@@ -1,3 +1,3 @@
 export default function HomePage() {
-  return <h1>Hello World - Home</h1>;
+  return <h1>Melhores Filmes:</h1>;
 }
