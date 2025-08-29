@@ -6,38 +6,42 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilm } from "@fortawesome/free-solid-svg-icons";
+import { DesktopNav } from "./desktop-nav";
+import { MobileNav } from "./mobile-nav";
 
 export function HeaderComponent() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#E0E0E0] bg-[#FAFAFA]/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo e Ícone */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-xl font-bold text-[#4B5D73]"
-        >
-          <FontAwesomeIcon icon={faFilm} className="h-16 text-[#D33B3B]" />
-          <span className="hidden sm:inline">Yuffie's Cinematic</span>
+    <header className="w-full fixed top-0 z-50 bg-gradient-to-b from-black/90 to-transparent">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 text-red-500">
+          <FontAwesomeIcon icon={faFilm} className="h-6 w-6" />
+          <span className="font-bold text-lg tracking-wide">
+            Yuffie's Cinematic
+          </span>
         </Link>
 
-        {/* Campo de Busca */}
-        <div className="flex flex-1 justify-end">
-          <div className="flex w-full items-center space-x-2 sm:max-w-xs">
-            <Input
-              type="text"
-              placeholder="Busque um filme"
-              className="h-9 rounded-md px-3 text-[#212121] placeholder:text-[#9E9E9E] border border-[#E0E0E0] focus:ring-2 focus:ring-[#A3D9E2] focus:outline-none"
-            />
-            <Button
-              type="submit"
-              size="icon"
-              className="h-9 w-9 rounded-md bg-[#D33B3B] text-[#FFFFFF] hover:bg-[#B83131]"
-            >
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Buscar</span>
-            </Button>
-          </div>
+        {/* Navegação */}
+        <DesktopNav />
+
+        {/* Busca */}
+        <div className="hidden md:flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Buscar filmes..."
+            className="bg-gray-800 text-white border-gray-700"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            className="bg-red-600 hover:bg-red-700"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
         </div>
+
+        {/* Mobile nav */}
+        <MobileNav />
       </div>
     </header>
   );
