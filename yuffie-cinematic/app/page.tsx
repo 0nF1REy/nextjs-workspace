@@ -7,16 +7,16 @@ export default function HomePage() {
   // Dados de filmes/series
   const items = [
     {
-      title: "O Poderoso Chefão",
-      poster: "/assets/images/the-godfather-1972.jpg",
+      title: "Tempo de Matar",
+      poster: "/assets/images/a-time-to-kill-1996.jpg",
       video: null,
-      detail: "/pages/movie-description-01",
+      detail: "/movie-description-01",
     },
     {
       title: "Amadeus",
       poster: "/assets/images/amadeus-1984.jpg",
       video: null,
-      detail: "/pages/movie-description-02",
+      detail: "/movie-description-02",
     },
     {
       title: "John Wick: Capítulo 2",
@@ -24,13 +24,13 @@ export default function HomePage() {
       video: null,
     },
     {
-      title: "Tempo de Matar",
-      poster: "/assets/images/a-time-to-kill-1996.jpg",
+      title: "Ip Man",
+      poster: "/assets/images/ip-man-2008.jpg",
       video: null,
     },
     {
-      title: "Ip Man",
-      poster: "/assets/images/ip-man-2008.jpg",
+      title: "O Poderoso Chefão",
+      poster: "/assets/images/the-godfather-1972.jpg",
       video: null,
     },
     {
@@ -90,7 +90,10 @@ export default function HomePage() {
       {/* Filmes/Series */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         {items.map((item, idx) => (
-          <Card key={item.title} className="p-2 flex flex-col items-center">
+          <Card
+            key={`${item.title}-${idx}`}
+            className="p-2 flex flex-col items-center"
+          >
             <CardHeader className="relative w-full h-56 mb-2">
               <Image
                 src={item.poster}
@@ -105,7 +108,7 @@ export default function HomePage() {
                 {item.title}
               </CardTitle>
               {/* Navegação */}
-              {idx < 2 && item.detail && (
+              {item.detail && (
                 <Link href={item.detail}>
                   <Button variant="secondary" size="sm" className="w-full">
                     Ver detalhes
