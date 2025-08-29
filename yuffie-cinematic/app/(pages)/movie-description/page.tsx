@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-export default function MovieDescriptionOnePage() {
+export default function MovieDescriptionPage() {
   const movie = {
     title: "Tempo de Matar",
     synopsis:

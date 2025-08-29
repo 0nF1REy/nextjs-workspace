@@ -4,19 +4,23 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
-  // Dados de filmes/series
   const items = [
     {
       title: "Tempo de Matar",
       poster: "/assets/images/a-time-to-kill-1996.jpg",
       video: null,
-      detail: "/movie-description-01",
+      detail: "/movie-description",
+    },
+    {
+      title: "Arquivo X",
+      poster: "/assets/images/the-x-files-1993.jpg",
+      video: null,
+      detail: "/serie-description",
     },
     {
       title: "Amadeus",
       poster: "/assets/images/amadeus-1984.jpg",
       video: null,
-      detail: "/movie-description-02",
     },
     {
       title: "John Wick: Capítulo 2",
@@ -56,6 +60,31 @@ export default function HomePage() {
     {
       title: "Anjos Caídos",
       poster: "/assets/images/fallen-angels-1995.jpg",
+      video: null,
+    },
+    {
+      title: "De Volta para o Futuro",
+      poster: "/assets/images/back-to-the-future-1985.jpg",
+      video: null,
+    },
+    {
+      title: "Um Tira da Pesada",
+      poster: "/assets/images/beverly-hills-cop-1984.jpg",
+      video: null,
+    },
+    {
+      title: "Fuga de Nova York",
+      poster: "/assets/images/escape-from-new-york-1981.jpg",
+      video: null,
+    },
+    {
+      title: "Road House",
+      poster: "/assets/images/road-house-1989.jpg",
+      video: null,
+    },
+    {
+      title: "Eles Vivem",
+      poster: "/assets/images/they-live-1988.jpg",
       video: null,
     },
   ];
