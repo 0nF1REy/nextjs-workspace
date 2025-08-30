@@ -39,7 +39,7 @@ export function FooterComponent() {
 
         {/* Copyright */}
         <p className="text-center text-xs text-gray-500 px-4">
-          &copy; 2025
+          &copy; {new Date().getFullYear()}
           <span className="text-red-600 font-semibold"> Yuffie Cinematic</span>.
           Todos os direitos reservados.
         </p>
