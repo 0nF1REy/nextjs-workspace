@@ -1,25 +1,54 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function NotFoundPage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <div className="flex items-center min-h-screen px-4 py-12 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-      <div className="w-full space-y-6 text-center">
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl animate-bounce">
+    <main className="bg-[#0d0d0d] text-gray-200 min-h-screen flex flex-col">
+      <section className="flex-grow flex items-center justify-center px-6 py-12 md:px-12">
+        <div className="text-center space-y-6">
+          <motion.h1
+            className="text-6xl md:text-8xl font-extrabold text-red-500"
+            animate={{ y: [0, -20, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+          >
             404
-          </h1>
-          <p className="text-gray-500">
+          </motion.h1>
+
+          <motion.p
+            className="text-gray-400 text-lg md:text-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+          >
             Parece que você se aventurou no reino digital desconhecido.
-          </p>
+          </motion.p>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center rounded-md bg-red-500 px-8 py-3 text-lg font-semibold text-gray-50 shadow-lg transition-all hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600"
+              prefetch={false}
+            >
+              Voltar ao site
+            </Link>
+          </motion.div>
         </div>
-        <Link
-          href="/"
-          className="inline-flex h-10 items-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-          prefetch={false}
-        >
-          Voltar ao site
-        </Link>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
