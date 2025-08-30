@@ -12,7 +12,7 @@ export function FooterComponent() {
           <Link
             href="/legal?tab=aviso"
             className={cn(
-              "text-sm text-gray-400 hover:text-red-600 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium"
+              "text-sm text-gray-400 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium hover:text-red-600 hover:drop-shadow-[0_0_6px_rgba(255,0,0,0.7)]"
             )}
           >
             Aviso Legal
@@ -21,7 +21,7 @@ export function FooterComponent() {
           <Link
             href="/legal?tab=privacidade"
             className={cn(
-              "text-sm text-gray-400 hover:text-red-600 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium"
+              "text-sm text-gray-400 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium hover:text-red-600 hover:drop-shadow-[0_0_6px_rgba(255,0,0,0.7)]"
             )}
           >
             Política de Privacidade
@@ -30,7 +30,7 @@ export function FooterComponent() {
           <Link
             href="/legal?tab=termos"
             className={cn(
-              "text-sm text-gray-400 hover:text-red-600 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium"
+              "text-sm text-gray-400 transition-colors text-center px-2 py-1 uppercase tracking-wide font-medium hover:text-red-600 hover:drop-shadow-[0_0_6px_rgba(255,0,0,0.7)]"
             )}
           >
             Termos de Uso
@@ -39,8 +39,8 @@ export function FooterComponent() {
 
         {/* Copyright */}
         <p className="text-center text-xs text-gray-500 px-4">
-          © 2025{" "}
-          <span className="text-red-600 font-semibold">Yuffie Cinematic</span>.
+          &copy; 2025
+          <span className="text-red-600 font-semibold"> Yuffie Cinematic</span>.
           Todos os direitos reservados.
         </p>
       </div>
