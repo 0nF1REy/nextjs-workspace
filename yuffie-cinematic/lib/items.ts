@@ -90,6 +90,76 @@ export const items: Item[] = [
     category: "filme",
   },
   {
+    title: "13 Reasons Why",
+    poster: "/assets/images/series/13-reasons-why-2017.jpg",
+    category: "serie",
+  },
+  {
+    title: "Breaking Bad",
+    poster: "/assets/images/series/breaking-bad-2008.png",
+    category: "serie",
+  },
+  {
+    title: "Cobra Kai",
+    poster: "/assets/images/series/cobra-kai-2018.jpg",
+    category: "serie",
+  },
+  {
+    title: "Desencanto",
+    poster: "/assets/images/series/desencanto-2018.jpg",
+    category: "serie",
+  },
+  {
+    title: "Futurama",
+    poster: "/assets/images/series/futurama-1999.jpg",
+    category: "serie",
+  },
+  {
+    title: "iCarly",
+    poster: "/assets/images/series/icarly-2007.jpg",
+    category: "serie",
+  },
+  {
+    title: "Rick and Morty",
+    poster: "/assets/images/series/rick-and-morty-2013.png",
+    category: "serie",
+  },
+  {
+    title: "Smiling Friends",
+    poster: "/assets/images/series/smiling-friends-2022.jpg",
+    category: "serie",
+  },
+  {
+    title: "Squid Game",
+    poster: "/assets/images/series/squid-game-2021.jpg",
+    category: "serie",
+  },
+  {
+    title: "Stranger Things",
+    poster: "/assets/images/series/stranger-things-2016.jpg",
+    category: "serie",
+  },
+  {
+    title: "Supernatural",
+    poster: "/assets/images/series/supernatural-2005.jpg",
+    category: "serie",
+  },
+  {
+    title: "The Boys",
+    poster: "/assets/images/series/the-boys-2019.jpg",
+    category: "serie",
+  },
+  {
+    title: "The Simpsons",
+    poster: "/assets/images/series/the-simpsons-1989.jpg",
+    category: "serie",
+  },
+  {
+    title: "Todo Mundo Odeia o Chris",
+    poster: "/assets/images/series/todo-mundo-odeia-o-chris-2005.jpg",
+    category: "serie",
+  },
+  {
     title: "Barakamon",
     poster: "/assets/images/animes/barakamon-2014.jpg",
     category: "anime",
