@@ -20,27 +20,9 @@ export const animeItems: Item[] = [
     type: "anime",
   },
   {
-    id: "barakamon",
-    title: "Barakamon",
-    poster: "/assets/images/animes/barakamon-2014.jpg",
-    type: "anime",
-  },
-  {
-    id: "berserk",
-    title: "Berserk",
-    poster: "/assets/images/animes/berserk-1997.jpg",
-    type: "anime",
-  },
-  {
     id: "bleach",
     title: "Bleach",
     poster: "/assets/images/animes/bleach-2004.jpg",
-    type: "anime",
-  },
-  {
-    id: "cowboy-bebop",
-    title: "Cowboy Bebop",
-    poster: "/assets/images/animes/cowboy-bebop-1998.jpg",
     type: "anime",
   },
   {

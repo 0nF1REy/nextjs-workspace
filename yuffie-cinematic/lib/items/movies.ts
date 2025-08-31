@@ -15,25 +15,6 @@ export const movieItems: Item[] = [
     type: "movie",
   },
   {
-    id: "amadeus",
-    title: "Amadeus",
-    poster: "/assets/images/movies/amadeus-1984.jpg",
-    type: "movie",
-  },
-  {
-    id: "a-time-to-kill",
-    title: "Tempo de Matar",
-    poster: "/assets/images/movies/a-time-to-kill-1996.jpg",
-    video: "/assets/videos/a-time-to-kill-trailer.mp4",
-    type: "movie",
-  },
-  {
-    id: "the-godfather",
-    title: "O Poderoso Chefão",
-    poster: "/assets/images/movies/the-godfather-1972.jpg",
-    type: "movie",
-  },
-  {
     id: "fallen-angels",
     title: "Anjos Caídos",
     poster: "/assets/images/movies/fallen-angels-1995.jpg",

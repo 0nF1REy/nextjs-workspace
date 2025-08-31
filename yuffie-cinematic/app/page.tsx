@@ -48,6 +48,19 @@ export default function HomePage() {
   const getCinematicDetails = (id: string) =>
     cinematics.find((d: CinematicDetail) => d.id === id);
 
+  const detailIds = ["a-time-to-kill", "the-x-files"];
+
+  const highlightIds = [
+    "a-time-to-kill",
+    "the-x-files",
+    "the-godfather",
+    "parasite",
+  ];
+
+  const highlights = highlightIds
+    .map((id) => items.find((item) => item.id === id))
+    .filter(Boolean) as Item[];
+
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen">
       {/* Seção de Vídeo em Destaque */}
@@ -93,9 +106,9 @@ export default function HomePage() {
           Destaques
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
-          {items.slice(0, 4).map((item: Item, idx: number) => (
+          {highlights.map((item, idx) => (
             <motion.div
-              key={`highlights-${item.id}-${idx}`}
+              key={`highlight-${item.id}-${idx}`}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
@@ -114,7 +127,8 @@ export default function HomePage() {
                     {item.title}
                   </CardTitle>
 
-                  {idx < 2 && (
+                  {/* Botão só para Tempo de Matar e Arquivo X */}
+                  {detailIds.includes(item.id) && (
                     <Link
                       href={`/details/${encodeURIComponent(
                         getCinematicDetails(item.id)?.id || item.id
