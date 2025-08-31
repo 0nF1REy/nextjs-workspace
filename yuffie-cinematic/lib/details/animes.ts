@@ -1,4 +1,4 @@
-import { CinematicDetail } from "./details";
+import { CinematicDetail } from "./types";
 
 export const animeDetails: CinematicDetail[] = [
   {

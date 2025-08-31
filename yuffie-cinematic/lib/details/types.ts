@@ -23,17 +23,3 @@ export interface CinematicDetail {
   galleryImages?: GalleryImage[];
   type: "movie" | "serie" | "anime";
 }
-
-import { movieDetails } from "./movies";
-import { seriesDetails } from "./series";
-import { animeDetails } from "./animes";
-
-export const cinematics: CinematicDetail[] = [
-  ...movieDetails,
-  ...seriesDetails,
-  ...animeDetails,
-];
-
-export const movies = movieDetails;
-export const series = seriesDetails;
-export const animes = animeDetails;

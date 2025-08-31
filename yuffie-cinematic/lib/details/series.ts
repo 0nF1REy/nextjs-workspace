@@ -1,6 +1,6 @@
-import { CinematicDetail } from "./details";
+import { CinematicDetail } from "./types";
 
-export const seriesDetails: CinematicDetail[] = [
+export const serieDetails: CinematicDetail[] = [
   {
     id: "the-x-files",
     title: "The X-Files",
