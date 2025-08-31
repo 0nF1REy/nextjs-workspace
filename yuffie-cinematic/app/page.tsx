@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,11 +20,16 @@ export default function HomePage() {
   const serieCarouselRef = useRef<HTMLDivElement>(null);
   const animeCarouselRef = useRef<HTMLDivElement>(null);
 
-  const videoItems = items.filter((item: Item) => item.video);
-  const videoSrc =
-    videoItems.length > 0
-      ? videoItems[Math.floor(Math.random() * videoItems.length)].video
-      : null;
+  const videoItems = useMemo(() => items.filter((item: Item) => item.video), []);
+
+  const [currentVideoSrc, setCurrentVideoSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (videoItems.length > 0) {
+      const randomIndex = Math.floor(Math.random() * videoItems.length);
+      setCurrentVideoSrc(videoItems[randomIndex].video || null);
+    }
+  }, [videoItems]); 
 
   const categories: {
     key: Item["category"];
@@ -39,14 +44,14 @@ export default function HomePage() {
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen">
       {/* Seção de Vídeo em Destaque */}
-      <section className="relative w-full h-[90vh] flex items-end justify-center">
-        {videoSrc ? (
+      <section className="relative w-full h-[70vh] sm:h-[80vh] md:h-[90vh] flex items-end justify-center overflow-hidden">
+        {currentVideoSrc ? (
           <video
-            src={videoSrc}
+            src={currentVideoSrc}
             autoPlay
             muted
             loop
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover sm:object-contain md:object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70">
@@ -57,12 +62,12 @@ export default function HomePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
         <motion.div
-          className="relative text-center pb-10"
+          className="relative text-center pb-10 px-4"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
         >
-          <p className="text-xl md:text-2xl font-light text-gray-300">
+          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300">
             Descubra o melhor do cinema
           </p>
           <motion.div

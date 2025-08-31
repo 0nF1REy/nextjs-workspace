@@ -10,12 +10,14 @@ export const items: Item[] = [
   {
     title: "Tempo de Matar",
     poster: "/assets/images/movies/a-time-to-kill-1996.jpg",
+    video: "/assets/videos/a-time-to-kill-trailer.mp4",
     detail: "/movie-description",
     category: "filme",
   },
   {
     title: "Arquivo X",
     poster: "/assets/images/series/the-x-files-1993.jpg",
+    video: "/assets/videos/the-x-files-trailer.mp4",
     detail: "/serie-description",
     category: "serie",
   },
