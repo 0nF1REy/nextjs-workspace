@@ -95,7 +95,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
           {items.slice(0, 4).map((item: Item, idx: number) => (
             <motion.div
-              key={item.id}
+              key={`highlights-${item.id}-${idx}`}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
@@ -186,7 +186,7 @@ export default function HomePage() {
               >
                 {filteredItems.map((item: Item, idx: number) => (
                   <motion.div
-                    key={item.id}
+                    key={`${cat.key}-${item.id}-${idx}`}
                     className="min-w-[200px] flex-shrink-0"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200 }}
