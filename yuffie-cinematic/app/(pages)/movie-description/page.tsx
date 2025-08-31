@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart } from "lucide-react";
 
+import ImageGallery from "@/components/description/image-gallery";
+
 interface Movie {
   id: string;
   title: string;
@@ -90,6 +92,24 @@ const saveUserRatingToStorage = (movieId: string, rating: number): void => {
 };
 
 export default function MovieDescriptionPage() {
+  const galleryImages = [
+    {
+      id: "1",
+      title: "Foto 1",
+      src: "/assets/images/gallery/a-time-to-kill/01.png",
+    },
+    {
+      id: "2",
+      title: "Foto 2",
+      src: "/assets/images/gallery/a-time-to-kill/02.png",
+    },
+    {
+      id: "3",
+      title: "Foto 3",
+      src: "/assets/images/gallery/a-time-to-kill/03.png",
+    },
+  ];
+
   const movie: Movie = useMemo(
     () => ({
       id: "1",
@@ -105,7 +125,9 @@ export default function MovieDescriptionPage() {
         "Samuel L. Jackson",
         "Kevin Spacey",
       ],
-      carouselImages: ["/assets/images/a-time-to-kill-banner.jpg"],
+      carouselImages: [
+        "/assets/images/a-time-to-kill-banner.jpg"
+      ],
       rating: 4,
       genre: ["Drama", "Crime", "Thriller"],
       duration: 149,
@@ -383,7 +405,7 @@ export default function MovieDescriptionPage() {
   const SimilarMoviesSection = useMemo(
     () => (
       <section className="mt-12">
-        <h2 className="text-xl font-bold text-red-600 mb-4">
+        <h2 className="text-xl font-bold text-red-500 mb-4">
           Filmes Semelhantes
         </h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -532,6 +554,9 @@ export default function MovieDescriptionPage() {
           </Tabs>
         </aside>
       </main>
+
+      {/* Galeria de Imagens */}
+      <ImageGallery images={galleryImages} />
 
       {/* Filmes Similares */}
       {SimilarMoviesSection}
