@@ -24,6 +24,8 @@ import { Heart } from "lucide-react";
 
 import ImageGallery from "@/components/description/image-gallery";
 
+import MovieReviews from "@/components/description/movie-reviews";
+
 interface Movie {
   id: string;
   title: string;
@@ -552,30 +554,11 @@ export default function MovieDescriptionPage() {
         </Card>
 
         {/* Resenhas */}
-        <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg">
-          <Tabs
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="grid grid-cols-2 gap-2 mb-6">
-              <TabsTrigger
-                value="details"
-                className="data-[state=active]:bg-red-600 data-[state=active]:text-white rounded-lg"
-              >
-                Detalhes
-              </TabsTrigger>
-              <TabsTrigger
-                value="reviews"
-                className="data-[state=active]:bg-red-600 data-[state=active]:text-white rounded-lg"
-              >
-                Resenhas
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="details">{MovieDetails}</TabsContent>
-            <TabsContent value="reviews">{ReviewsList}</TabsContent>
-          </Tabs>
-        </aside>
+        <MovieReviews
+          genre={movie.genre}
+          duration={movie.duration}
+          reviews={reviews}
+        />
       </main>
 
       {/* Galeria de Imagens */}
