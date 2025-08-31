@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, use } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -22,22 +23,9 @@ import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 
 import ImageGallery from "@/components/description/image-gallery";
-
 import MovieReviews from "@/components/description/movie-reviews";
 
-interface Movie {
-  id: string;
-  title: string;
-  synopsis: string;
-  year: number;
-  director: string;
-  cover: string;
-  cast: string[];
-  carouselImages: string[];
-  rating: number;
-  genre?: string[];
-  duration?: number;
-}
+import { cinematics } from "@/lib/details";
 
 interface SimilarMovie {
   id: string;
@@ -92,110 +80,72 @@ const saveUserRatingToStorage = (movieId: string, rating: number): void => {
   }
 };
 
-export default function MovieDescriptionPage() {
-  const galleryImages = [
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default function CinematicDescriptionPage({ params }: PageProps) {
+  const { id } = use(params);
+
+  const cinematic = useMemo(() => {
+    const decodedId = decodeURIComponent(id);
+    return cinematics.find((c) => c.id === decodedId);
+  }, [id]);
+
+  // Imagens de galeria padrão para itens que não possuem dados de galeria específicos
+  const defaultGalleryImages = [
     {
       id: "1",
-      title: "Cena do Tribunal",
-      src: "/assets/images/gallery/a-time-to-kill/01.png",
-      description: "Jake Brigance defendendo Carl Lee Hailey no tribunal",
-      photoCredit: "Warner Bros Pictures",
-      sourceLink: "https://warnerbros.com",
-      people: [
-        "Matthew McConaughey (Jake Brigance)",
-        "Samuel L. Jackson (Carl Lee Hailey)",
-        "Kevin Spacey (Rufus Buckley)",
-      ],
-    },
-    {
-      id: "2",
-      title: "Bastidores da Produção",
-      src: "/assets/images/gallery/a-time-to-kill/02.png",
-      description: "Joel Schumacher dirigindo a cena do tribunal",
-      photoCredit: "Warner Bros Pictures",
-      sourceLink: "https://warnerbros.com",
-      people: [
-        "Joel Schumacher (Diretor)",
-        "Matthew McConaughey (Jake Brigance)",
-        "Peter Menzies Jr. (Diretor de Fotografia)",
-      ],
-    },
-    {
-      id: "3",
-      title: "Elenco Principal",
-      src: "/assets/images/gallery/a-time-to-kill/03.png",
-      description: "Foto promocional do elenco principal",
-      photoCredit: "Warner Bros Pictures",
-      sourceLink: "https://warnerbros.com",
-      people: [
-        "Matthew McConaughey (Jake Brigance)",
-        "Sandra Bullock (Ellen Roark)",
-        "Samuel L. Jackson (Carl Lee Hailey)",
-        "Ashley Judd (Carla Brigance)",
-      ],
+      title: "Poster Principal",
+      src: cinematic?.cover || "/assets/images/default-poster.jpg",
+      description: `Poster oficial de ${cinematic?.title || "Unknown"}`,
+      photoCredit: "Studio",
+      sourceLink: "#",
+      people: cinematic?.cast?.slice(0, 3) || [],
     },
   ];
 
-  const movie: Movie = useMemo(
-    () => ({
-      id: "1",
-      title: "A Time to Kill",
-      synopsis:
-        "Um jovem advogado defende um homem negro acusado de assassinar dois homens brancos que estupraram sua filha de 10 anos, provocando o renascimento da Ku Klux Klan.",
-      year: 1996,
-      director: "Joel Schumacher",
-      cover: "/assets/images/movies/a-time-to-kill-1996.jpg",
-      cast: [
-        "Matthew McConaughey",
-        "Sandra Bullock",
-        "Samuel L. Jackson",
-        "Kevin Spacey",
-      ],
-      carouselImages: ["/assets/images/a-time-to-kill-banner.jpg"],
-      rating: 4,
-      genre: ["Drama", "Crime", "Thriller"],
-      duration: 149,
-    }),
-    []
-  );
+  const galleryImages = cinematic?.galleryImages || defaultGalleryImages;
 
-  const similarMovies: SimilarMovie[] = useMemo(
-    () => [
-      {
-        id: "2",
-        title: "The Godfather",
-        cover: "/assets/images/movies/the-godfather-1972.jpg",
-      },
-      {
-        id: "3",
-        title: "The Shawshank Redemption",
-        cover: "/assets/images/movies/the-shawshank-redemption-1994.jpg",
-      },
-      {
-        id: "4",
-        title: "Amadeus",
-        cover: "/assets/images/movies/amadeus-1984.jpg",
-      },
-    ],
-    []
-  );
+  const similarMovies: SimilarMovie[] = useMemo(() => {
+    if (!cinematic) return [];
 
+    return cinematics
+      .filter((c) => c.id !== cinematic.id && c.type === cinematic.type)
+      .slice(0, 6)
+      .map((c) => ({
+        id: c.id,
+        title: c.title,
+        cover: c.cover,
+      }));
+  }, [cinematic]);
+
+  // Avaliações padrão
   const reviews: Review[] = useMemo(
     () => [
       {
         id: "1",
-        author: "Bethany",
-        content: "This movie grabbed me by the throat...",
-        rating: 5,
+        author: "Crítico Cinéfilo",
+        content: `Uma obra impressionante que demonstra o melhor do ${
+          cinematic?.type === "movie"
+            ? "cinema"
+            : cinematic?.type === "serie"
+            ? "seriado"
+            : "anime"
+        }.`,
+        rating: cinematic?.rating || 4,
       },
       {
         id: "2",
-        author: "Fatima Al Mutairi",
-        content: "Kevin Spacey defending child rapists...",
-        rating: 4,
+        author: "Espectador Assíduo",
+        content:
+          "Recomendo fortemente para quem aprecia boa narrativa e desenvolvimento de personagens.",
+        rating: Math.min((cinematic?.rating || 4) + 1, 5),
       },
     ],
-    []
+    [cinematic]
   );
 
   const [favorite, setFavorite] = useState(false);
@@ -203,11 +153,13 @@ export default function MovieDescriptionPage() {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   useEffect(() => {
-    const savedRating = getUserRatingFromStorage(movie.id);
-    if (savedRating !== null) {
-      setUserRating(savedRating);
+    if (cinematic) {
+      const savedRating = getUserRatingFromStorage(cinematic.id);
+      if (savedRating !== null) {
+        setUserRating(savedRating);
+      }
     }
-  }, [movie.id]);
+  }, [cinematic]);
 
   const handleFavoriteToggle = useCallback(() => {
     setFavorite((prev) => !prev);
@@ -215,28 +167,32 @@ export default function MovieDescriptionPage() {
 
   const handleStarClick = useCallback(
     (rating: number) => {
-      setUserRating(rating);
-      saveUserRatingToStorage(movie.id, rating);
+      if (cinematic) {
+        setUserRating(rating);
+        saveUserRatingToStorage(cinematic.id, rating);
+      }
     },
-    [movie.id]
+    [cinematic]
   );
 
   const handleStarHover = useCallback((rating: number | null) => {
     setHoveredRating(rating);
   }, []);
 
-  const MovieCarousel = useMemo(
-    () => (
+  const MovieCarousel = useMemo(() => {
+    if (!cinematic) return null;
+
+    return (
       <div className="flex justify-center mb-12">
         <div className="w-full max-w-4xl">
           <Carousel className="rounded-2xl overflow-hidden shadow-2xl">
             <CarouselContent>
-              {movie.carouselImages.map((img, idx) => (
-                <CarouselItem key={`${movie.id}-carousel-${idx}`}>
+              {cinematic.carouselImages.map((img, idx) => (
+                <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
                   <div className="relative h-64 md:h-80 lg:h-96 w-full flex justify-center">
                     <Image
                       src={img}
-                      alt={`${movie.title} scene ${idx + 1}`}
+                      alt={`${cinematic.title} scene ${idx + 1}`}
                       width={DEFAULT_IMAGE_DIMENSIONS.carousel.width}
                       height={DEFAULT_IMAGE_DIMENSIONS.carousel.height}
                       priority={idx === 0}
@@ -251,12 +207,13 @@ export default function MovieDescriptionPage() {
           </Carousel>
         </div>
       </div>
-    ),
-    [movie.carouselImages, movie.id, movie.title]
-  );
+    );
+  }, [cinematic]);
 
-  const InteractiveStarRating = useMemo(
-    () => (
+  const InteractiveStarRating = useMemo(() => {
+    if (!cinematic) return null;
+
+    return (
       <div className="mt-4 space-y-2">
         <div className="flex items-center gap-4">
           <div>
@@ -264,11 +221,11 @@ export default function MovieDescriptionPage() {
             <div className="text-yellow-400">
               {Array.from({ length: RATING_MAX }).map((_, idx) => (
                 <span key={`general-star-${idx}`} className="text-xl">
-                  {idx < movie.rating ? "★" : "☆"}
+                  {idx < cinematic.rating ? "★" : "☆"}
                 </span>
               ))}
               <span className="text-gray-400 text-sm ml-2">
-                {movie.rating}/{RATING_MAX}
+                {cinematic.rating}/{RATING_MAX}
               </span>
             </div>
           </div>
@@ -316,7 +273,7 @@ export default function MovieDescriptionPage() {
                   onClick={() => {
                     setUserRating(null);
                     if (typeof window !== "undefined") {
-                      localStorage.removeItem(`movie-rating-${movie.id}`);
+                      localStorage.removeItem(`movie-rating-${cinematic.id}`);
                     }
                   }}
                 >
@@ -332,47 +289,50 @@ export default function MovieDescriptionPage() {
           )}
         </div>
       </div>
-    ),
-    [
-      movie.rating,
-      movie.id,
-      userRating,
-      hoveredRating,
-      handleStarClick,
-      handleStarHover,
-    ]
-  );
+    );
+  }, [cinematic, userRating, hoveredRating, handleStarClick, handleStarHover]);
 
   const SimilarMovieCard = ({
     movie: similarMovie,
   }: {
     movie: SimilarMovie;
   }) => (
-    <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform">
-      <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
-        <Image
-          src={similarMovie.cover}
-          alt={similarMovie.title}
-          width={DEFAULT_IMAGE_DIMENSIONS.similar.width}
-          height={DEFAULT_IMAGE_DIMENSIONS.similar.height}
-          className="object-cover w-full h-full"
-        />
-      </div>
-      <CardFooter className="p-3">
-        <div className="w-full text-center">
-          <p className="text-xs font-medium text-gray-200 truncate">
-            {similarMovie.title}
-          </p>
+    <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
+      <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer">
+        <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
+          <Image
+            src={similarMovie.cover}
+            alt={similarMovie.title}
+            width={DEFAULT_IMAGE_DIMENSIONS.similar.width}
+            height={DEFAULT_IMAGE_DIMENSIONS.similar.height}
+            className="object-cover w-full h-full"
+          />
         </div>
-      </CardFooter>
-    </Card>
+        <CardFooter className="p-3">
+          <div className="w-full text-center">
+            <p className="text-xs font-medium text-gray-200 truncate">
+              {similarMovie.title}
+            </p>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 
-  const SimilarMoviesSection = useMemo(
-    () => (
+  const SimilarMoviesSection = useMemo(() => {
+    if (similarMovies.length === 0) return null;
+
+    const typeLabel =
+      cinematic?.type === "movie"
+        ? "Filmes"
+        : cinematic?.type === "serie"
+        ? "Séries"
+        : "Animes";
+
+    return (
       <section className="mt-12">
         <h2 className="text-xl font-bold text-red-500 mb-4">
-          Filmes Semelhantes
+          {typeLabel} Semelhantes
         </h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
           {similarMovies.map((similarMovie) => (
@@ -380,9 +340,8 @@ export default function MovieDescriptionPage() {
           ))}
         </div>
       </section>
-    ),
-    [similarMovies]
-  );
+    );
+  }, [similarMovies, cinematic]);
 
   const FavoriteButton = useMemo(
     () => (
@@ -417,24 +376,44 @@ export default function MovieDescriptionPage() {
     [favorite, handleFavoriteToggle]
   );
 
-  if (!movie) {
-    return <div>Filme não encontrado</div>;
+  // Mostrar estado de carregamento ou não encontrado
+  if (!cinematic) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">
+            Conteúdo não encontrado
+          </h1>
+          <p className="text-gray-400 mb-6">
+            O item que você está procurando não existe ou foi removido.
+          </p>
+          <Link href="/">
+            <Button variant="secondary" size="lg" className="hover:bg-red-600">
+              ← Voltar para Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
   }
+
+  const creatorLabel =
+    cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 px-4 py-8">
       {/* Carrossel */}
-      <section aria-label="Movie gallery">{MovieCarousel}</section>
+      <section aria-label="Cinematic gallery">{MovieCarousel}</section>
 
-      {/* Cartão de detalhes do filme */}
+      {/* Cartão de detalhes */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl">
           <div className="flex flex-col md:flex-row gap-6 p-6">
             {/* Poster */}
             <div className="flex-shrink-0">
               <Image
-                src={movie.cover}
-                alt={`${movie.title} movie poster`}
+                src={cinematic.cover}
+                alt={`${cinematic.title} poster`}
                 width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
                 height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
                 priority
@@ -446,15 +425,15 @@ export default function MovieDescriptionPage() {
             <div className="flex flex-col justify-between flex-1">
               <CardHeader>
                 <CardTitle className="text-2xl text-red-500">
-                  {movie.title}
+                  {cinematic.title}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  {movie.year} • Dirigido por {movie.director}
+                  {cinematic.year} • {creatorLabel} {cinematic.creator}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <p className="text-gray-300">{movie.synopsis}</p>
+                <p className="text-gray-300">{cinematic.synopsis}</p>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                   {/* Avaliações */}
@@ -466,8 +445,11 @@ export default function MovieDescriptionPage() {
                       Elenco Principal:
                     </span>
                     <ul className="list-disc list-inside text-gray-400 space-y-1">
-                      {movie.cast.map((actor, idx) => (
-                        <li key={`${movie.id}-cast-${idx}`} className="text-sm">
+                      {cinematic.cast.map((actor, idx) => (
+                        <li
+                          key={`${cinematic.id}-cast-${idx}`}
+                          className="text-sm"
+                        >
                           {actor}
                         </li>
                       ))}
@@ -496,8 +478,8 @@ export default function MovieDescriptionPage() {
 
         {/* Resenhas */}
         <MovieReviews
-          genre={movie.genre}
-          duration={movie.duration}
+          genre={cinematic.genre}
+          duration={cinematic.duration}
           reviews={reviews}
         />
       </main>
@@ -505,7 +487,7 @@ export default function MovieDescriptionPage() {
       {/* Galeria de Imagens */}
       <ImageGallery images={galleryImages} />
 
-      {/* Filmes Similares */}
+      {/* Similares */}
       {SimilarMoviesSection}
     </div>
   );

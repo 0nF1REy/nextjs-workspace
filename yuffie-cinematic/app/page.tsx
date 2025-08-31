@@ -14,13 +14,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { items, Item } from "@/lib/items";
+import { cinematics, CinematicDetail } from "@/lib/details";
 
 export default function HomePage() {
   const filmeCarouselRef = useRef<HTMLDivElement>(null);
   const serieCarouselRef = useRef<HTMLDivElement>(null);
   const animeCarouselRef = useRef<HTMLDivElement>(null);
 
-  const videoItems = useMemo(() => items.filter((item: Item) => item.video), []);
+  const videoItems = useMemo(
+    () => items.filter((item: Item) => item.video),
+    []
+  );
 
   const [currentVideoSrc, setCurrentVideoSrc] = useState<string | null>(null);
 
@@ -29,17 +33,20 @@ export default function HomePage() {
       const randomIndex = Math.floor(Math.random() * videoItems.length);
       setCurrentVideoSrc(videoItems[randomIndex].video || null);
     }
-  }, [videoItems]); 
+  }, [videoItems]);
 
   const categories: {
-    key: Item["category"];
+    key: Item["type"];
     label: string;
     ref: React.RefObject<HTMLDivElement | null>;
   }[] = [
-    { key: "filme", label: "Filmes", ref: filmeCarouselRef },
+    { key: "movie", label: "Filmes", ref: filmeCarouselRef },
     { key: "serie", label: "Séries", ref: serieCarouselRef },
     { key: "anime", label: "Animes", ref: animeCarouselRef },
   ];
+
+  const getCinematicDetails = (id: string) =>
+    cinematics.find((d: CinematicDetail) => d.id === id);
 
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen">
@@ -88,7 +95,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
           {items.slice(0, 4).map((item: Item, idx: number) => (
             <motion.div
-              key={`${item.title}-${idx}`}
+              key={item.id}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
@@ -106,8 +113,13 @@ export default function HomePage() {
                   <CardTitle className="text-base font-semibold text-gray-100 line-clamp-1">
                     {item.title}
                   </CardTitle>
-                  {item.detail && (
-                    <Link href={item.detail}>
+
+                  {idx < 2 && (
+                    <Link
+                      href={`/details/${encodeURIComponent(
+                        getCinematicDetails(item.id)?.id || item.id
+                      )}`}
+                    >
                       <Button
                         variant="secondary"
                         size="sm"
@@ -126,15 +138,25 @@ export default function HomePage() {
 
       {/* Carrosséis por Categoria */}
       {categories.map((cat) => {
-        const filteredItems = items.filter((i) => i.category === cat.key);
+        const filteredItems = items.filter((i) => i.type === cat.key);
 
         const scrollLeft = () => {
-          if (cat.ref.current)
-            cat.ref.current.scrollBy({ left: -300, behavior: "smooth" });
+          if (cat.ref.current) {
+            const scrollAmount = cat.ref.current.clientWidth || 300;
+            cat.ref.current.scrollBy({
+              left: -scrollAmount,
+              behavior: "smooth",
+            });
+          }
         };
         const scrollRight = () => {
-          if (cat.ref.current)
-            cat.ref.current.scrollBy({ left: 300, behavior: "smooth" });
+          if (cat.ref.current) {
+            const scrollAmount = cat.ref.current.clientWidth || 300;
+            cat.ref.current.scrollBy({
+              left: scrollAmount,
+              behavior: "smooth",
+            });
+          }
         };
 
         return (
@@ -164,7 +186,7 @@ export default function HomePage() {
               >
                 {filteredItems.map((item: Item, idx: number) => (
                   <motion.div
-                    key={`${item.title}-${idx}`}
+                    key={item.id}
                     className="min-w-[200px] flex-shrink-0"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200 }}
@@ -183,17 +205,6 @@ export default function HomePage() {
                         <CardTitle className="text-base font-semibold text-gray-100 line-clamp-1">
                           {item.title}
                         </CardTitle>
-                        {item.detail && (
-                          <Link href={item.detail}>
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white"
-                            >
-                              Ver detalhes
-                            </Button>
-                          </Link>
-                        )}
                       </CardContent>
                     </Card>
                   </motion.div>
