@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export default function NotFoundPage() {
+interface NotFoundPageProps {
+  message?: string;
+  searchParams?: { message?: string };
+}
+
+export default function NotFoundPage({
+  message,
+  searchParams,
+}: NotFoundPageProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -12,6 +20,11 @@ export default function NotFoundPage() {
   }, []);
 
   if (!mounted) return null;
+
+  const displayMessage =
+    message ||
+    searchParams?.message ||
+    "Parece que você se aventurou no reino digital desconhecido.";
 
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen flex flex-col">
@@ -31,7 +44,7 @@ export default function NotFoundPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
           >
-            Parece que você se aventurou no reino digital desconhecido.
+            {displayMessage}
           </motion.p>
 
           <motion.div

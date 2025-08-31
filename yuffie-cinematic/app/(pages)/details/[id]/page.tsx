@@ -27,6 +27,8 @@ import MovieReviews from "@/components/description/movie-reviews";
 
 import { cinematics } from "@/lib/details";
 
+import NotFoundPage from "@/app/not-found";
+
 interface SimilarMovie {
   id: string;
   title: string;
@@ -376,24 +378,15 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     [favorite, handleFavoriteToggle]
   );
 
-  // Mostrar estado de carregamento ou não encontrado
+  // Mostrar estado de não encontrado
   if (!cinematic) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">
-            Conteúdo não encontrado
-          </h1>
-          <p className="text-gray-400 mb-6">
-            O item que você está procurando não existe ou foi removido.
-          </p>
-          <Link href="/">
-            <Button variant="secondary" size="lg" className="hover:bg-red-600">
-              ← Voltar para Home
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <NotFoundPage
+        searchParams={{
+          message:
+            "O item que você está procurando não existe ou foi removido.",
+        }}
+      />
     );
   }
 
