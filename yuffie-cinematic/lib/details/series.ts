@@ -17,9 +17,17 @@ export const serieDetails: CinematicDetail[] = [
     galleryImages: [
       {
         id: "1",
-        title: "Agentes Mulder e Scully",
+        title: "Agente Scully",
         src: "/assets/images/gallery/the-x-files/01.png",
-        description: "Mulder e Scully investigando casos inexplicáveis",
+        description: "Gillian Anderson em Arquivo X (1993)",
+        photoCredit: "20th Century Fox",
+        sourceLink: "https://www.20thcenturystudios.com",
+        people: ["Gillian Anderson (Dana Scully)"],
+      },
+      {
+        id: "2",
+        title: "Agentes Mulder e Scully",
+        src: "/assets/images/gallery/the-x-files/02.png",
         photoCredit: "20th Century Fox",
         sourceLink: "https://www.20thcenturystudios.com",
         people: [

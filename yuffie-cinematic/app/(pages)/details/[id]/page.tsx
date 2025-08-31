@@ -51,7 +51,6 @@ interface UserRating {
 
 const RATING_MAX = 5;
 const DEFAULT_IMAGE_DIMENSIONS = {
-  carousel: { width: 800, height: 300 },
   cover: { width: 230, height: 345 },
   similar: { width: 160, height: 240 },
 };
@@ -191,14 +190,13 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
             <CarouselContent>
               {cinematic.carouselImages.map((img, idx) => (
                 <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
-                  <div className="relative h-64 md:h-80 lg:h-96 w-full flex justify-center">
+                  <div className="w-full aspect-[16/6] relative">
                     <Image
                       src={img}
                       alt={`${cinematic.title} scene ${idx + 1}`}
-                      width={DEFAULT_IMAGE_DIMENSIONS.carousel.width}
-                      height={DEFAULT_IMAGE_DIMENSIONS.carousel.height}
+                      fill
+                      className="object-contain rounded-lg"
                       priority={idx === 0}
-                      className="h-full w-auto object-contain rounded-lg max-w-full"
                     />
                   </div>
                 </CarouselItem>
