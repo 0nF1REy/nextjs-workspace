@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Heart } from "lucide-react";
 
 interface Movie {
   id: string;
@@ -57,9 +58,9 @@ interface UserRating {
 
 const RATING_MAX = 5;
 const DEFAULT_IMAGE_DIMENSIONS = {
-  carousel: { width: 800, height: 450 },
-  cover: { width: 250, height: 380 },
-  similar: { width: 200, height: 300 },
+  carousel: { width: 800, height: 300 },
+  cover: { width: 230, height: 345 },
+  similar: { width: 160, height: 240 },
 };
 
 const getUserRatingFromStorage = (movieId: string): number | null => {
@@ -94,22 +95,17 @@ export default function MovieDescriptionPage() {
       id: "1",
       title: "A Time to Kill",
       synopsis:
-        "A young lawyer defends a black man accused of murdering two white men who raped his 10-year-old daughter, sparking a rebirth of the KKK.",
+        "Um jovem advogado defende um homem negro acusado de assassinar dois homens brancos que estupraram sua filha de 10 anos, provocando o renascimento da Ku Klux Klan.",
       year: 1996,
       director: "Joel Schumacher",
-      cover: "/assets/images/a-time-to-kill-1996.jpg",
+      cover: "/assets/images/movies/a-time-to-kill-1996.jpg",
       cast: [
         "Matthew McConaughey",
         "Sandra Bullock",
         "Samuel L. Jackson",
         "Kevin Spacey",
       ],
-      carouselImages: [
-        "/assets/images/a-time-to-kill-1996.jpg",
-        "/assets/images/the-godfather-1972.jpg",
-        "/assets/images/the-shawshank-redemption-1994.jpg",
-        "/assets/images/amadeus-1984.jpg",
-      ],
+      carouselImages: ["/assets/images/a-time-to-kill-banner.jpg"],
       rating: 4,
       genre: ["Drama", "Crime", "Thriller"],
       duration: 149,
@@ -190,24 +186,30 @@ export default function MovieDescriptionPage() {
 
   const MovieCarousel = useMemo(
     () => (
-      <Carousel className="rounded-2xl overflow-hidden shadow-2xl border border-red-900/40">
-        <CarouselContent>
-          {movie.carouselImages.map((img, idx) => (
-            <CarouselItem key={`${movie.id}-carousel-${idx}`}>
-              <Image
-                src={img}
-                alt={`${movie.title} scene ${idx + 1}`}
-                width={DEFAULT_IMAGE_DIMENSIONS.carousel.width}
-                height={DEFAULT_IMAGE_DIMENSIONS.carousel.height}
-                priority={idx === 0}
-                className="w-full h-auto object-cover"
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="bg-red-700/80 text-white hover:bg-red-600" />
-        <CarouselNext className="bg-red-700/80 text-white hover:bg-red-600" />
-      </Carousel>
+      <div className="flex justify-center mb-12">
+        <div className="w-full max-w-4xl">
+          <Carousel className="rounded-2xl overflow-hidden shadow-2xl">
+            <CarouselContent>
+              {movie.carouselImages.map((img, idx) => (
+                <CarouselItem key={`${movie.id}-carousel-${idx}`}>
+                  <div className="relative h-64 md:h-80 lg:h-96 w-full flex justify-center">
+                    <Image
+                      src={img}
+                      alt={`${movie.title} scene ${idx + 1}`}
+                      width={DEFAULT_IMAGE_DIMENSIONS.carousel.width}
+                      height={DEFAULT_IMAGE_DIMENSIONS.carousel.height}
+                      priority={idx === 0}
+                      className="h-full w-auto object-contain rounded-lg max-w-full"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="bg-red-700/80 text-white hover:bg-red-600" />
+            <CarouselNext className="bg-red-700/80 text-white hover:bg-red-600" />
+          </Carousel>
+        </div>
+      </div>
     ),
     [movie.carouselImages, movie.id, movie.title]
   );
@@ -300,20 +302,6 @@ export default function MovieDescriptionPage() {
     ]
   );
 
-  const CastList = useMemo(
-    () => (
-      <div className="mt-4">
-        <span className="font-semibold text-gray-200">Elenco Principal:</span>
-        <ul className="list-disc list-inside text-gray-400">
-          {movie.cast.map((actor, idx) => (
-            <li key={`${movie.id}-cast-${idx}`}>{actor}</li>
-          ))}
-        </ul>
-      </div>
-    ),
-    [movie.cast, movie.id]
-  );
-
   const MovieDetails = useMemo(
     () => (
       <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-xl">
@@ -321,11 +309,6 @@ export default function MovieDescriptionPage() {
           <CardTitle className="text-red-500">Detalhes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <ul className="list-disc list-inside text-gray-400">
-            {movie.cast.map((actor, idx) => (
-              <li key={`details-cast-${idx}`}>{actor}</li>
-            ))}
-          </ul>
           {movie.genre && (
             <div>
               <span className="font-semibold">Gênero: </span>
@@ -341,7 +324,7 @@ export default function MovieDescriptionPage() {
         </CardContent>
       </Card>
     ),
-    [movie.cast, movie.genre, movie.duration]
+    [movie.genre, movie.duration]
   );
 
   const ReviewsList = useMemo(
@@ -378,7 +361,7 @@ export default function MovieDescriptionPage() {
     movie: SimilarMovie;
   }) => (
     <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform">
-      <div className="aspect-[2/3] relative overflow-hidden rounded-t-lg">
+      <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
         <Image
           src={similarMovie.cover}
           alt={similarMovie.title}
@@ -387,9 +370,9 @@ export default function MovieDescriptionPage() {
           className="object-cover w-full h-full"
         />
       </div>
-      <CardFooter className="p-4">
-        <div className="w-full text-center space-y-2">
-          <p className="text-sm font-medium text-gray-200 truncate">
+      <CardFooter className="p-3">
+        <div className="w-full text-center">
+          <p className="text-xs font-medium text-gray-200 truncate">
             {similarMovie.title}
           </p>
         </div>
@@ -403,7 +386,7 @@ export default function MovieDescriptionPage() {
         <h2 className="text-xl font-bold text-red-600 mb-4">
           Filmes Semelhantes
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
           {similarMovies.map((similarMovie) => (
             <SimilarMovieCard key={similarMovie.id} movie={similarMovie} />
           ))}
@@ -413,6 +396,39 @@ export default function MovieDescriptionPage() {
     [similarMovies]
   );
 
+  const FavoriteButton = useMemo(
+    () => (
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={handleFavoriteToggle}
+          aria-pressed={favorite}
+          aria-label={
+            favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
+          variant="ghost"
+          size="lg"
+          className={`group transition-all duration-300 hover:scale-110 ${
+            favorite
+              ? "text-red-500 hover:text-red-600"
+              : "text-gray-400 hover:text-red-400"
+          }`}
+        >
+          <Heart
+            className={`w-6 h-6 transition-all duration-300 ${
+              favorite
+                ? "fill-red-500 text-red-500"
+                : "text-gray-400 hover:text-red-400 group-hover:scale-110"
+            }`}
+          />
+          <span className="ml-2 text-sm font-medium">
+            {favorite ? "Favoritado" : "Favoritar"}
+          </span>
+        </Button>
+      </div>
+    ),
+    [favorite, handleFavoriteToggle]
+  );
+
   if (!movie) {
     return <div>Filme não encontrado</div>;
   }
@@ -420,26 +436,26 @@ export default function MovieDescriptionPage() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 px-4 py-8">
       {/* Carrossel */}
-      <section aria-label="Movie gallery" className="mb-12">
-        {MovieCarousel}
-      </section>
+      <section aria-label="Movie gallery">{MovieCarousel}</section>
 
       {/* Cartão de detalhes do filme */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl">
           <div className="flex flex-col md:flex-row gap-6 p-6">
             {/* Poster */}
-            <Image
-              src={movie.cover}
-              alt={`${movie.title} movie poster`}
-              width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
-              height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
-              priority
-              className="rounded-lg shadow-lg"
-            />
+            <div className="flex-shrink-0">
+              <Image
+                src={movie.cover}
+                alt={`${movie.title} movie poster`}
+                width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
+                height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
+                priority
+                className="rounded-lg shadow-lg"
+              />
+            </div>
 
             {/* Infos */}
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col justify-between flex-1">
               <CardHeader>
                 <CardTitle className="text-2xl text-red-500">
                   {movie.title}
@@ -452,23 +468,27 @@ export default function MovieDescriptionPage() {
               <CardContent className="space-y-4">
                 <p className="text-gray-300">{movie.synopsis}</p>
 
-                {InteractiveStarRating}
+                <div className="flex flex-col lg:flex-row gap-8 items-start">
+                  {/* Avaliações */}
+                  <div>{InteractiveStarRating}</div>
 
-                <div>
-                  <Button
-                    onClick={handleFavoriteToggle}
-                    aria-pressed={favorite}
-                    className={`${
-                      favorite
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-gray-700 hover:bg-gray-600"
-                    } text-white`}
-                  >
-                    {favorite ? "Favorito" : "Adicionar aos Favoritos"}
-                  </Button>
+                  {/* Elenco Principal */}
+                  <div>
+                    <span className="font-semibold text-gray-200 block mb-2">
+                      Elenco Principal:
+                    </span>
+                    <ul className="list-disc list-inside text-gray-400 space-y-1">
+                      {movie.cast.map((actor, idx) => (
+                        <li key={`${movie.id}-cast-${idx}`} className="text-sm">
+                          {actor}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                {CastList}
+                {/* Botão Favoritar */}
+                <div className="pt-2">{FavoriteButton}</div>
               </CardContent>
             </div>
           </div>
