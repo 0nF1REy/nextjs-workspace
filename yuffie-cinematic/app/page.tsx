@@ -20,6 +20,7 @@ export default function HomePage() {
   const filmeCarouselRef = useRef<HTMLDivElement>(null);
   const serieCarouselRef = useRef<HTMLDivElement>(null);
   const animeCarouselRef = useRef<HTMLDivElement>(null);
+  const destaquesRef = useRef<HTMLDivElement>(null);
 
   const videoItems = useMemo(
     () => items.filter((item: Item) => item.video),
@@ -61,6 +62,15 @@ export default function HomePage() {
     .map((id) => items.find((item) => item.id === id))
     .filter(Boolean) as Item[];
 
+  const scrollToDestaques = () => {
+    if (destaquesRef.current) {
+      destaquesRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen">
       {/* Seção de Vídeo em Destaque */}
@@ -91,9 +101,10 @@ export default function HomePage() {
             Descubra o melhor do cinema
           </p>
           <motion.div
-            className="mt-6 cursor-pointer text-gray-200"
+            className="mt-6 cursor-pointer text-gray-200 hover:text-red-500 transition-colors"
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
+            onClick={scrollToDestaques}
           >
             <FontAwesomeIcon icon={faChevronDown} size="2x" />
           </motion.div>
@@ -101,7 +112,7 @@ export default function HomePage() {
       </section>
 
       {/* Grid Destaques */}
-      <section className="px-6 md:px-12 py-12">
+      <section ref={destaquesRef} className="px-6 md:px-12 py-12">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-8">
           Destaques
         </h2>
