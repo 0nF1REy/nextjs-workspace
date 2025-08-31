@@ -19,7 +19,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart } from "lucide-react";
 
 import ImageGallery from "@/components/description/image-gallery";
@@ -200,7 +199,6 @@ export default function MovieDescriptionPage() {
   );
 
   const [favorite, setFavorite] = useState(false);
-  const [activeTab, setActiveTab] = useState("details");
   const [userRating, setUserRating] = useState<number | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
@@ -213,10 +211,6 @@ export default function MovieDescriptionPage() {
 
   const handleFavoriteToggle = useCallback(() => {
     setFavorite((prev) => !prev);
-  }, []);
-
-  const handleTabChange = useCallback((value: string) => {
-    setActiveTab(value);
   }, []);
 
   const handleStarClick = useCallback(
@@ -347,59 +341,6 @@ export default function MovieDescriptionPage() {
       handleStarClick,
       handleStarHover,
     ]
-  );
-
-  const MovieDetails = useMemo(
-    () => (
-      <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-red-500">Detalhes</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {movie.genre && (
-            <div>
-              <span className="font-semibold">Gênero: </span>
-              {movie.genre.join(", ")}
-            </div>
-          )}
-          {movie.duration && (
-            <div>
-              <span className="font-semibold">Duração: </span>
-              {movie.duration} minutos
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    ),
-    [movie.genre, movie.duration]
-  );
-
-  const ReviewsList = useMemo(
-    () => (
-      <div className="space-y-4">
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="bg-black/40 border border-gray-800 p-4 rounded-lg shadow-md"
-          >
-            <p className="font-semibold text-red-500">{review.author}</p>
-            <p className="italic text-gray-300">
-              &ldquo;{review.content}&rdquo;
-            </p>
-            {review.rating && (
-              <div className="text-yellow-400">
-                {Array.from({ length: RATING_MAX }).map((_, idx) => (
-                  <span key={`review-${review.id}-star-${idx}`}>
-                    {idx < review.rating! ? "★" : "☆"}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    ),
-    [reviews]
   );
 
   const SimilarMovieCard = ({
