@@ -95,18 +95,43 @@ export default function MovieDescriptionPage() {
   const galleryImages = [
     {
       id: "1",
-      title: "Foto 1",
+      title: "Cena do Tribunal",
       src: "/assets/images/gallery/a-time-to-kill/01.png",
+      description: "Jake Brigance defendendo Carl Lee Hailey no tribunal",
+      photoCredit: "Warner Bros Pictures",
+      sourceLink: "https://warnerbros.com",
+      people: [
+        "Matthew McConaughey (Jake Brigance)",
+        "Samuel L. Jackson (Carl Lee Hailey)",
+        "Kevin Spacey (Rufus Buckley)",
+      ],
     },
     {
       id: "2",
-      title: "Foto 2",
+      title: "Bastidores da Produção",
       src: "/assets/images/gallery/a-time-to-kill/02.png",
+      description: "Joel Schumacher dirigindo a cena do tribunal",
+      photoCredit: "Warner Bros Pictures",
+      sourceLink: "https://warnerbros.com",
+      people: [
+        "Joel Schumacher (Diretor)",
+        "Matthew McConaughey (Jake Brigance)",
+        "Peter Menzies Jr. (Diretor de Fotografia)",
+      ],
     },
     {
       id: "3",
-      title: "Foto 3",
+      title: "Elenco Principal",
       src: "/assets/images/gallery/a-time-to-kill/03.png",
+      description: "Foto promocional do elenco principal",
+      photoCredit: "Warner Bros Pictures",
+      sourceLink: "https://warnerbros.com",
+      people: [
+        "Matthew McConaughey (Jake Brigance)",
+        "Sandra Bullock (Ellen Roark)",
+        "Samuel L. Jackson (Carl Lee Hailey)",
+        "Ashley Judd (Carla Brigance)",
+      ],
     },
   ];
 
@@ -125,9 +150,7 @@ export default function MovieDescriptionPage() {
         "Samuel L. Jackson",
         "Kevin Spacey",
       ],
-      carouselImages: [
-        "/assets/images/a-time-to-kill-banner.jpg"
-      ],
+      carouselImages: ["/assets/images/a-time-to-kill-banner.jpg"],
       rating: 4,
       genre: ["Drama", "Crime", "Thriller"],
       duration: 149,
