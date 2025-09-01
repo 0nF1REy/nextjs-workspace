@@ -59,62 +59,67 @@ export default function MediaViewer({
   const currentImage = images[currentIndex];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 flex flex-col">
-      {/* Top Bar */}
-      <div className="flex justify-center px-4 text-white text-lg">
-        <div className="w-full max-w-5xl flex justify-between items-center">
-          <button
-            onClick={onClose}
-            aria-label="Fechar"
-            className="hover:text-red-500 flex items-center gap-2 text-base"
-          >
-            <FaTimes /> Fechar
-          </button>
-          <div className="flex items-center gap-6 text-sm">
-            <span className="text-yellow-400">
-              {currentIndex + 1} de {images.length}
-            </span>
-            <FaTh className="cursor-pointer hover:text-white" />
-            <FaShareAlt className="cursor-pointer hover:text-white" />
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex flex-col"
+      onClick={onClose}
+    >
+      {/* Conteúdo central */}
+      <div
+        className="flex-1 flex flex-col items-center justify-center px-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top Bar */}
+        <div className="flex justify-center px-4 py-3 bg-black/60 backdrop-blur-sm text-white text-lg sticky top-0 z-50 w-full max-w-5xl">
+          <div className="w-full flex justify-between items-center">
+            <button
+              onClick={onClose}
+              aria-label="Fechar"
+              className="hover:text-red-500 flex items-center gap-2 text-base transition-colors duration-200"
+            >
+              <FaTimes /> Fechar
+            </button>
+            <div className="flex items-center gap-6 text-sm">
+              <span className="text-yellow-400">
+                {currentIndex + 1} de {images.length}
+              </span>
+              <FaTh className="cursor-pointer hover:text-white transition-colors duration-200 hover:scale-110" />
+              <FaShareAlt className="cursor-pointer hover:text-white transition-colors duration-200 hover:scale-110" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-5xl flex flex-col">
+        {/* Imagem principal */}
+        <div className="w-full max-w-5xl flex flex-col mt-4">
           <Image
             src={currentImage.src}
             alt={currentImage.title}
             width={1200}
             height={800}
-            className="object-contain max-h-[80vh] rounded-lg shadow-lg mx-auto"
+            className="object-contain max-h-[70vh] w-auto rounded-lg shadow-2xl mx-auto"
           />
 
           {/* Info Section */}
-          <div className="bg-black/70 text-gray-200 p-4 text-sm flex justify-between items-start rounded-t-lg mt-4">
-            <div>
+          <div className="bg-black/60 backdrop-blur-sm text-gray-200 p-4 rounded-lg mt-4 flex justify-between items-start gap-6">
+            <div className="flex-1 space-y-1">
               {currentImage.description && (
-                <p className="text-blue-400 mt-1">{currentImage.description}</p>
+                <p className="text-blue-400">{currentImage.description}</p>
               )}
-
               {currentImage.title && (
-                <p className="mt-1">
+                <p>
                   <span className="font-semibold">Título: </span>
-                  <span className="text-yellow-300">{currentImage.title}</span>
+                  <span className="text-yellow-400">{currentImage.title}</span>
                 </p>
               )}
-
               {currentImage.people && currentImage.people.length > 0 && (
-                <p className="mt-2">
+                <p>
                   <span className="font-semibold">Pessoas: </span>
-                  <span className="text-yellow-300">
+                  <span className="text-red-400">
                     {currentImage.people.join(", ")}
                   </span>
                 </p>
               )}
-
               {currentImage.photoCredit && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-400">
                   {currentImage.photoCredit}{" "}
                   {currentImage.sourceLink && (
                     <a
@@ -133,33 +138,33 @@ export default function MediaViewer({
             {/* Ícones */}
             <div className="flex flex-col gap-4 text-gray-400">
               <FaPen
-                className="cursor-pointer hover:text-white"
+                className="cursor-pointer hover:text-white transition-colors duration-200 hover:scale-110"
                 title="Editar etiquetas"
               />
               <FaFlag
-                className="cursor-pointer hover:text-white"
+                className="cursor-pointer hover:text-white transition-colors duration-200 hover:scale-110"
                 title="Denunciar imagem"
               />
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Botões de navegação */}
-      <button
-        onClick={prevImage}
-        aria-label="Imagem anterior"
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black text-white text-2xl"
-      >
-        <FaChevronLeft />
-      </button>
-      <button
-        onClick={nextImage}
-        aria-label="Próxima imagem"
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black text-white text-2xl"
-      >
-        <FaChevronRight />
-      </button>
+        {/* Navegação */}
+        <button
+          onClick={prevImage}
+          aria-label="Imagem anterior"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black p-3 rounded-full text-white text-2xl shadow-lg transition-transform duration-200 hover:scale-110"
+        >
+          <FaChevronLeft />
+        </button>
+        <button
+          onClick={nextImage}
+          aria-label="Próxima imagem"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black p-3 rounded-full text-white text-2xl shadow-lg transition-transform duration-200 hover:scale-110"
+        >
+          <FaChevronRight />
+        </button>
+      </div>
     </div>
   );
 }

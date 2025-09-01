@@ -90,6 +90,8 @@ export default function ImageGallery({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {images.map((item, index) => (
           <Card
+            role="button"
+            aria-label={`Abrir imagem ${item.title}`}
             key={item.id}
             className="group overflow-hidden bg-black/40 border border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer hover:border-red-500/50"
             onClick={() => openViewer(index)}
