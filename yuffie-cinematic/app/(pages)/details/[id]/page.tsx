@@ -546,7 +546,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
           </div>
 
           {/* CardFooter */}
-          <CardFooter className="pt-6 flex justify-center md:justify-start">
+          <CardFooter className="flex justify-center md:justify-start">
             <Link href="/">
               <Button
                 variant="secondary"
