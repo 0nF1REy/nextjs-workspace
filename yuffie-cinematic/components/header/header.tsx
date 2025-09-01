@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilm } from "@fortawesome/free-solid-svg-icons";
+import { faFilm, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
 
@@ -34,9 +33,9 @@ export function HeaderComponent() {
           <Button
             type="submit"
             size="icon"
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-red-500 hover:bg-red-600"
           >
-            <Search className="h-4 w-4" />
+            <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
           </Button>
         </div>
 

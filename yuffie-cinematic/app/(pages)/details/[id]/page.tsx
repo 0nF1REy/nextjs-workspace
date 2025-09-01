@@ -20,7 +20,9 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 
 import ImageGallery from "@/components/description/image-gallery";
 import MovieReviews from "@/components/description/movie-reviews";
@@ -65,7 +67,7 @@ const RollingCovers = ({ items, speed = 30 }: RollingCoversProps) => {
         className="flex gap-4 animate-scroll"
         style={{
           animationDuration: `${speed}s`,
-          width: `${duplicatedItems.length * 170}px`, 
+          width: `${duplicatedItems.length * 170}px`,
         }}
       >
         {duplicatedItems.map((item, index) => (
@@ -98,7 +100,7 @@ const RollingCovers = ({ items, speed = 30 }: RollingCoversProps) => {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-${(items.length * 170)}px);
+            transform: translateX(-${items.length * 170}px);
           }
         }
         .animate-scroll {
@@ -437,10 +439,11 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
               : "text-gray-400 hover:text-red-400"
           }`}
         >
-          <Heart
+          <FontAwesomeIcon
+            icon={favorite ? faHeart : faHeartRegular}
             className={`w-6 h-6 transition-all duration-300 ${
               favorite
-                ? "fill-red-500 text-red-500"
+                ? "text-red-500"
                 : "text-gray-400 hover:text-red-400 group-hover:scale-110"
             }`}
           />
