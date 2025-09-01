@@ -191,11 +191,20 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
               {cinematic.carouselImages.map((img, idx) => (
                 <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
                   <div className="w-full aspect-[16/6] relative">
+                    <div className="absolute inset-0 -z-10">
+                      <Image
+                        src={img}
+                        alt=""
+                        fill
+                        className="object-cover scale-110 blur-xl opacity-30"
+                        priority={idx === 0}
+                      />
+                    </div>
                     <Image
                       src={img}
                       alt={`${cinematic.title} scene ${idx + 1}`}
                       fill
-                      className="object-contain rounded-lg"
+                      className="object-contain rounded-lg relative z-10"
                       priority={idx === 0}
                     />
                   </div>
