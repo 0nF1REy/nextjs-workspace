@@ -260,7 +260,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
             <CarouselContent>
               {cinematic.carouselImages.map((img, idx) => (
                 <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
-                  <div className="w-full aspect-[16/6] relative">
+                  <div className="w-full aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] relative">
                     <div className="absolute inset-0 -z-10">
                       <Image
                         src={img}
