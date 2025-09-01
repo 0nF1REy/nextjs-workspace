@@ -40,6 +40,18 @@ export default function MediaViewer({
   }, [isOpen, startIndex]);
 
   useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -54,6 +66,12 @@ export default function MediaViewer({
   const prevImage = () =>
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   if (!isOpen) return null;
 
   const currentImage = images[currentIndex];
@@ -61,15 +79,18 @@ export default function MediaViewer({
   return (
     <div
       className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex flex-col"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       {/* Conteúdo central */}
       <div
         className="flex-1 flex flex-col items-center justify-center px-4"
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleBackdropClick}
       >
         {/* Top Bar */}
-        <div className="flex justify-center px-4 py-3 bg-black/60 backdrop-blur-sm text-white text-lg sticky top-0 z-50 w-full max-w-5xl">
+        <div
+          className="flex justify-center px-4 py-3 bg-black/60 backdrop-blur-sm text-white text-lg sticky top-0 z-50 w-full max-w-5xl"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="w-full flex justify-between items-center">
             <button
               onClick={onClose}
@@ -89,7 +110,10 @@ export default function MediaViewer({
         </div>
 
         {/* Imagem principal */}
-        <div className="w-full max-w-5xl flex flex-col mt-4">
+        <div
+          className="w-full max-w-5xl flex flex-col mt-4"
+          onClick={(e) => e.stopPropagation()}
+        >
           <Image
             src={currentImage.src}
             alt={currentImage.title}
