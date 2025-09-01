@@ -28,32 +28,6 @@ export const animeDetails: CinematicDetail[] = [
     type: "anime",
   },
   {
-    id: "death-note",
-    title: "Death Note",
-    synopsis:
-      "Um estudante encontra um caderno sobrenatural que permite matar qualquer pessoa apenas escrevendo seu nome nele.",
-    year: 2006,
-    creator: "Tetsurō Araki",
-    cover: "/assets/images/animes/death-note-2006.jpg",
-    cast: ["Mamoru Miyano", "Kappei Yamaguchi", "Aya Hirano"],
-    carouselImages: ["/assets/images/death-note-banner.jpg"],
-    rating: 5,
-    genre: ["Mistério", "Psicológico", "Sobrenatural"],
-    duration: 23,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Light e Ryuk",
-        src: "/assets/images/gallery/death-note/01.png",
-        description: "Light Yagami com o shinigami Ryuk",
-        photoCredit: "Madhouse",
-        sourceLink: "https://www.madhouse.co.jp",
-        people: ["Mamoru Miyano (Light Yagami)", "Shidō Nakamura (Ryuk)"],
-      },
-    ],
-    type: "anime",
-  },
-  {
     id: "steins-gate",
     title: "Steins;Gate",
     synopsis:

@@ -29,7 +29,7 @@ import { cinematics } from "@/lib/details";
 
 import NotFoundPage from "@/app/not-found";
 
-interface SimilarMovie {
+interface CinematicItem {
   id: string;
   title: string;
   cover: string;
@@ -48,6 +48,66 @@ interface UserRating {
   rating: number;
   timestamp: number;
 }
+
+interface RollingCoversProps {
+  items: CinematicItem[];
+  speed?: number;
+}
+
+const RollingCovers = ({ items, speed = 30 }: RollingCoversProps) => {
+  if (!items || items.length === 0) return null;
+
+  const duplicatedItems = [...items, ...items, ...items];
+
+  return (
+    <div className="w-full overflow-hidden py-6 bg-gradient-to-r from-transparent via-red-900/10 to-transparent">
+      <div
+        className="flex gap-4 animate-scroll"
+        style={{
+          animationDuration: `${speed}s`,
+          width: `${duplicatedItems.length * 170}px`, 
+        }}
+      >
+        {duplicatedItems.map((item, index) => (
+          <Link
+            key={`${item.id}-${index}`}
+            href={`/details/${encodeURIComponent(item.id)}`}
+            className="flex-shrink-0"
+          >
+            <div className="group cursor-pointer transition-transform duration-300 hover:scale-105">
+              <div className="relative w-[110px] h-[100px] rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src={item.cover}
+                  alt={item.title}
+                  fill
+                  className="object-cover transition-all duration-300 group-hover:brightness-110"
+                  sizes="150px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <p className="text-xs font-medium truncate">{item.title}</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-${(items.length * 170)}px);
+          }
+        }
+        .animate-scroll {
+          animation: scroll ${speed}s linear infinite;
+        }
+      `}</style>
+    </div>
+  );
+};
 
 const RATING_MAX = 5;
 const DEFAULT_IMAGE_DIMENSIONS = {
@@ -95,7 +155,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     return cinematics.find((c) => c.id === decodedId);
   }, [id]);
 
-  // Imagens de galeria padrão para itens que não possuem dados de galeria específicos
+  // Imagens de galeria padrão
   const defaultGalleryImages = [
     {
       id: "1",
@@ -110,7 +170,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
 
   const galleryImages = cinematic?.galleryImages || defaultGalleryImages;
 
-  const similarMovies: SimilarMovie[] = useMemo(() => {
+  const similarMovies: CinematicItem[] = useMemo(() => {
     if (!cinematic) return [];
 
     return cinematics
@@ -122,6 +182,14 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
         cover: c.cover,
       }));
   }, [cinematic]);
+
+  const allCinematicsItems: CinematicItem[] = useMemo(() => {
+    return cinematics.map((c) => ({
+      id: c.id,
+      title: c.title,
+      cover: c.cover,
+    }));
+  }, []);
 
   // Avaliações padrão
   const reviews: Review[] = useMemo(
@@ -304,7 +372,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
   const SimilarMovieCard = ({
     movie: similarMovie,
   }: {
-    movie: SimilarMovie;
+    movie: CinematicItem;
   }) => (
     <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
       <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer">
@@ -402,6 +470,11 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-8">
+      {/* Rolling Covers */}
+      <section aria-label="Rolling covers">
+        <RollingCovers items={allCinematicsItems} speed={30} />
+      </section>
+
       {/* Carrossel */}
       <section aria-label="Cinematic gallery">{MovieCarousel}</section>
 
