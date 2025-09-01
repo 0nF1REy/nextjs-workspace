@@ -484,47 +484,51 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
       {/* Cartão de detalhes */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
-          <div className="flex flex-col md:flex-row gap-6 p-6">
+          <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
             {/* Poster */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex justify-center md:block">
               <Image
                 src={cinematic.cover}
                 alt={`${cinematic.title} poster`}
                 width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
                 height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
                 priority
-                className="rounded-lg shadow-lg"
+                className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
               />
             </div>
 
             {/* Infos */}
             <div className="flex flex-col justify-between flex-1">
-              <CardHeader>
-                <CardTitle className="text-2xl text-red-500">
+              <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
+                <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
                   {cinematic.title}
                 </CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-sm sm:text-base md:text-gray-400">
                   {cinematic.year} • {creatorLabel} {cinematic.creator}
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                <p className="text-gray-300">{cinematic.synopsis}</p>
+              <CardContent className="space-y-4 p-0">
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                  {cinematic.synopsis}
+                </p>
 
-                <div className="flex flex-col lg:flex-row gap-8 items-start">
+                <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
                   {/* Avaliações */}
-                  <div>{InteractiveStarRating}</div>
+                  <div className="w-full lg:w-auto">
+                    {InteractiveStarRating}
+                  </div>
 
                   {/* Elenco Principal */}
-                  <div>
-                    <span className="font-semibold text-gray-200 block mb-2">
+                  <div className="w-full lg:w-auto">
+                    <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
                       Elenco Principal:
                     </span>
                     <ul className="list-disc list-inside text-gray-400 space-y-1">
                       {cinematic.cast.map((actor, idx) => (
                         <li
                           key={`${cinematic.id}-cast-${idx}`}
-                          className="text-sm"
+                          className="text-sm sm:text-base"
                         >
                           {actor}
                         </li>
@@ -534,12 +538,15 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                 </div>
 
                 {/* Botão Favoritar */}
-                <div className="pt-2">{FavoriteButton}</div>
+                <div className="pt-4 flex justify-center md:justify-start">
+                  {FavoriteButton}
+                </div>
               </CardContent>
             </div>
           </div>
 
-          <CardFooter>
+          {/* CardFooter */}
+          <CardFooter className="pt-6 flex justify-center md:justify-start">
             <Link href="/">
               <Button
                 variant="secondary"
