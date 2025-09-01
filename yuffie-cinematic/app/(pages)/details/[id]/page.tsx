@@ -401,13 +401,13 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 px-4 py-8">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-8">
       {/* Carrossel */}
       <section aria-label="Cinematic gallery">{MovieCarousel}</section>
 
       {/* Cartão de detalhes */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl">
+        <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
           <div className="flex flex-col md:flex-row gap-6 p-6">
             {/* Poster */}
             <div className="flex-shrink-0">
