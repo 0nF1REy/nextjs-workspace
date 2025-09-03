@@ -261,12 +261,9 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
             <CarouselContent>
               {cinematic.carouselImages.map((img, idx) => (
                 <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
-                  <div
-                    className="w-full relative overflow-hidden"
-                    style={{ height: "350px" }}
-                  >
+                  <div className="w-full relative overflow-hidden h-[220px] sm:h-[350px]">
                     {/* Background difuso */}
-                    <div className="absolute inset-0 -z-10">
+                    <div className="absolute inset-0 -z-10 hidden sm:block">
                       <Image
                         src={img}
                         alt=""
@@ -275,13 +272,12 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                         priority={idx === 0}
                       />
                     </div>
-
                     {/* Imagem principal */}
                     <Image
                       src={img}
                       alt={`${cinematic.title} scene ${idx + 1}`}
                       fill
-                      className="object-contain rounded-lg relative z-10"
+                      className="rounded-lg relative z-10 object-cover sm:object-contain"
                       priority={idx === 0}
                     />
                   </div>
