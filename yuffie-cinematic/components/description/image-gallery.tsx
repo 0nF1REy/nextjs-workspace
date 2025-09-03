@@ -71,13 +71,9 @@ export default function ImageGallery({
     );
   }
 
+  // Se não há imagens, não renderiza nada
   if (images.length === 0) {
-    return (
-      <section className="mt-12">
-        <h2 className="text-xl font-bold text-red-500 mb-4">{title}</h2>
-        <p className="text-gray-400">Nenhuma imagem encontrada.</p>
-      </section>
-    );
+    return null;
   }
 
   return (

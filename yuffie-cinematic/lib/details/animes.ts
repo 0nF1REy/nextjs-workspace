@@ -13,17 +13,6 @@ export const animeDetails: CinematicDetail[] = [
     rating: 5,
     genre: ["Ação", "Ficção Científica", "Drama"],
     duration: 24,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Tripulação da Bebop",
-        src: "/assets/images/gallery/cowboy-bebop/01.png",
-        description: "Spike Spiegel e sua equipe a bordo da nave Bebop",
-        photoCredit: "Sunrise",
-        sourceLink: "https://www.sunrise-inc.co.jp",
-        people: ["Spike Spiegel", "Jet Black", "Faye Valentine", "Ed"],
-      },
-    ],
     type: "anime",
   },
   {
@@ -38,21 +27,6 @@ export const animeDetails: CinematicDetail[] = [
     rating: 5,
     genre: ["Ficção Científica", "Drama", "Thriller"],
     duration: 24,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Laboratório do Futuro Gadget",
-        src: "/assets/images/gallery/steins-gate/01.png",
-        description:
-          "Okabe e seus amigos descobrindo o envio de mensagens ao passado",
-        photoCredit: "White Fox",
-        sourceLink: "https://whitefox.co.jp",
-        people: [
-          "Mamoru Miyano (Rintarō Okabe)",
-          "Kana Hanazawa (Mayuri Shiina)",
-        ],
-      },
-    ],
     type: "anime",
   },
 ];

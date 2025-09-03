@@ -110,17 +110,6 @@ export const serieDetails: CinematicDetail[] = [
     rating: 5,
     genre: ["Ficção Científica", "Terror", "Drama"],
     duration: 50,
-    galleryImages: [
-      {
-        id: "1",
-        title: "O Mundo Invertido",
-        src: "/assets/images/gallery/stranger-things/01.png",
-        description: "Onze em confronto com o Demogorgon",
-        photoCredit: "Netflix",
-        sourceLink: "https://www.netflix.com",
-        people: ["Millie Bobby Brown (Onze)", "David Harbour (Jim Hopper)"],
-      },
-    ],
     type: "serie",
     seasons: [
       {

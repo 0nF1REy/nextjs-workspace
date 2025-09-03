@@ -61,18 +61,6 @@ export const movieDetails: CinematicDetail[] = [
     rating: 5,
     genre: ["Crime", "Drama"],
     duration: 175,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Don Corleone",
-        src: "/assets/images/gallery/the-godfather/01.png",
-        description:
-          "Marlon Brando como Vito Corleone em sua icônica interpretação",
-        photoCredit: "Paramount Pictures",
-        sourceLink: "https://www.paramount.com",
-        people: ["Marlon Brando (Vito Corleone)"],
-      },
-    ],
     type: "movie",
   },
   {
@@ -87,17 +75,6 @@ export const movieDetails: CinematicDetail[] = [
     rating: 5,
     genre: ["Drama", "Thriller"],
     duration: 132,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Família Kim",
-        src: "/assets/images/gallery/parasite/01.png",
-        description: "A família Kim reunida, planejando sua ascensão",
-        photoCredit: "CJ Entertainment",
-        sourceLink: "https://www.cjent.co.kr",
-        people: ["Song Kang-ho (Kim Ki-taek)", "Choi Woo-shik (Kim Ki-woo)"],
-      },
-    ],
     type: "movie",
   },
 ];
