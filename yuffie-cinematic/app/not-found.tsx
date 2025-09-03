@@ -6,13 +6,9 @@ import { motion } from "framer-motion";
 
 interface NotFoundPageProps {
   message?: string;
-  searchParams?: { message?: string };
 }
 
-export default function NotFoundPage({
-  message,
-  searchParams,
-}: NotFoundPageProps) {
+export default function NotFoundPage({ message }: NotFoundPageProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,9 +18,7 @@ export default function NotFoundPage({
   if (!mounted) return null;
 
   const displayMessage =
-    message ||
-    searchParams?.message ||
-    "Parece que você se aventurou no reino digital desconhecido.";
+    message || "Parece que você se aventurou no reino digital desconhecido.";
 
   return (
     <main className="bg-[#0d0d0d] text-gray-200 min-h-screen flex flex-col">

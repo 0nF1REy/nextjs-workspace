@@ -454,12 +454,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
   // Mostrar estado de não encontrado
   if (!cinematic) {
     return (
-      <NotFoundPage
-        searchParams={{
-          message:
-            "O item que você está procurando não existe ou foi removido.",
-        }}
-      />
+      <NotFoundPage message="O item que você está procurando não existe ou foi removido." />
     );
   }
 
