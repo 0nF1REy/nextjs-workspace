@@ -27,7 +27,7 @@ export interface CinematicDetail {
   creator: string;
   cover: string;
   cast: string[];
-  carouselImages: string[];
+  carouselImages?: string[];
   rating: number;
   genre?: string[];
   duration?: number;

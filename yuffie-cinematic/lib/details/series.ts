@@ -70,21 +70,9 @@ export const serieDetails: CinematicDetail[] = [
     creator: "Vince Gilligan",
     cover: "/assets/images/series/breaking-bad-2008.png",
     cast: ["Bryan Cranston", "Aaron Paul", "Anna Gunn", "Dean Norris"],
-    carouselImages: ["/assets/images/breaking-bad-banner.jpg"],
     rating: 5,
     genre: ["Crime", "Drama", "Thriller"],
     duration: 47,
-    galleryImages: [
-      {
-        id: "1",
-        title: "Walter White e Jesse Pinkman",
-        src: "/assets/images/gallery/breaking-bad/01.png",
-        description: "Walter White com Jesse Pinkman em Albuquerque",
-        photoCredit: "AMC",
-        sourceLink: "https://www.amc.com",
-        people: ["Bryan Cranston (Walter White)", "Aaron Paul (Jesse Pinkman)"],
-      },
-    ],
     type: "serie",
     seasons: [
       {
@@ -119,7 +107,6 @@ export const serieDetails: CinematicDetail[] = [
       "David Harbour",
       "Winona Ryder",
     ],
-    carouselImages: ["/assets/images/stranger-things-banner.jpg"],
     rating: 5,
     genre: ["Ficção Científica", "Terror", "Drama"],
     duration: 50,

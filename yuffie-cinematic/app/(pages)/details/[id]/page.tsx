@@ -158,20 +158,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     return cinematics.find((c) => c.id === decodedId);
   }, [id]);
 
-  // Imagens de galeria padrão
-  const defaultGalleryImages = [
-    {
-      id: "1",
-      title: "Poster Principal",
-      src: cinematic?.cover || "/assets/images/default-poster.jpg",
-      description: `Poster oficial de ${cinematic?.title || "Unknown"}`,
-      photoCredit: "Studio",
-      sourceLink: "#",
-      people: cinematic?.cast?.slice(0, 3) || [],
-    },
-  ];
-
-  const galleryImages = cinematic?.galleryImages || defaultGalleryImages;
+  const galleryImages = cinematic?.galleryImages;
 
   const similarMovies: CinematicItem[] = useMemo(() => {
     if (!cinematic) return [];
@@ -252,7 +239,12 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
   }, []);
 
   const MovieCarousel = useMemo(() => {
-    if (!cinematic) return null;
+    if (
+      !cinematic ||
+      !cinematic.carouselImages ||
+      cinematic.carouselImages.length === 0
+    )
+      return null;
 
     return (
       <div className="flex justify-center mb-12">
