@@ -26,6 +26,7 @@ import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 
 import ImageGallery from "@/components/description/image-gallery";
 import MovieReviews from "@/components/description/movie-reviews";
+import SeasonEpisodes from "@/components/description/season-episodes";
 
 import { cinematics } from "@/lib/details";
 
@@ -255,12 +256,16 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
 
     return (
       <div className="flex justify-center mb-12">
-        <div className="w-full max-w-4xl">
+        <div className="w-full">
           <Carousel className="rounded-2xl overflow-hidden shadow-2xl">
             <CarouselContent>
               {cinematic.carouselImages.map((img, idx) => (
                 <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
-                  <div className="w-full aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] relative">
+                  <div
+                    className="w-full relative overflow-hidden"
+                    style={{ height: "350px" }}
+                  >
+                    {/* Background difuso */}
                     <div className="absolute inset-0 -z-10">
                       <Image
                         src={img}
@@ -270,6 +275,8 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                         priority={idx === 0}
                       />
                     </div>
+
+                    {/* Imagem principal */}
                     <Image
                       src={img}
                       alt={`${cinematic.title} scene ${idx + 1}`}
@@ -566,6 +573,14 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
           reviews={reviews}
         />
       </main>
+
+      {/* Seção de Temporadas */}
+      {cinematic.type === "serie" && cinematic.seasons && (
+        <SeasonEpisodes
+          seasons={cinematic.seasons}
+          seriesTitle={cinematic.title}
+        />
+      )}
 
       {/* Galeria de Imagens */}
       <ImageGallery images={galleryImages} />
