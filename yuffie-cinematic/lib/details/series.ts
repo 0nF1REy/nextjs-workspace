@@ -37,6 +37,29 @@ export const serieDetails: CinematicDetail[] = [
       },
     ],
     type: "serie",
+    seasons: [
+      {
+        id: "the-x-files-s1",
+        seasonNumber: 1,
+        title: "Temporada 1",
+        synopsis:
+          "Os agentes Fox Mulder e Dana Scully são designados para os Arquivos X, investigando casos inexplicáveis. Eles se deparam com conspirações governamentais e fenômenos paranormais.",
+        cover: "/assets/images/series/the-x-files-1993.jpg",
+        episodes: 24,
+        releaseYear: 1993,
+        highlights: ["Primeiro caso paranormal", "Mulder e Scully se conhecem"],
+      },
+      {
+        id: "the-x-files-s2",
+        seasonNumber: 2,
+        title: "Temporada 2",
+        synopsis:
+          "Os agentes Fox Mulder e Dana Scully são designados para os Arquivos X, investigando casos inexplicáveis. Eles se deparam com conspirações governamentais e fenômenos paranormais.",
+        cover: "/assets/images/series/the-x-files-1993.jpg",
+        episodes: 25,
+        releaseYear: 1994,
+      },
+    ],
   },
   {
     id: "breaking-bad",
@@ -63,6 +86,24 @@ export const serieDetails: CinematicDetail[] = [
       },
     ],
     type: "serie",
+    seasons: [
+      {
+        id: "bb-s1",
+        seasonNumber: 1,
+        title: "Temporada 1",
+        synopsis:
+          "Walter White, um professor de química do ensino médio, descobre que tem câncer e decide usar suas habilidades para produzir metanfetamina e garantir o futuro de sua família.",
+        cover: "/assets/images/series/breaking-bad-2008.png",
+      },
+      {
+        id: "bb-s2",
+        seasonNumber: 2,
+        title: "Temporada 2",
+        synopsis:
+          "Walter e Jesse enfrentam novos desafios e ameaças no perigoso mundo do tráfico de drogas.",
+        cover: "/assets/images/series/breaking-bad-2008.png",
+      },
+    ],
   },
   {
     id: "stranger-things",
@@ -94,5 +135,23 @@ export const serieDetails: CinematicDetail[] = [
       },
     ],
     type: "serie",
+    seasons: [
+      {
+        id: "st-s1",
+        seasonNumber: 1,
+        title: "Temporada 1",
+        synopsis:
+          "O desaparecimento de Will Byers leva seus amigos, sua mãe e o chefe de polícia a uma série de mistérios envolvendo experimentos secretos do governo e uma garota com poderes sobrenaturais.",
+        cover: "/assets/images/series/stranger-things-2016.jpg",
+      },
+      {
+        id: "st-s2",
+        seasonNumber: 2,
+        title: "Temporada 2",
+        synopsis:
+          "Um ano depois, os moradores de Hawkins ainda estão se recuperando dos horrores do Demogorgon e dos segredos do laboratório de Hawkins. Will Byers continua a ser assombrado por visões do Mundo Invertido.",
+        cover: "/assets/images/series/stranger-things-2016.jpg",
+      },
+    ],
   },
 ];

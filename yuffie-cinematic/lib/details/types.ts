@@ -8,6 +8,17 @@ export interface GalleryImage {
   people?: string[];
 }
 
+export interface Season {
+  id: string;
+  seasonNumber: number;
+  title: string;
+  synopsis?: string;
+  cover?: string;
+  episodes?: number;
+  releaseYear?: number;
+  highlights?: string[];
+}
+
 export interface CinematicDetail {
   id: string;
   title: string;
@@ -22,4 +33,5 @@ export interface CinematicDetail {
   duration?: number;
   galleryImages?: GalleryImage[];
   type: "movie" | "serie" | "anime";
+  seasons?: Season[];
 }
