@@ -35,3 +35,4 @@ export interface CinematicDetail {
   type: "movie" | "serie" | "anime";
   seasons?: Season[];
 }
+

@@ -57,7 +57,7 @@ interface RollingCoversProps {
   speed?: number;
 }
 
-const RollingCovers = ({ items, speed = 30 }: RollingCoversProps) => {
+const RollingCovers = ({ items, speed = 0.1 }: RollingCoversProps) => {
   if (!items || items.length === 0) return null;
 
   const duplicatedItems = [...items, ...items, ...items];
