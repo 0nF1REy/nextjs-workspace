@@ -24,7 +24,7 @@ export function MobileNav() {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="left" className="w-72 bg-black text-white">
+      <SheetContent side="left" className="w-72 bg-gray-900 text-white">
         <SheetHeader>
           <SheetTitle className="text-red-500 text-lg">Menu</SheetTitle>
         </SheetHeader>

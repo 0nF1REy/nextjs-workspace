@@ -14,21 +14,24 @@ export function HeaderComponent() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-red-500">
           <FontAwesomeIcon icon={faFilm} className="h-6 w-6" />
-          <span className="font-bold text-lg tracking-wide">
+          <span className="hidden md:block font-bold text-lg tracking-wide">
             Yuffie's Cinematic
           </span>
         </Link>
 
-        {/* Navegação */}
+        {/* Navegação Desktop */}
         <DesktopNav />
 
-        {/* Busca */}
-        <div className="flex-1 md:flex-none flex items-center justify-center md:justify-end gap-2">
+        {/* Busca Desktop */}
+        <div className="hidden md:flex flex-1 md:flex-none items-center justify-center md:justify-end gap-2">
           <SearchBar />
         </div>
 
-        {/* Mobile nav */}
-        <MobileNav />
+        {/* Mobile */}
+        <div className="flex md:hidden items-center gap-2">
+          <SearchBar />
+          <MobileNav />
+        </div>
       </div>
     </header>
   );
