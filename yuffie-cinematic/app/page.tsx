@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react"; 
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -65,21 +65,21 @@ export default function HomePage() {
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const scrollCarousel = (
-    key: keyof typeof carouselRefs,
-    direction: "left" | "right"
-  ) => {
-    const el = carouselRefs[key].current;
-    if (!el) return;
-    const amount = el.clientWidth || 300;
-    el.scrollBy({
-      left: direction === "right" ? amount : -amount,
-      behavior: "smooth",
-    });
-  };
+  const scrollCarousel = useCallback(
+    (key: keyof typeof carouselRefs, direction: "left" | "right") => {
+      const el = carouselRefs[key].current;
+      if (!el) return;
+      const amount = el.clientWidth * 0.8;
+      el.scrollBy({
+        left: direction === "right" ? amount : -amount,
+        behavior: "smooth",
+      });
+    },
+    [carouselRefs]
+  );
 
   return (
-    <main className="bg-[#0d0d0d] text-gray-200 min-h-screen">
+    <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
       {/* Vídeo em Destaque */}
       <section className="relative w-full h-[70vh] sm:h-[80vh] md:h-[90vh] flex items-end justify-center overflow-hidden">
         {currentVideoItem?.video ? (
@@ -97,7 +97,7 @@ export default function HomePage() {
                 );
               }
             }}
-            className={`absolute inset-0 w-full h-full object-cover sm:object-contain md:object-cover ${
+            className={`absolute inset-0 w-full h-full object-cover ${
               videoLoaded ? "cursor-pointer" : "cursor-wait"
             }`}
           />
@@ -110,16 +110,16 @@ export default function HomePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
         <motion.div
-          className="relative text-center pb-10 px-4"
+          className="relative text-center pb-10 px-4 z-10"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
         >
-          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300">
+          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 drop-shadow-lg">
             Descubra o melhor do cinema
           </p>
           <motion.div
-            className="mt-6 cursor-pointer text-gray-200 hover:text-red-500 transition-colors"
+            className="mt-6 cursor-pointer text-red-500 hover:text-red-400 transition-colors drop-shadow-lg"
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
             onClick={() => scrollToRef(destaquesRef)}
@@ -131,17 +131,17 @@ export default function HomePage() {
 
       {/* Grid Destaques */}
       <section ref={destaquesRef} className="px-6 md:px-12 py-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-red-500 mb-8">
           Destaques
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
           {highlights.map((item, idx) => (
             <motion.div
               key={`highlight-${item.id}-${idx}`}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.03 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <div className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition rounded-lg">
+              <div className="overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-red-900/40 hover:border-red-600 transition rounded-lg shadow-lg">
                 <div className="relative h-60 overflow-hidden">
                   <Image
                     src={item.poster}
@@ -161,9 +161,9 @@ export default function HomePage() {
                     )}`}
                   >
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
-                      className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white"
+                      className="mt-3 w-full bg-red-700 hover:bg-red-600 text-white shadow-md"
                     >
                       Ver detalhes
                     </Button>
@@ -180,19 +180,21 @@ export default function HomePage() {
         const filteredItems = items.filter((i) => i.type === cat.key);
         return (
           <section key={cat.key} className="px-6 md:px-12 py-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
               {cat.label}
             </h2>
             <div className="relative">
               <button
                 onClick={() => scrollCarousel(cat.key, "left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 hover:bg-black/80 p-2 rounded-full text-gray-200 transition"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                aria-label="Scroll left" 
               >
                 <FontAwesomeIcon icon={faChevronLeft} size="lg" />
               </button>
               <button
                 onClick={() => scrollCarousel(cat.key, "right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 hover:bg-black/80 p-2 rounded-full text-gray-200 transition"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                aria-label="Scroll right"
               >
                 <FontAwesomeIcon icon={faChevronRight} size="lg" />
               </button>
@@ -208,22 +210,28 @@ export default function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200 }}
                   >
-                    <div className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition relative rounded-lg">
-                      <div className="relative h-60 overflow-hidden">
-                        <Image
-                          src={item.poster}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
-                          priority={idx < 3}
-                        />
+                    <Link
+                      href={`/details/${encodeURIComponent(
+                        getCinematicDetails(item.id)?.id || item.id
+                      )}`}
+                    >
+                      <div className="overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-red-900/40 hover:border-red-600 transition relative rounded-lg shadow-lg">
+                        <div className="relative h-60 overflow-hidden">
+                          <Image
+                            src={item.poster}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                            priority={idx < 3}
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="text-base font-semibold text-gray-100 line-clamp-1">
+                            {item.title}
+                          </h3>
+                        </div>
                       </div>
-                      <div className="p-4">
-                        <h3 className="text-base font-semibold text-gray-100 line-clamp-1">
-                          {item.title}
-                        </h3>
-                      </div>
-                    </div>
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>
