@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect, useMemo, useCallback } from "react"; 
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,11 +19,19 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
   const router = useRouter();
   const destaquesRef = useRef<HTMLDivElement>(null);
-  const carouselRefs = {
-    movie: useRef<HTMLDivElement>(null),
-    serie: useRef<HTMLDivElement>(null),
-    anime: useRef<HTMLDivElement>(null),
-  };
+
+  const movieRef = useRef<HTMLDivElement>(null);
+  const serieRef = useRef<HTMLDivElement>(null);
+  const animeRef = useRef<HTMLDivElement>(null);
+
+  const carouselRefs = useMemo(
+    () => ({
+      movie: movieRef,
+      serie: serieRef,
+      anime: animeRef,
+    }),
+    []
+  );
 
   const videoItems = useMemo(() => items.filter((i) => i.video), []);
   const [currentVideoItem, setCurrentVideoItem] = useState<Item | null>(null);
@@ -187,7 +195,7 @@ export default function HomePage() {
               <button
                 onClick={() => scrollCarousel(cat.key, "left")}
                 className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
-                aria-label="Scroll left" 
+                aria-label="Scroll left"
               >
                 <FontAwesomeIcon icon={faChevronLeft} size="lg" />
               </button>
