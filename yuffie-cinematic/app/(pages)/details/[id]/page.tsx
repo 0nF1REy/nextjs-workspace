@@ -372,8 +372,8 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     movie: CinematicItem;
   }) => (
     <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
-      <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer">
-        <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
+        <div className="aspect-[3/4] relative overflow-hidden">
           <Image
             src={similarMovie.cover}
             alt={similarMovie.title}
@@ -382,14 +382,14 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
             className="object-cover w-full h-full"
           />
         </div>
-        <CardFooter className="p-3">
+        <div className="p-3">
           <div className="w-full text-center">
             <p className="text-xs font-medium text-gray-200 truncate">
               {similarMovie.title}
             </p>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 
