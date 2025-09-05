@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRef, useState, useEffect, useMemo } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -143,8 +142,8 @@ export default function HomePage() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <Card className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition">
-                <CardHeader className="relative h-60">
+              <div className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition rounded-lg">
+                <div className="relative h-60 overflow-hidden">
                   <Image
                     src={item.poster}
                     alt={item.title}
@@ -152,11 +151,11 @@ export default function HomePage() {
                     className="object-cover"
                     priority={idx < 6}
                   />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-base font-semibold text-gray-100 line-clamp-1">
+                </div>
+                <div className="p-4">
+                  <h3 className="text-base font-semibold text-gray-100 line-clamp-1">
                     {item.title}
-                  </CardTitle>
+                  </h3>
                   {detailIds.includes(item.id) && (
                     <Link
                       href={`/details/${encodeURIComponent(
@@ -172,8 +171,8 @@ export default function HomePage() {
                       </Button>
                     </Link>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -212,8 +211,8 @@ export default function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200 }}
                   >
-                    <Card className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition relative">
-                      <CardHeader className="relative h-60">
+                    <div className="overflow-hidden bg-[#1a1a1a] border border-gray-800 hover:border-red-600 transition relative rounded-lg">
+                      <div className="relative h-60 overflow-hidden">
                         <Image
                           src={item.poster}
                           alt={item.title}
@@ -221,13 +220,13 @@ export default function HomePage() {
                           className="object-cover"
                           priority={idx < 3}
                         />
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <CardTitle className="text-base font-semibold text-gray-100 line-clamp-1">
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-base font-semibold text-gray-100 line-clamp-1">
                           {item.title}
-                        </CardTitle>
-                      </CardContent>
-                    </Card>
+                        </h3>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </motion.div>
