@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilm, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faFilm } from "@fortawesome/free-solid-svg-icons";
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
+import { SearchBar } from "./SearchBar";
 
 export function HeaderComponent() {
   return (
@@ -24,19 +23,8 @@ export function HeaderComponent() {
         <DesktopNav />
 
         {/* Busca */}
-        <div className="hidden md:flex items-center gap-2">
-          <Input
-            type="text"
-            placeholder="Buscar filmes..."
-            className="bg-gray-800 text-white border-gray-700"
-          />
-          <Button
-            type="submit"
-            size="icon"
-            className="bg-red-500 hover:bg-red-600"
-          >
-            <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
-          </Button>
+        <div className="flex-1 md:flex-none flex items-center justify-center md:justify-end gap-2">
+          <SearchBar />
         </div>
 
         {/* Mobile nav */}
