@@ -43,7 +43,6 @@ export default function HomePage() {
     { key: "anime" as const, label: "Animes" },
   ];
 
-  const detailIds = ["a-time-to-kill", "the-x-files"];
   const highlightIds = [
     "a-time-to-kill",
     "the-x-files",
@@ -156,21 +155,19 @@ export default function HomePage() {
                   <h3 className="text-base font-semibold text-gray-100 line-clamp-1">
                     {item.title}
                   </h3>
-                  {detailIds.includes(item.id) && (
-                    <Link
-                      href={`/details/${encodeURIComponent(
-                        getCinematicDetails(item.id)?.id || item.id
-                      )}`}
+                  <Link
+                    href={`/details/${encodeURIComponent(
+                      getCinematicDetails(item.id)?.id || item.id
+                    )}`}
+                  >
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white"
                     >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white"
-                      >
-                        Ver detalhes
-                      </Button>
-                    </Link>
-                  )}
+                      Ver detalhes
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
