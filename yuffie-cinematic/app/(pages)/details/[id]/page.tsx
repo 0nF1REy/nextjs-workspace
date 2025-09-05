@@ -57,17 +57,19 @@ interface RollingCoversProps {
   speed?: number;
 }
 
-const RollingCovers = ({ items, speed = 0.1 }: RollingCoversProps) => {
+const RollingCovers = ({ items, speed = 1 }: RollingCoversProps) => {
   if (!items || items.length === 0) return null;
 
   const duplicatedItems = [...items, ...items, ...items];
+  const totalWidth = items.length * 170;
+  const animationDuration = totalWidth / speed;
 
   return (
     <div className="w-full overflow-hidden py-6 bg-gradient-to-r from-transparent via-red-900/10 to-transparent">
       <div
         className="flex gap-4 animate-scroll"
         style={{
-          animationDuration: `${speed}s`,
+          animationDuration: `${animationDuration}s`,
           width: `${duplicatedItems.length * 170}px`,
         }}
       >
@@ -75,21 +77,19 @@ const RollingCovers = ({ items, speed = 0.1 }: RollingCoversProps) => {
           <Link
             key={`${item.id}-${index}`}
             href={`/details/${encodeURIComponent(item.id)}`}
-            className="flex-shrink-0"
           >
-            <div className="group cursor-pointer transition-transform duration-300 hover:scale-105">
-              <div className="relative w-[110px] h-[100px] rounded-lg overflow-hidden shadow-lg">
-                <Image
-                  src={item.cover}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-all duration-300 group-hover:brightness-110"
-                  sizes="150px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-xs font-medium truncate">{item.title}</p>
-                </div>
+            <div className="flex-shrink-0 w-40 h-10 relative overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform cursor-pointer">
+              <Image
+                src={item.cover}
+                alt={item.title}
+                fill
+                className="object-cover"
+                sizes="160px"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                <p className="text-white text-xs font-medium truncate">
+                  {item.title}
+                </p>
               </div>
             </div>
           </Link>
@@ -101,11 +101,11 @@ const RollingCovers = ({ items, speed = 0.1 }: RollingCoversProps) => {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-${items.length * 170}px);
+            transform: translateX(-${totalWidth}px);
           }
         }
         .animate-scroll {
-          animation: scroll ${speed}s linear infinite;
+          animation: scroll ${animationDuration}s linear infinite;
         }
       `}</style>
     </div>
@@ -465,7 +465,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-8">
       {/* Rolling Covers */}
       <section aria-label="Rolling covers">
-        <RollingCovers items={allCinematicsItems} speed={30} />
+        <RollingCovers items={allCinematicsItems} speed={20} />
       </section>
 
       {/* Carrossel */}
