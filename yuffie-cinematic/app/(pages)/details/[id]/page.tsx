@@ -86,7 +86,9 @@ const RollingCovers = ({ items, speed = 1 }: RollingCoversProps) => {
                 className="object-cover"
                 sizes="160px"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+              {/* Overlay escuro */}
+              <div className="absolute inset-0 bg-black/40"></div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 z-10">
                 <p className="text-white text-xs font-medium truncate">
                   {item.title}
                 </p>
