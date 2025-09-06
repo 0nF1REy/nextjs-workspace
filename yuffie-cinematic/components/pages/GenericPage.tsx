@@ -6,6 +6,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Item } from "@/lib/items/types";
 
 type PageProps = {
@@ -18,7 +21,7 @@ interface ItemWithRating extends Item {
 }
 
 export default function GenericPage({ items, title }: PageProps) {
-  const [searchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"title" | "rating">("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -65,9 +68,13 @@ export default function GenericPage({ items, title }: PageProps) {
     [sortBy]
   );
 
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
   return (
     <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
-      <section className="px-6 md:px-12 py-12">
+      <section className="px-6 md:px-12 py-12 pt-24">
         <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, y: -30 }}
@@ -83,8 +90,44 @@ export default function GenericPage({ items, title }: PageProps) {
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex items-center justify-center gap-2 mt-4">
+        {/* Busca específica da página */}
+        <motion.div
+          className="max-w-2xl mx-auto mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="relative">
+            <Input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={`Buscar ${title.toLowerCase()}...`}
+              className="bg-gray-800 text-white border-gray-700 w-full pl-12 pr-12 py-3 text-lg"
+            />
+            <FontAwesomeIcon
+              icon={faSearch}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"
+            />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                <FontAwesomeIcon icon={faTimes} className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Controles de ordenação e contador */}
+        <motion.div
+          className="max-w-4xl mx-auto mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <div className="flex items-center justify-center gap-2 mb-4">
             <span className="text-gray-400 text-sm">Ordenar por:</span>
             <Button
               variant={sortBy === "title" ? "default" : "ghost"}
@@ -104,10 +147,16 @@ export default function GenericPage({ items, title }: PageProps) {
             </Button>
           </div>
 
-          <p className="text-gray-400 mt-2 text-center">
-            {filteredAndSortedItems.length} {title.toLowerCase()} encontrado{filteredAndSortedItems.length !== 1 ? "s" : ""}
+          <p className="text-gray-400 text-center">
+            {filteredAndSortedItems.length} {title.toLowerCase()} encontrado
+            {filteredAndSortedItems.length !== 1 ? "s" : ""}
+            {searchTerm && (
+              <span className="text-red-400 ml-1">
+                para &ldquo;{searchTerm}&rdquo;
+              </span>
+            )}
           </p>
-        </div>
+        </motion.div>
       </section>
 
       <section className="px-6 md:px-12 pb-12">
@@ -148,9 +197,26 @@ export default function GenericPage({ items, title }: PageProps) {
             ))}
           </motion.div>
         ) : (
-          <div className="text-center py-12 text-gray-400">
-            Nenhum {title.toLowerCase()} encontrado
-          </div>
+          <motion.div
+            className="text-center py-12 text-gray-400"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            {searchTerm ? (
+              <div>
+                <p className="text-lg mb-4">
+                  Nenhum {title.toLowerCase()} encontrado para &ldquo;
+                  {searchTerm}&rdquo;
+                </p>
+                <Button onClick={clearSearch} variant="outline" size="sm">
+                  Limpar busca
+                </Button>
+              </div>
+            ) : (
+              <p>Nenhum {title.toLowerCase()} encontrado</p>
+            )}
+          </motion.div>
         )}
       </section>
     </main>
