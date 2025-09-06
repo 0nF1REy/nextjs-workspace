@@ -3,12 +3,12 @@ import { Item } from "./types";
 export const seriesItems: Item[] = [
   {
     id: "the-x-files",
-    title: "Arquivo X",
+    title: "The X-Files",
     poster: "/assets/images/series/the-x-files-1993.jpg",
     video: "/assets/videos/the-x-files-trailer.mp4",
     type: "serie",
   },
-    {
+  {
     id: "13-reasons-why",
     title: "13 Reasons Why",
     poster: "/assets/images/series/13-reasons-why-2017.jpg",
@@ -28,7 +28,7 @@ export const seriesItems: Item[] = [
   },
   {
     id: "disenchantment",
-    title: "Desencanto",
+    title: "Disenchantment",
     poster: "/assets/images/series/desencanto-2018.jpg",
     type: "serie",
   },
@@ -88,7 +88,7 @@ export const seriesItems: Item[] = [
   },
   {
     id: "todo-mundo-odeia-o-chris",
-    title: "Todo Mundo Odeia o Chris",
+    title: "Everbody Hates Chris",
     poster: "/assets/images/series/todo-mundo-odeia-o-chris-2005.jpg",
     type: "serie",
   },
