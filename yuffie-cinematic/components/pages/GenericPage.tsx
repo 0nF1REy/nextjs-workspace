@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -176,22 +175,24 @@ export default function GenericPage({ items, title }: PageProps) {
                 whileHover={{ scale: 1.05 }}
               >
                 <Link href={`/details/${item.id}`}>
-                  <Card className="overflow-hidden rounded-lg shadow-lg border border-red-900/40 hover:border-red-600 transition-all duration-300">
-                    <div className="relative h-72">
+                  <div className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
+                    <div className="aspect-[3/4] relative overflow-hidden">
                       <Image
                         src={item.poster}
                         alt={item.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="object-cover w-full h-full"
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
                       />
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-sm font-semibold text-gray-100 line-clamp-2">
-                        {item.title}
-                      </h3>
+                    <div className="p-3">
+                      <div className="w-full text-center">
+                        <h3 className="text-xs font-medium text-gray-200 truncate">
+                          {item.title}
+                        </h3>
+                      </div>
                     </div>
-                  </Card>
+                  </div>
                 </Link>
               </motion.div>
             ))}
