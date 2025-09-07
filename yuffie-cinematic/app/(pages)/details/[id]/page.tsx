@@ -119,9 +119,9 @@ const DEFAULT_IMAGE_DIMENSIONS = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Sub-componente para o carrossel
@@ -236,7 +236,7 @@ const SimilarMoviesSectionComponent = ({
 
 // É um Server Component
 export default async function CinematicDescriptionPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const decodedId = decodeURIComponent(id);
   const cinematic = cinematics.find((c) => c.id === decodedId);
