@@ -1,0 +1,12 @@
+@keyframes scroll-animation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(var(--scroll-distance));
+  }
+}
+
+.rolling-scroll {
+  animation: scroll-animation var(--duration) linear infinite;
+}
