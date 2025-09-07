@@ -12,8 +12,17 @@ interface UserRating {
   timestamp: number;
 }
 
+interface FavoriteItem {
+  id: string;
+  title: string;
+  cover: string;
+  type: "movie" | "serie" | "anime";
+  timestamp: number;
+}
+
 const RATING_MAX = 5;
 
+// Funções para gerenciar ratings no localStorage
 const getUserRatingFromStorage = (movieId: string): number | null => {
   if (typeof window === "undefined") return null;
   try {
@@ -38,22 +47,71 @@ const saveUserRatingToStorage = (movieId: string, rating: number): void => {
   }
 };
 
+// Funções para gerenciar favoritos no localStorage
+const getFavoritesFromStorage = (): FavoriteItem[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem("user-favorites");
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveFavoriteToStorage = (item: FavoriteItem): void => {
+  if (typeof window === "undefined") return;
+  try {
+    const favorites = getFavoritesFromStorage();
+    const updatedFavorites = [...favorites, item];
+    localStorage.setItem("user-favorites", JSON.stringify(updatedFavorites));
+  } catch (error) {
+    console.error("Falha ao salvar favorito:", error);
+  }
+};
+
+const removeFavoriteFromStorage = (itemId: string): void => {
+  if (typeof window === "undefined") return;
+  try {
+    const favorites = getFavoritesFromStorage();
+    const updatedFavorites = favorites.filter((fav) => fav.id !== itemId);
+    localStorage.setItem("user-favorites", JSON.stringify(updatedFavorites));
+  } catch (error) {
+    console.error("Falha ao remover favorito:", error);
+  }
+};
+
+const isFavoriteInStorage = (itemId: string): boolean => {
+  if (typeof window === "undefined") return false;
+  try {
+    const favorites = getFavoritesFromStorage();
+    return favorites.some((fav) => fav.id === itemId);
+  } catch {
+    return false;
+  }
+};
+
 interface UserInteractiveElementsProps {
   cinematicId: string;
   cinematicRating: number;
+  cinematicTitle: string;
+  cinematicCover: string;
+  cinematicType: "movie" | "serie" | "anime";
 }
 
 export function UserInteractiveElements({
   cinematicId,
   cinematicRating,
+  cinematicTitle,
+  cinematicCover,
+  cinematicType,
 }: UserInteractiveElementsProps) {
   const [favorite, setFavorite] = useState(false);
   const [userRating, setUserRating] = useState<number | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
-  useEffect(() => {}, [cinematicId]);
-
+  // Carregar estado inicial dos favoritos e ratings
   useEffect(() => {
+    setFavorite(isFavoriteInStorage(cinematicId));
     const savedRating = getUserRatingFromStorage(cinematicId);
     if (savedRating !== null) {
       setUserRating(savedRating);
@@ -61,8 +119,24 @@ export function UserInteractiveElements({
   }, [cinematicId]);
 
   const handleFavoriteToggle = useCallback(() => {
-    setFavorite((prev) => !prev);
-  }, []);
+    const newFavoriteState = !favorite;
+    setFavorite(newFavoriteState);
+
+    if (newFavoriteState) {
+      // Adicionar aos favoritos
+      const favoriteItem: FavoriteItem = {
+        id: cinematicId,
+        title: cinematicTitle,
+        cover: cinematicCover,
+        type: cinematicType,
+        timestamp: Date.now(),
+      };
+      saveFavoriteToStorage(favoriteItem);
+    } else {
+      // Remover dos favoritos
+      removeFavoriteFromStorage(cinematicId);
+    }
+  }, [favorite, cinematicId, cinematicTitle, cinematicCover, cinematicType]);
 
   const handleStarClick = useCallback(
     (rating: number) => {
@@ -75,6 +149,13 @@ export function UserInteractiveElements({
   const handleStarHover = useCallback((rating: number | null) => {
     setHoveredRating(rating);
   }, []);
+
+  const handleRemoveRating = useCallback(() => {
+    setUserRating(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(`movie-rating-${cinematicId}`);
+    }
+  }, [cinematicId]);
 
   const FavoriteButton = useMemo(
     () => (
@@ -168,12 +249,7 @@ export function UserInteractiveElements({
                   variant="ghost"
                   size="sm"
                   className="text-xs text-gray-500 hover:text-gray-300 ml-2"
-                  onClick={() => {
-                    setUserRating(null);
-                    if (typeof window !== "undefined") {
-                      localStorage.removeItem(`movie-rating-${cinematicId}`);
-                    }
-                  }}
+                  onClick={handleRemoveRating}
                 >
                   Remover
                 </Button>
@@ -189,12 +265,12 @@ export function UserInteractiveElements({
       </div>
     );
   }, [
-    cinematicId,
     userRating,
     hoveredRating,
     handleStarClick,
     handleStarHover,
     cinematicRating,
+    handleRemoveRating,
   ]);
 
   return (
@@ -206,3 +282,28 @@ export function UserInteractiveElements({
     </>
   );
 }
+
+// Função utilitária para ser usada na página de perfil
+export const getUserFavorites = (): FavoriteItem[] => {
+  return getFavoritesFromStorage();
+};
+
+// Função utilitária para obter todas as avaliações do usuário
+export const getUserRatings = (): UserRating[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const ratings: UserRating[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("movie-rating-")) {
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          ratings.push(JSON.parse(stored));
+        }
+      }
+    }
+    return ratings.sort((a, b) => b.timestamp - a.timestamp);
+  } catch {
+    return [];
+  }
+};

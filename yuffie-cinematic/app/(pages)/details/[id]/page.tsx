@@ -355,6 +355,9 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
                       <DynamicUserInteractiveElements
                         cinematicId={cinematic.id}
                         cinematicRating={cinematic.rating}
+                        cinematicTitle={cinematic.title}
+                        cinematicCover={cinematic.cover}
+                        cinematicType={cinematic.type}
                       />
                     </Suspense>
                   </div>
@@ -404,6 +407,7 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
             genre={cinematic.genre}
             duration={cinematic.duration}
             reviews={reviews}
+            cinematicId={cinematic.id}
           />
         </Suspense>
       </main>
