@@ -11,96 +11,28 @@ import {
   faStar as faStarRegular,
 } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
+import { getCurrentUser, getLoggedUsername } from "@/lib/user";
+import { Review } from "@/lib/details/types";
+import { UserReview } from "@/lib/user/types";
+import {
+  getUserReviewsFromStorage,
+  saveUserReviewToStorage,
+  getLikedReviewsFromStorage,
+  saveLikedReviewToStorage,
+  removeLikedReviewFromStorage,
+  getUserRatingFromStorage,
+  isFavoriteInStorage,
+} from "@/lib/user/storage";
 
 interface MovieDetailsProps {
   genre?: string[];
   duration?: number;
 }
 
-interface Review {
-  id: string;
-  author: string;
-  content: string;
-  rating?: number;
-  date?: string;
-  avatarSeed?: string;
-  likes?: number;
-}
-
-interface UserReview {
-  id: string;
-  author: string;
-  content: string;
-  rating: number;
-  date: string;
-  cinematicId: string;
-  avatarSeed: string;
-  likes: number;
-}
-
 const RATING_MAX = 5;
-const LOGGED_USER = "Alan Ryan";
 
-// Funções para gerenciar reviews no localStorage
-const getUserReviewsFromStorage = (cinematicId: string): UserReview[] => {
-  if (typeof window === "undefined") return [];
-  try {
-    const stored = localStorage.getItem(`user-reviews-${cinematicId}`);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveUserReviewToStorage = (
-  cinematicId: string,
-  review: UserReview
-): void => {
-  if (typeof window === "undefined") return;
-  try {
-    const existingReviews = getUserReviewsFromStorage(cinematicId);
-    const updatedReviews = [...existingReviews, review];
-    localStorage.setItem(
-      `user-reviews-${cinematicId}`,
-      JSON.stringify(updatedReviews)
-    );
-  } catch (error) {
-    console.error("Falha ao salvar a review:", error);
-  }
-};
-
-const getLikedReviewsFromStorage = (): string[] => {
-  if (typeof window === "undefined") return [];
-  try {
-    const stored = localStorage.getItem("liked-reviews");
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveLikedReviewToStorage = (reviewId: string): void => {
-  if (typeof window === "undefined") return;
-  try {
-    const likedReviews = getLikedReviewsFromStorage();
-    if (!likedReviews.includes(reviewId)) {
-      likedReviews.push(reviewId);
-      localStorage.setItem("liked-reviews", JSON.stringify(likedReviews));
-    }
-  } catch (error) {
-    console.error("Falha ao salvar like:", error);
-  }
-};
-
-const removeLikedReviewFromStorage = (reviewId: string): void => {
-  if (typeof window === "undefined") return;
-  try {
-    const likedReviews = getLikedReviewsFromStorage();
-    const updatedLikes = likedReviews.filter((id) => id !== reviewId);
-    localStorage.setItem("liked-reviews", JSON.stringify(updatedLikes));
-  } catch (error) {
-    console.error("Falha ao remover like:", error);
-  }
+export const getAllUserReviews = (): UserReview[] => {
+  return getUserReviewsFromStorage();
 };
 
 function MovieDetails({ genre, duration }: MovieDetailsProps) {
@@ -127,10 +59,11 @@ function MovieDetails({ genre, duration }: MovieDetailsProps) {
   );
 }
 
-function StarRating({ rating }: { rating: number }) {
+// Exporta StarRating para ser usada em outros componentes
+export function StarRating({ rating }: { rating: number }) {
   const stars = [];
   const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
+  const hasHalfStar = rating - fullStars >= 0.5;
   const emptyStars = RATING_MAX - fullStars - (hasHalfStar ? 1 : 0);
 
   // Estrelas cheias
@@ -173,14 +106,51 @@ function ReviewItem({
   review,
   onLike,
   isLiked,
+  cinematicId,
 }: {
-  review: Review & { likes: number };
+  review: (Review | UserReview) & { likes: number; avatarSeed?: string };
   onLike: (reviewId: string) => void;
   isLiked: boolean;
+  cinematicId: string;
 }) {
+  const [isFavorited, setIsFavorited] = useState(false);
+
   const avatarUrl = `https://i.pravatar.cc/300?u=${
     review.avatarSeed || review.author
   }`;
+
+  // Verifica se o review é do usuário
+  const isUserReview = review.id.startsWith("user-");
+
+  // Carregar estado inicial do favorito
+  useEffect(() => {
+    if (isUserReview) {
+      setIsFavorited(isFavoriteInStorage(cinematicId));
+    }
+  }, [isUserReview, cinematicId]);
+
+  // Escutar mudanças de favorito
+  useEffect(() => {
+    if (!isUserReview) return;
+
+    const handleFavoriteChanged = (event: CustomEvent) => {
+      if (event.detail.cinematicId === cinematicId) {
+        setIsFavorited(event.detail.favorite);
+      }
+    };
+
+    window.addEventListener(
+      "favoriteChanged",
+      handleFavoriteChanged as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "favoriteChanged",
+        handleFavoriteChanged as EventListener
+      );
+    };
+  }, [isUserReview, cinematicId]);
 
   return (
     <div className="space-y-4 p-4 bg-black/40 border border-gray-800 rounded-lg shadow-md">
@@ -195,23 +165,34 @@ function ReviewItem({
             sizes="48px"
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex items-center gap-2">
           <p className="font-semibold text-red-400 text-sm sm:text-base">
             Review by {review.author}
           </p>
-          {review.date && (
-            <p className="text-xs text-gray-500">
-              {new Date(review.date).toLocaleDateString("pt-BR")}
-            </p>
+          {isUserReview && (
+            <FontAwesomeIcon
+              icon={isFavorited ? faHeart : faHeartRegular}
+              className={`w-4 h-4 ml-2 ${
+                isFavorited ? "text-red-500" : "text-gray-400"
+              }`}
+              title={isFavorited ? "Favoritado" : "Não favoritado"}
+            />
           )}
         </div>
+        {review.date && (
+          <p className="text-xs text-gray-500">
+            {new Date(review.date).toLocaleDateString("pt-BR")}
+          </p>
+        )}
       </div>
 
-      {/* Rating e Coração */}
-      <div className="flex items-center gap-3">
-        {review.rating && <StarRating rating={review.rating} />}
-        <FontAwesomeIcon icon={faHeart} className="text-red-500 w-4 h-4" />
-      </div>
+      {/* Rating (se existir) */}
+      {review.rating && review.rating > 0 && (
+        <div className="flex items-center gap-3">
+          <StarRating rating={review.rating} />
+          <span className="text-gray-400 text-sm">{review.rating}/5</span>
+        </div>
+      )}
 
       {/* Comentário */}
       <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
@@ -249,34 +230,66 @@ function ReviewForm({
   onSubmit: (review: UserReview) => void;
 }) {
   const [content, setContent] = useState("");
-  const [rating, setRating] = useState<number>(0);
-  const [hoveredRating, setHoveredRating] = useState<number>(0);
+  const [userRating, setUserRating] = useState<number | null>(null);
+
+  const currentUser = getCurrentUser();
+  const username = currentUser?.username || getLoggedUsername();
+
+  // Carrega o rating do usuário ao montar o componente
+  useEffect(() => {
+    const rating = getUserRatingFromStorage(cinematicId);
+    setUserRating(rating);
+  }, [cinematicId]);
+
+  // Escuta o evento 'ratingChanged' para atualizar o userRating
+  useEffect(() => {
+    const handleRatingChanged = (event: CustomEvent) => {
+      if (event.detail.cinematicId === cinematicId) {
+        setUserRating(getUserRatingFromStorage(cinematicId));
+      }
+    };
+
+    window.addEventListener(
+      "ratingChanged",
+      handleRatingChanged as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "ratingChanged",
+        handleRatingChanged as EventListener
+      );
+    };
+  }, [cinematicId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!content.trim() || rating === 0) {
-      alert("Por favor, escreva sua review e dê uma avaliação.");
+    if (!content.trim()) {
+      alert("Por favor, escreva sua review.");
+      return;
+    }
+
+    if (userRating === null || userRating === 0) {
+      alert(
+        "Por favor, avalie o filme/série/anime antes de enviar sua review."
+      );
       return;
     }
 
     const newReview: UserReview = {
       id: `user-${Date.now()}`,
-      author: LOGGED_USER,
+      author: username,
       content: content.trim(),
-      rating,
+      rating: userRating,
       date: new Date().toISOString(),
       cinematicId,
-      avatarSeed: LOGGED_USER,
+      avatarSeed: username,
       likes: 0,
     };
 
     onSubmit(newReview);
-
-    // Limpar formulário
     setContent("");
-    setRating(0);
-    setHoveredRating(0);
   };
 
   return (
@@ -284,50 +297,31 @@ function ReviewForm({
       <div className="flex items-center gap-3 mb-4">
         <div className="relative w-10 h-10 flex-shrink-0">
           <Image
-            src={`https://i.pravatar.cc/300?u=${LOGGED_USER}`}
-            alt={`Avatar de ${LOGGED_USER}`}
+            src={
+              currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`
+            }
+            alt={`Avatar de ${username}`}
             fill
             className="rounded-full object-cover"
             sizes="40px"
           />
         </div>
         <h3 className="text-lg font-semibold text-red-400">
-          Escreva sua review, {LOGGED_USER.split(" ")[0]}!
+          Escreva sua review, {username}!
         </h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Sua avaliação
-          </label>
-          <div className="flex gap-1">
-            {Array.from({ length: RATING_MAX }).map((_, idx) => {
-              const starValue = idx + 1;
-              const isActive = hoveredRating
-                ? starValue <= hoveredRating
-                : starValue <= rating;
-
-              return (
-                <button
-                  key={`rating-star-${idx}`}
-                  type="button"
-                  className={`text-2xl transition-colors duration-200 hover:scale-110 ${
-                    isActive
-                      ? "text-yellow-400"
-                      : "text-gray-500 hover:text-yellow-400"
-                  }`}
-                  onClick={() => setRating(starValue)}
-                  onMouseEnter={() => setHoveredRating(starValue)}
-                  onMouseLeave={() => setHoveredRating(0)}
-                >
-                  <FontAwesomeIcon icon={isActive ? faStar : faStarRegular} />
-                </button>
-              );
-            })}
-          </div>
+      {/* Aviso se não houver avaliação */}
+      {(!userRating || userRating === 0) && (
+        <div className="bg-yellow-900/30 border border-yellow-600/50 rounded-lg p-3">
+          <p className="text-yellow-400 text-sm">
+            ⚠️ Você precisa avaliar o filme/série/anime antes de escrever uma
+            review. Use as estrelas na seção principal para dar sua nota.
+          </p>
         </div>
+      )}
 
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
             htmlFor="content"
@@ -350,8 +344,8 @@ function ReviewForm({
 
         <Button
           type="submit"
-          className="w-full bg-red-600 hover:bg-red-700 text-white"
-          disabled={!content.trim() || rating === 0}
+          className="w-full bg-red-600 hover:bg-red-700 text-white disabled:bg-gray-600 disabled:cursor-not-allowed"
+          disabled={!content.trim() || !userRating || userRating === 0}
         >
           Publicar Review
         </Button>
@@ -375,6 +369,28 @@ function ReviewsList({
   useEffect(() => {
     setUserReviews(getUserReviewsFromStorage(cinematicId));
     setLikedReviews(getLikedReviewsFromStorage());
+  }, [cinematicId]);
+
+  // Escuta mudanças de favorito para atualizar as reviews do usuário
+  useEffect(() => {
+    const handleFavoriteChanged = (event: CustomEvent) => {
+      if (event.detail.cinematicId === cinematicId) {
+        // Re-carrega as reviews para atualizar o estado de favorito
+        setUserReviews(getUserReviewsFromStorage(cinematicId));
+      }
+    };
+
+    window.addEventListener(
+      "favoriteChanged",
+      handleFavoriteChanged as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "favoriteChanged",
+        handleFavoriteChanged as EventListener
+      );
+    };
   }, [cinematicId]);
 
   const handleLike = useCallback(
@@ -418,6 +434,7 @@ function ReviewsList({
             review={review}
             onLike={handleLike}
             isLiked={likedReviews.includes(review.id)}
+            cinematicId={cinematicId}
           />
         ))}
       </div>
