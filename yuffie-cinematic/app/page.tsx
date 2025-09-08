@@ -42,6 +42,7 @@ export default function HomePage() {
   const videoItems = useMemo(() => items.filter((i) => i.video), []);
   const [currentVideoItem, setCurrentVideoItem] = useState<Item | null>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [playedVideos, setPlayedVideos] = useState<string[]>([]);
 
   const categories = useMemo(
     () => [
@@ -72,6 +73,45 @@ export default function HomePage() {
       );
     }
   }, [videoItems]);
+
+  const getNextRandomVideo = useCallback(() => {
+    if (videoItems.length <= 1) return null;
+
+    let availableVideos = videoItems.filter(
+      (item) => item.id !== currentVideoItem?.id
+    );
+
+    // Se todos os vídeos já foram reproduzidos, reseta a lista (exceto o atual)
+    if (playedVideos.length >= videoItems.length - 1) {
+      setPlayedVideos([]);
+      availableVideos = videoItems.filter(
+        (item) => item.id !== currentVideoItem?.id
+      );
+    } else {
+      // Filtra vídeos que ainda não foram reproduzidos
+      availableVideos = availableVideos.filter(
+        (item) => !playedVideos.includes(item.id)
+      );
+    }
+
+    if (availableVideos.length === 0) return null;
+
+    return availableVideos[Math.floor(Math.random() * availableVideos.length)];
+  }, [videoItems, currentVideoItem, playedVideos]);
+
+  const handleVideoEnd = useCallback(() => {
+    if (!currentVideoItem) return;
+
+    // Adiciona o vídeo atual à lista de reproduzidos
+    setPlayedVideos((prev) => [...prev, currentVideoItem.id]);
+
+    // Seleciona o próximo vídeo
+    const nextVideo = getNextRandomVideo();
+    if (nextVideo) {
+      setVideoLoaded(false);
+      setCurrentVideoItem(nextVideo);
+    }
+  }, [currentVideoItem, getNextRandomVideo]);
 
   const getCinematicDetails = useCallback(
     (id: string) => cinematics.find((d: CinematicDetail) => d.id === id),
@@ -176,12 +216,13 @@ export default function HomePage() {
       <section className="relative w-full h-screen flex items-end justify-center overflow-hidden">
         {currentVideoItem?.video ? (
           <video
+            key={currentVideoItem.id}
             src={currentVideoItem.video}
             autoPlay
             muted
-            loop
             onLoadedData={() => setVideoLoaded(true)}
             onError={() => setVideoLoaded(false)}
+            onEnded={handleVideoEnd}
             onClick={() => {
               if (videoLoaded && currentVideoItem) {
                 router.push(
@@ -189,8 +230,10 @@ export default function HomePage() {
                 );
               }
             }}
-            className={`absolute inset-0 w-full h-full object-cover ${
-              videoLoaded ? "cursor-pointer" : "cursor-wait"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              videoLoaded
+                ? "cursor-pointer opacity-100"
+                : "cursor-wait opacity-75"
             }`}
           />
         ) : (
