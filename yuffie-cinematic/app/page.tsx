@@ -194,14 +194,14 @@ export default function HomePage() {
             <div className="relative">
               <button
                 onClick={() => scrollCarousel(cat.key, "left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
                 aria-label="Scroll left"
               >
                 <FontAwesomeIcon icon={faChevronLeft} size="lg" />
               </button>
               <button
                 onClick={() => scrollCarousel(cat.key, "right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
                 aria-label="Scroll right"
               >
                 <FontAwesomeIcon icon={faChevronRight} size="lg" />
