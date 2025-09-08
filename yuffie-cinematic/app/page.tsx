@@ -291,7 +291,13 @@ export default function HomePage() {
               whileHover={{ scale: 1.03 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <div className="overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-red-900/40 hover:border-red-600 transition rounded-lg shadow-lg">
+              <div
+                className={`overflow-hidden border border-red-900/40 hover:border-red-600 transition rounded-lg shadow-lg ${
+                  item.id === "a-time-to-kill" || item.id === "the-x-files"
+                    ? 'bg-gradient-to-br from-gray-900 to-black bg-[url("/assets/animations/space-particles.gif")] bg-cover bg-center bg-no-repeat'
+                    : "bg-gradient-to-br from-gray-900 to-black"
+                }`}
+              >
                 <div className="relative h-60 overflow-hidden">
                   <Image
                     src={item.poster}
