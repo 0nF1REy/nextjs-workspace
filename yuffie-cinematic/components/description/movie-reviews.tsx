@@ -518,7 +518,7 @@ export default function MovieReviews({
     setActiveTab(value);
   }, []);
 
-  const handleNewReview = useCallback((review: UserReview) => {}, []);
+  const handleNewReview = useCallback((_review: UserReview) => {}, []);
 
   return (
     <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg h-[600px] flex flex-col">

@@ -16,7 +16,7 @@ export function HeaderComponent() {
         <Link href="/" className="flex items-center gap-2 text-red-500">
           <FontAwesomeIcon icon={faFilm} className="h-6 w-6" />
           <span className="hidden md:block font-bold text-lg tracking-wide">
-            Yuffie's Cinematic
+            Yuffie&apos;s Cinematic
           </span>
         </Link>
 
