@@ -191,7 +191,7 @@ export default function HomePage() {
             <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
               {cat.label}
             </h2>
-            <div className="relative">
+            <div className="relative py-2">
               <button
                 onClick={() => scrollCarousel(cat.key, "left")}
                 className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
@@ -210,6 +210,11 @@ export default function HomePage() {
               <motion.div
                 ref={carouselRefs[cat.key]}
                 className="flex overflow-x-auto gap-6 pb-4 scrollbar-none"
+                style={{
+                  overflowY: "visible",
+                  paddingTop: "8px",
+                  paddingBottom: "16px",
+                }}
               >
                 {filteredItems.map((item, idx) => (
                   <motion.div
