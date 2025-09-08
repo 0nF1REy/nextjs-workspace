@@ -173,7 +173,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
       {/* Vídeo em Destaque */}
-      <section className="relative w-full h-[70vh] sm:h-[80vh] md:h-[90vh] flex items-end justify-center overflow-hidden">
+      <section className="relative w-full h-screen flex items-end justify-center overflow-hidden">
         {currentVideoItem?.video ? (
           <video
             src={currentVideoItem.video}
@@ -200,23 +200,38 @@ export default function HomePage() {
             </span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
         <motion.div
-          className="relative text-center pb-10 px-4 z-10"
+          className="relative text-center pb-16 px-4 z-10"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
         >
-          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 drop-shadow-lg">
-            Descubra o melhor do cinema
-          </p>
-          <motion.div
-            className="mt-6 cursor-pointer text-red-500 hover:text-red-400 transition-colors drop-shadow-lg"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            onClick={() => scrollToRef(destaquesRef)}
+          <motion.p
+            className="text-xl sm:text-2xl md:text-3xl font-light text-gray-200 drop-shadow-lg mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, delay: 0.6 }}
           >
-            <FontAwesomeIcon icon={faChevronDown} size="2x" />
+            Descubra o melhor do cinema
+          </motion.p>
+          <motion.div
+            className="mt-8 cursor-pointer text-red-500 hover:text-red-400 transition-colors drop-shadow-lg"
+            animate={{
+              y: [0, -15, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 2,
+              ease: "easeInOut",
+            }}
+            onClick={() => scrollToRef(destaquesRef)}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FontAwesomeIcon icon={faChevronDown} size="3x" />
+            <p className="text-sm mt-2 font-medium">Explorar</p>
           </motion.div>
         </motion.div>
       </section>
