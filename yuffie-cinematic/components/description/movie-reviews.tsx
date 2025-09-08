@@ -167,7 +167,7 @@ function ReviewItem({
         </div>
         <div className="flex-1 flex items-center gap-2">
           <p className="font-semibold text-red-400 text-sm sm:text-base">
-            Review by {review.author}
+            Review por {review.author}
           </p>
           {isUserReview && (
             <FontAwesomeIcon
@@ -424,19 +424,34 @@ function ReviewsList({
   ];
 
   return (
-    <div className="space-y-6">
-      <ReviewForm cinematicId={cinematicId} onSubmit={handleNewReview} />
+    <div className="flex flex-col h-full">
+      {/* Formulário de review */}
+      <div className="flex-shrink-0 mb-4">
+        <ReviewForm cinematicId={cinematicId} onSubmit={handleNewReview} />
+      </div>
 
-      <div className="space-y-4">
-        {allReviews.map((review) => (
-          <ReviewItem
-            key={review.id}
-            review={review}
-            onLike={handleLike}
-            isLiked={likedReviews.includes(review.id)}
-            cinematicId={cinematicId}
-          />
-        ))}
+      {/* Container com scroll */}
+      <div className="flex-1 min-h-0">
+        <div className="h-full overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+          {allReviews.length > 0 ? (
+            allReviews.map((review) => (
+              <ReviewItem
+                key={review.id}
+                review={review}
+                onLike={handleLike}
+                isLiked={likedReviews.includes(review.id)}
+                cinematicId={cinematicId}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+              <FontAwesomeIcon icon={faStar} className="w-12 h-12 mb-3" />
+              <p className="text-center">
+                Nenhuma review ainda. Seja o primeiro a avaliar!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -457,19 +472,16 @@ export default function MovieReviews({
     setActiveTab(value);
   }, []);
 
-  const handleNewReview = useCallback((review: UserReview) => {
-    // Callback para quando uma nova review é adicionada
-    console.log("Nova review adicionada:", review);
-  }, []);
+  const handleNewReview = useCallback((review: UserReview) => {}, []);
 
   return (
-    <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg">
+    <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg h-[600px] flex flex-col">
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
-        className="w-full"
+        className="w-full h-full flex flex-col"
       >
-        <TabsList className="grid grid-cols-2 gap-2 mb-6">
+        <TabsList className="grid grid-cols-2 gap-2 mb-6 flex-shrink-0">
           <TabsTrigger
             value="details"
             className="data-[state=active]:bg-red-600 data-[state=active]:text-white rounded-lg"
@@ -483,10 +495,12 @@ export default function MovieReviews({
             Reviews
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="details">
+
+        <TabsContent value="details" className="flex-1 min-h-0">
           <MovieDetails genre={genre} duration={duration} />
         </TabsContent>
-        <TabsContent value="reviews">
+
+        <TabsContent value="reviews" className="flex-1 min-h-0">
           <ReviewsList
             reviews={reviews}
             cinematicId={cinematicId}
@@ -494,6 +508,31 @@ export default function MovieReviews({
           />
         </TabsContent>
       </Tabs>
+
+      <style jsx global>{`
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #dc2626 #374151;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #374151;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #dc2626;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #b91c1c;
+        }
+      `}</style>
     </aside>
   );
 }
