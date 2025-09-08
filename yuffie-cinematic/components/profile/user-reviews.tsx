@@ -135,13 +135,13 @@ export default function UserReviews({ userId }: UserReviewsProps) {
         return (
           <div
             key={review.id}
-            className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-lg p-6 hover:border-red-500/30 transition-colors"
+            className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-lg p-4 md:p-6 hover:border-red-500/30 transition-colors"
           >
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               {cinematic && (
                 <Link
                   href={`/details/${cinematic.id}`}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 self-center sm:self-start"
                 >
                   <div className="relative w-16 h-24 rounded-md overflow-hidden hover:scale-105 transition-transform">
                     <Image
@@ -155,13 +155,13 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                 </Link>
               )}
 
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-3 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div>
+                  <div className="min-w-0">
                     {cinematic && (
                       <Link
                         href={`/details/${cinematic.id}`}
-                        className="text-red-400 font-semibold hover:text-red-300 transition-colors"
+                        className="text-red-400 font-semibold hover:text-red-300 transition-colors block truncate"
                       >
                         {cinematic.title}
                       </Link>
@@ -174,7 +174,7 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <div className="flex items-center gap-2 text-gray-500 text-sm flex-shrink-0">
                     <FontAwesomeIcon icon={faCalendar} className="w-3 h-3" />
                     <span>
                       {new Date(review.date).toLocaleDateString("pt-BR")}
@@ -182,9 +182,17 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                   </div>
                 </div>
 
-                <p className="text-gray-300 leading-relaxed">
-                  &ldquo;{review.content}&rdquo;
-                </p>
+                {/* Review content com truncamento responsivo */}
+                <div className="text-gray-300 leading-relaxed">
+                  <p className="break-words sm:break-normal">
+                    <span className="md:hidden line-clamp-3">
+                      &ldquo;{review.content}&rdquo;
+                    </span>
+                    <span className="hidden md:block">
+                      &ldquo;{review.content}&rdquo;
+                    </span>
+                  </p>
+                </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-gray-700">
                   <div className="flex items-center gap-2 text-gray-500 text-sm">
@@ -195,9 +203,10 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                   {cinematic && (
                     <Link
                       href={`/details/${cinematic.id}`}
-                      className="text-red-400 text-sm hover:text-red-300 transition-colors"
+                      className="text-red-400 text-sm hover:text-red-300 transition-colors flex-shrink-0"
                     >
-                      Ver detalhes →
+                      <span className="hidden sm:inline">Ver detalhes →</span>
+                      <span className="sm:hidden">Ver →</span>
                     </Link>
                   )}
                 </div>
