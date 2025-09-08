@@ -9,6 +9,7 @@ import {
   faStarHalf,
   faHeart,
   faCalendar,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarOutline } from "@fortawesome/free-regular-svg-icons";
 import { getAllUserReviews } from "@/components/description/movie-reviews";
@@ -141,15 +142,15 @@ export default function UserReviews({ userId }: UserReviewsProps) {
               {cinematic && (
                 <Link
                   href={`/details/${cinematic.id}`}
-                  className="flex-shrink-0 self-center sm:self-start"
+                  className="w-full sm:w-auto sm:flex-shrink-0 sm:self-start"
                 >
-                  <div className="relative w-16 h-24 rounded-md overflow-hidden hover:scale-105 transition-transform">
+                  <div className="relative w-full h-32 sm:w-16 sm:h-24 rounded-md overflow-hidden hover:scale-105 transition-transform">
                     <Image
                       src={cinematic.cover}
                       alt={cinematic.title}
                       fill
                       className="object-cover"
-                      sizes="64px"
+                      sizes="(max-width: 640px) 100vw, 64px"
                     />
                   </div>
                 </Link>
@@ -203,10 +204,14 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                   {cinematic && (
                     <Link
                       href={`/details/${cinematic.id}`}
-                      className="text-red-400 text-sm hover:text-red-300 transition-colors flex-shrink-0"
+                      className="text-red-400 text-sm hover:text-red-300 transition-colors flex-shrink-0 flex items-center gap-1"
                     >
-                      <span className="hidden sm:inline">Ver detalhes →</span>
-                      <span className="sm:hidden">Ver →</span>
+                      <span className="hidden sm:inline">Ver detalhes</span>
+                      <span className="sm:hidden">Ver</span>
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        className="w-3 h-3"
+                      />
                     </Link>
                   )}
                 </div>
