@@ -5,7 +5,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faStar, faStarHalf } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart,
+  faStar,
+  faStarHalf,
+  faChevronDown,
+  faChevronUp,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as faHeartRegular,
   faStar as faStarRegular,
@@ -365,6 +371,7 @@ function ReviewsList({
 }) {
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
   const [likedReviews, setLikedReviews] = useState<string[]>([]);
+  const [showReviews, setShowReviews] = useState(false);
 
   useEffect(() => {
     setUserReviews(getUserReviewsFromStorage(cinematicId));
@@ -375,7 +382,6 @@ function ReviewsList({
   useEffect(() => {
     const handleFavoriteChanged = (event: CustomEvent) => {
       if (event.detail.cinematicId === cinematicId) {
-        // Re-carrega as reviews para atualizar o estado de favorito
         setUserReviews(getUserReviewsFromStorage(cinematicId));
       }
     };
@@ -413,6 +419,8 @@ function ReviewsList({
       saveUserReviewToStorage(cinematicId, newReview);
       setUserReviews((prev) => [...prev, newReview]);
       onNewReview(newReview);
+      // Automaticamente mostrar as reviews quando uma nova for adicionada
+      setShowReviews(true);
     },
     [cinematicId, onNewReview]
   );
@@ -430,29 +438,66 @@ function ReviewsList({
         <ReviewForm cinematicId={cinematicId} onSubmit={handleNewReview} />
       </div>
 
-      {/* Container com scroll */}
-      <div className="flex-1 min-h-0">
-        <div className="h-full overflow-y-auto pr-2 space-y-4 custom-scrollbar">
-          {allReviews.length > 0 ? (
-            allReviews.map((review) => (
-              <ReviewItem
-                key={review.id}
-                review={review}
-                onLike={handleLike}
-                isLiked={likedReviews.includes(review.id)}
-                cinematicId={cinematicId}
-              />
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-              <FontAwesomeIcon icon={faStar} className="w-12 h-12 mb-3" />
-              <p className="text-center">
-                Nenhuma review ainda. Seja o primeiro a avaliar!
-              </p>
-            </div>
-          )}
-        </div>
+      {/* Botão para mostrar/ocultar reviews */}
+      <div className="flex-shrink-0 mb-4">
+        <Button
+          onClick={() => setShowReviews(!showReviews)}
+          className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 flex items-center justify-between"
+          variant="outline"
+        >
+          <span className="flex items-center gap-2">
+            <FontAwesomeIcon icon={faStar} className="w-4 h-4" />
+            {showReviews ? "Ocultar Reviews" : "Ver Reviews Disponíveis"}
+            {allReviews.length > 0 && (
+              <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                {allReviews.length}
+              </span>
+            )}
+          </span>
+          <FontAwesomeIcon
+            icon={showReviews ? faChevronUp : faChevronDown}
+            className="w-4 h-4"
+          />
+        </Button>
       </div>
+
+      {/* Container com scroll para as reviews */}
+      {showReviews && (
+        <div className="flex-1 min-h-0">
+          <div className="h-full overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+            {allReviews.length > 0 ? (
+              allReviews.map((review) => (
+                <ReviewItem
+                  key={review.id}
+                  review={review}
+                  onLike={handleLike}
+                  isLiked={likedReviews.includes(review.id)}
+                  cinematicId={cinematicId}
+                />
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <FontAwesomeIcon icon={faStar} className="w-12 h-12 mb-3" />
+                <p className="text-center">
+                  Nenhuma review ainda. Seja o primeiro a avaliar!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Placeholder quando reviews estão ocultas */}
+      {!showReviews && allReviews.length > 0 && (
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          <div className="text-center">
+            <FontAwesomeIcon icon={faStar} className="w-8 h-8 mb-2" />
+            <p className="text-sm">
+              Clique em "Ver Reviews Disponíveis" para ler as avaliações
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
