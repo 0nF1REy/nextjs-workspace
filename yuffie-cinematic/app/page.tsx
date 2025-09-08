@@ -43,6 +43,28 @@ export default function HomePage() {
   const [currentVideoItem, setCurrentVideoItem] = useState<Item | null>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
+  const categories = useMemo(
+    () => [
+      { key: "movie" as const, label: "Filmes" },
+      { key: "serie" as const, label: "Séries" },
+      { key: "anime" as const, label: "Animes" },
+    ],
+    []
+  );
+
+  const highlightIds = useMemo(
+    () => ["a-time-to-kill", "the-x-files", "the-godfather", "parasite"],
+    []
+  );
+
+  const highlights = useMemo(
+    () =>
+      highlightIds
+        .map((id) => items.find((item) => item.id === id))
+        .filter(Boolean) as Item[],
+    [highlightIds]
+  );
+
   useEffect(() => {
     if (videoItems.length > 0) {
       setCurrentVideoItem(
@@ -51,33 +73,24 @@ export default function HomePage() {
     }
   }, [videoItems]);
 
-  const categories = [
-    { key: "movie" as const, label: "Filmes" },
-    { key: "serie" as const, label: "Séries" },
-    { key: "anime" as const, label: "Animes" },
-  ];
+  const getCinematicDetails = useCallback(
+    (id: string) => cinematics.find((d: CinematicDetail) => d.id === id),
+    []
+  );
 
-  const highlightIds = [
-    "a-time-to-kill",
-    "the-x-files",
-    "the-godfather",
-    "parasite",
-  ];
+  const getVideoDetailId = useCallback(
+    () =>
+      currentVideoItem &&
+      (getCinematicDetails(currentVideoItem.id)?.id || currentVideoItem.id),
+    [currentVideoItem, getCinematicDetails]
+  );
 
-  const highlights = highlightIds
-    .map((id) => items.find((item) => item.id === id))
-    .filter(Boolean) as Item[];
-
-  const getCinematicDetails = (id: string) =>
-    cinematics.find((d: CinematicDetail) => d.id === id);
-
-  const getVideoDetailId = () =>
-    currentVideoItem &&
-    (getCinematicDetails(currentVideoItem.id)?.id || currentVideoItem.id);
-
-  const scrollToRef = (ref: React.RefObject<HTMLDivElement | null>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  const scrollToRef = useCallback(
+    (ref: React.RefObject<HTMLDivElement | null>) => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    []
+  );
 
   const checkScrollState = useCallback(
     (key: keyof typeof carouselRefs) => {
@@ -86,7 +99,7 @@ export default function HomePage() {
 
       const canScrollLeft = el.scrollLeft > 0;
       const canScrollRight =
-        el.scrollLeft < el.scrollWidth - el.clientWidth - 1; 
+        el.scrollLeft < el.scrollWidth - el.clientWidth - 1;
 
       setScrollStates((prev) => ({
         ...prev,
@@ -109,6 +122,8 @@ export default function HomePage() {
   useEffect(() => {
     const refs = Object.entries(carouselRefs);
 
+    const cleanupFunctions: (() => void)[] = [];
+
     refs.forEach(([key, ref]) => {
       const element = ref.current;
       if (!element) return;
@@ -126,11 +141,15 @@ export default function HomePage() {
       element.addEventListener("scroll", handleScroll);
       window.addEventListener("resize", handleResize);
 
-      return () => {
+      cleanupFunctions.push(() => {
         element.removeEventListener("scroll", handleScroll);
         window.removeEventListener("resize", handleResize);
-      };
+      });
     });
+
+    return () => {
+      cleanupFunctions.forEach((cleanup) => cleanup());
+    };
   }, [carouselRefs, checkScrollState]);
 
   const scrollCarousel = useCallback(
