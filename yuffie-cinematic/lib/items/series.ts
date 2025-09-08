@@ -29,7 +29,7 @@ export const seriesItems: Item[] = [
   {
     id: "disenchantment",
     title: "Disenchantment",
-    poster: "/assets/images/series/desencanto-2018.jpg",
+    poster: "/assets/images/series/disenchantment-2018.jpg",
     type: "serie",
   },
   {
@@ -87,9 +87,9 @@ export const seriesItems: Item[] = [
     type: "serie",
   },
   {
-    id: "todo-mundo-odeia-o-chris",
+    id: "everybody-hates-chris",
     title: "Everbody Hates Chris",
-    poster: "/assets/images/series/todo-mundo-odeia-o-chris-2005.jpg",
+    poster: "/assets/images/series/everybody-hates-chris-2005.jpg",
     type: "serie",
   },
 ];
