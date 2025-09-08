@@ -33,6 +33,12 @@ export default function HomePage() {
     []
   );
 
+  const [scrollStates, setScrollStates] = useState({
+    movie: { canScrollLeft: false, canScrollRight: false },
+    serie: { canScrollLeft: false, canScrollRight: false },
+    anime: { canScrollLeft: false, canScrollRight: false },
+  });
+
   const videoItems = useMemo(() => items.filter((i) => i.video), []);
   const [currentVideoItem, setCurrentVideoItem] = useState<Item | null>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -73,17 +79,76 @@ export default function HomePage() {
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const checkScrollState = useCallback(
+    (key: keyof typeof carouselRefs) => {
+      const el = carouselRefs[key].current;
+      if (!el) return;
+
+      const canScrollLeft = el.scrollLeft > 0;
+      const canScrollRight =
+        el.scrollLeft < el.scrollWidth - el.clientWidth - 1; 
+
+      setScrollStates((prev) => ({
+        ...prev,
+        [key]: { canScrollLeft, canScrollRight },
+      }));
+    },
+    [carouselRefs]
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      categories.forEach((cat) => {
+        checkScrollState(cat.key);
+      });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [categories, checkScrollState]);
+
+  useEffect(() => {
+    const refs = Object.entries(carouselRefs);
+
+    refs.forEach(([key, ref]) => {
+      const element = ref.current;
+      if (!element) return;
+
+      const handleScroll = () => {
+        checkScrollState(key as keyof typeof carouselRefs);
+      };
+
+      const handleResize = () => {
+        setTimeout(() => {
+          checkScrollState(key as keyof typeof carouselRefs);
+        }, 100);
+      };
+
+      element.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        element.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleResize);
+      };
+    });
+  }, [carouselRefs, checkScrollState]);
+
   const scrollCarousel = useCallback(
     (key: keyof typeof carouselRefs, direction: "left" | "right") => {
       const el = carouselRefs[key].current;
       if (!el) return;
+
       const amount = el.clientWidth * 0.8;
       el.scrollBy({
         left: direction === "right" ? amount : -amount,
         behavior: "smooth",
       });
+
+      setTimeout(() => {
+        checkScrollState(key);
+      }, 300);
     },
-    [carouselRefs]
+    [carouselRefs, checkScrollState]
   );
 
   return (
@@ -186,26 +251,35 @@ export default function HomePage() {
       {/* Carrosséis por Categoria */}
       {categories.map((cat) => {
         const filteredItems = items.filter((i) => i.type === cat.key);
+        const scrollState = scrollStates[cat.key];
+
         return (
           <section key={cat.key} className="px-6 md:px-12 py-8">
             <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
               {cat.label}
             </h2>
             <div className="relative py-2">
-              <button
-                onClick={() => scrollCarousel(cat.key, "left")}
-                className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
-                aria-label="Scroll left"
-              >
-                <FontAwesomeIcon icon={faChevronLeft} size="lg" />
-              </button>
-              <button
-                onClick={() => scrollCarousel(cat.key, "right")}
-                className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
-                aria-label="Scroll right"
-              >
-                <FontAwesomeIcon icon={faChevronRight} size="lg" />
-              </button>
+              {/* Seta esquerda */}
+              {scrollState.canScrollLeft && (
+                <button
+                  onClick={() => scrollCarousel(cat.key, "left")}
+                  className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                  aria-label="Scroll left"
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+                </button>
+              )}
+
+              {/* Seta direita */}
+              {scrollState.canScrollRight && (
+                <button
+                  onClick={() => scrollCarousel(cat.key, "right")}
+                  className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+                  aria-label="Scroll right"
+                >
+                  <FontAwesomeIcon icon={faChevronRight} size="lg" />
+                </button>
+              )}
 
               <motion.div
                 ref={carouselRefs[cat.key]}
