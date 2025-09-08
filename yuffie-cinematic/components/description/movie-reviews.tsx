@@ -493,7 +493,8 @@ function ReviewsList({
           <div className="text-center">
             <FontAwesomeIcon icon={faStar} className="w-8 h-8 mb-2" />
             <p className="text-sm">
-              Clique em "Ver Reviews Disponíveis" para ler as avaliações
+              Clique em &ldquo;Ver Reviews Disponíveis&rdquo; para ler as
+              avaliações
             </p>
           </div>
         </div>
