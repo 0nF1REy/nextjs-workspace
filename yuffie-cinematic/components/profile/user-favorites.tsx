@@ -41,11 +41,8 @@ export default function UserFavorites({ userId }: UserFavoritesProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-gray-800 animate-pulse rounded-lg h-64"
-          ></div>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="bg-gray-800 animate-pulse rounded-lg h-64" />
         ))}
       </div>
     );

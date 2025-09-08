@@ -23,20 +23,20 @@ export default function UserStats({ userId }: UserStatsProps) {
 
   const statsData = [
     {
-      icon: faStar,
-      label: "Reviews",
-      value: stats.totalReviews,
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-600/20",
-      borderColor: "border-yellow-500/30",
-    },
-    {
       icon: faHeart,
       label: "Favoritos",
       value: stats.totalFavorites,
       color: "text-red-400",
       bgColor: "bg-red-600/20",
       borderColor: "border-red-500/30",
+    },
+    {
+      icon: faStar,
+      label: "Reviews",
+      value: stats.totalReviews,
+      color: "text-yellow-400",
+      bgColor: "bg-yellow-600/20",
+      borderColor: "border-yellow-500/30",
     },
     {
       icon: faThumbsUp,
@@ -49,18 +49,22 @@ export default function UserStats({ userId }: UserStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
       {statsData.map((stat, index) => (
         <div
           key={index}
-          className={`bg-gradient-to-br from-gray-900 to-black border ${stat.borderColor} ${stat.bgColor} p-6 text-center rounded-lg`}
+          className={`bg-gradient-to-br from-gray-900 to-black border ${stat.borderColor} ${stat.bgColor} p-4 md:p-6 text-center rounded-lg`}
         >
           <FontAwesomeIcon
             icon={stat.icon}
-            className={`w-8 h-8 ${stat.color} mb-2`}
+            className={`w-6 h-6 md:w-8 md:h-8 ${stat.color} mb-2`}
           />
-          <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-          <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
+          <p className={`text-xl md:text-2xl font-bold ${stat.color}`}>
+            {stat.value}
+          </p>
+          <p className="text-gray-400 text-xs md:text-sm font-medium">
+            {stat.label}
+          </p>
         </div>
       ))}
     </div>

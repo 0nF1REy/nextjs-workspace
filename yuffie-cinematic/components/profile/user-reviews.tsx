@@ -99,11 +99,8 @@ export default function UserReviews({ userId }: UserReviewsProps) {
   if (loading) {
     return (
       <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-gray-800 animate-pulse rounded-lg h-32"
-          ></div>
+        {Array.from({ length: 3 }, (_, i) => (
+          <div key={i} className="bg-gray-800 animate-pulse rounded-lg h-32" />
         ))}
       </div>
     );
