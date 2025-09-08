@@ -2,8 +2,6 @@ import {
   faHome,
   faFilm,
   faTv,
-  faHeart,
-  faStar,
   faDragon,
 } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -19,6 +17,4 @@ export const navItems: NavItem[] = [
   { href: "/movies", label: "Filmes", icon: faFilm },
   { href: "/series", label: "Séries", icon: faTv },
   { href: "/animes", label: "Animes", icon: faDragon },
-  { href: "/favorites", label: "Favoritos", icon: faHeart },
-  { href: "/reviews", label: "Reviews", icon: faStar },
 ];
