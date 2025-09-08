@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import {
   Carousel,
   CarouselContent,
@@ -293,10 +295,10 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-8">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-13">
       {/* Rolling Covers */}
       <section aria-label="Rolling covers">
-        <RollingCovers items={allCinematicsItems} speed={20} />
+        <RollingCovers items={allCinematicsItems} speed={10} />
       </section>
 
       {/* Carrossel */}
@@ -389,9 +391,10 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
               <Button
                 variant="secondary"
                 size="lg"
-                className="hover:bg-red-600"
+                className="hover:bg-red-600 flex items-center gap-2"
               >
-                ← Voltar para Home
+                <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
+                Voltar para Home
               </Button>
             </Link>
           </CardFooter>
