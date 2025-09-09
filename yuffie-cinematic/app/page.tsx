@@ -54,7 +54,7 @@ export default function HomePage() {
   );
 
   const highlightIds = useMemo(
-    () => ["a-time-to-kill", "the-x-files", "the-godfather", "parasite"],
+    () => ["a-time-to-kill", "the-x-files", "fallen-angels", "john-wick-2"],
     []
   );
 
