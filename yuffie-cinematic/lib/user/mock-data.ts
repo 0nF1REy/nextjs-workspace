@@ -138,6 +138,329 @@ export const simulatedUserReviews: UserReview[] = [
     avatarSeed: "HorrorFan",
     likes: 35,
   },
+
+  // Kyo Reviews
+  {
+    id: "review-kyo-1",
+    author: "Kyo",
+    content:
+      "Barakamon é um anime adorável. A evolução do personagem e as lições de vida são cativantes.",
+    rating: 5,
+    date: "2025-02-10T17:30:00.000Z",
+    cinematicId: "barakamon",
+    avatarSeed: "Kyo",
+    likes: 12,
+  },
+  {
+    id: "review-kyo-2",
+    author: "Kyo",
+    content: "Berserk é intenso e sombrio. A arte e a narrativa são épicas.",
+    rating: 5,
+    date: "2025-02-15T18:00:00.000Z",
+    cinematicId: "berserk",
+    avatarSeed: "Kyo",
+    likes: 8,
+  },
+
+  // Iori Reviews
+  {
+    id: "review-iori-1",
+    author: "Iori",
+    content:
+      "Cowboy Bebop é uma obra-prima. A trilha sonora e os personagens são inesquecíveis.",
+    rating: 5,
+    date: "2025-03-01T19:15:00.000Z",
+    cinematicId: "cowboy-bebop",
+    avatarSeed: "Iori",
+    likes: 15,
+  },
+  {
+    id: "review-iori-2",
+    author: "Iori",
+    content:
+      "Fullmetal Alchemist tem uma das melhores histórias de anime. A alquimia e os dilemas morais são incríveis.",
+    rating: 5,
+    date: "2025-03-10T20:00:00.000Z",
+    cinematicId: "fullmetal-alchemist",
+    avatarSeed: "Iori",
+    likes: 10,
+  },
+
+  // Terry Reviews
+  {
+    id: "review-terry-1",
+    author: "Terry",
+    content:
+      "A Time to Kill é um drama jurídico poderoso. Matthew McConaughey está excelente.",
+    rating: 4,
+    date: "2025-01-20T16:30:00.000Z",
+    cinematicId: "a-time-to-kill",
+    avatarSeed: "Terry",
+    likes: 9,
+  },
+  {
+    id: "review-terry-2",
+    author: "Terry",
+    content:
+      "The Godfather é uma obra-prima atemporal. Marlon Brando brilha em cada cena.",
+    rating: 5,
+    date: "2025-01-25T18:45:00.000Z",
+    cinematicId: "the-godfather",
+    avatarSeed: "Terry",
+    likes: 14,
+  },
+
+  // Mai Reviews
+  {
+    id: "review-mai-1",
+    author: "Mai",
+    content:
+      "Kill la Kill é animado e divertido, cheio de ação e estilo visual único.",
+    rating: 5,
+    date: "2025-04-05T20:30:00.000Z",
+    cinematicId: "kill-la-kill",
+    avatarSeed: "Mai",
+    likes: 11,
+  },
+  {
+    id: "review-mai-2",
+    author: "Mai",
+    content:
+      "Perfect Blue é um thriller psicológico perturbador e brilhante. Satoshi Kon é genial.",
+    rating: 5,
+    date: "2025-04-10T19:15:00.000Z",
+    cinematicId: "perfect-blue",
+    avatarSeed: "Mai",
+    likes: 13,
+  },
+
+  // Eikichi Reviews
+  {
+    id: "review-eikichi-1",
+    author: "Eikichi",
+    content:
+      "Great Teacher Onizuka mostra que a educação pode ser divertida e impactante. Inspirador!",
+    rating: 5,
+    date: "2025-05-01T18:00:00.000Z",
+    cinematicId: "great-teacher-onizuka",
+    avatarSeed: "Eikichi",
+    likes: 17,
+  },
+  // Audrey Reviews
+  {
+    id: "review-audrey-1",
+    author: "Audrey",
+    content:
+      "Shawshank Redemption é inspirador e emocionante. A história de amizade e esperança é inesquecível.",
+    rating: 5,
+    date: "2025-05-12T18:00:00.000Z",
+    cinematicId: "shawshank-redemption",
+    avatarSeed: "Audrey",
+    likes: 21,
+  },
+  {
+    id: "review-audrey-2",
+    author: "Audrey",
+    content:
+      "Ip Man é uma obra de arte nas artes marciais. As lutas são incríveis e a história emocionante.",
+    rating: 5,
+    date: "2025-05-18T19:15:00.000Z",
+    cinematicId: "ip-man",
+    avatarSeed: "Audrey",
+    likes: 17,
+  },
+
+  // Charles Reviews
+  {
+    id: "review-charles-1",
+    author: "Charles",
+    content:
+      "Back To The Future é diversão pura. A viagem no tempo e os personagens são icônicos.",
+    rating: 5,
+    date: "2025-06-01T17:30:00.000Z",
+    cinematicId: "back-to-the-future",
+    avatarSeed: "Charles",
+    likes: 25,
+  },
+  {
+    id: "review-charles-2",
+    author: "Charles",
+    content:
+      "Amadeus é uma experiência musical incrível. Mozart e Salieri ganham vida na tela.",
+    rating: 5,
+    date: "2025-06-05T18:45:00.000Z",
+    cinematicId: "amadeus",
+    avatarSeed: "Charles",
+    likes: 19,
+  },
+
+  // Danilo Reviews
+  {
+    id: "review-danilo-1",
+    author: "Danilo",
+    content:
+      "Breaking Bad é uma aula de roteiro e atuação. Cada episódio é tenso e imprevisível.",
+    rating: 5,
+    date: "2025-06-12T20:00:00.000Z",
+    cinematicId: "breaking-bad",
+    avatarSeed: "Danilo",
+    likes: 23,
+  },
+  {
+    id: "review-danilo-2",
+    author: "Danilo",
+    content:
+      "Cobra Kai revive o universo Karatê Kid de forma brilhante. Nostalgia e ação na medida certa.",
+    rating: 4,
+    date: "2025-06-18T21:15:00.000Z",
+    cinematicId: "cobra-kai",
+    avatarSeed: "Danilo",
+    likes: 18,
+  },
+
+  // Elaine Reviews
+  {
+    id: "review-elaine-1",
+    author: "Elaine",
+    content:
+      "Gintama é genial, mistura comédia, ação e referências culturais de maneira única.",
+    rating: 5,
+    date: "2025-07-01T19:30:00.000Z",
+    cinematicId: "gintama",
+    avatarSeed: "Elaine",
+    likes: 22,
+  },
+  {
+    id: "review-elaine-2",
+    author: "Elaine",
+    content:
+      "Steins;Gate é um anime brilhante de viagem no tempo, cheio de suspense e emoção.",
+    rating: 5,
+    date: "2025-07-05T20:45:00.000Z",
+    cinematicId: "steins-gate",
+    avatarSeed: "Elaine",
+    likes: 27,
+  },
+
+  // Joao Reviews
+  {
+    id: "review-joao-1",
+    author: "Joao",
+    content:
+      "The X-Files é uma série clássica de mistério e investigação paranormal. Ícone dos anos 90.",
+    rating: 4,
+    date: "2025-07-12T18:00:00.000Z",
+    cinematicId: "the-x-files",
+    avatarSeed: "Joao",
+    likes: 14,
+  },
+  {
+    id: "review-joao-2",
+    author: "Joao",
+    content:
+      "Stranger Things mistura nostalgia e suspense de forma incrível. Demogorgon é aterrorizante!",
+    rating: 4,
+    date: "2025-07-18T19:15:00.000Z",
+    cinematicId: "stranger-things",
+    avatarSeed: "Joao",
+    likes: 16,
+  },
+
+  // Poliana Reviews
+  {
+    id: "review-poliana-1",
+    author: "Poliana",
+    content:
+      "Fairy Tail é divertido e cheio de magia. Personagens cativantes e boas lições de amizade.",
+    rating: 4,
+    date: "2025-08-01T20:30:00.000Z",
+    cinematicId: "fairy-tail",
+    avatarSeed: "Poliana",
+    likes: 12,
+  },
+  {
+    id: "review-poliana-2",
+    author: "Poliana",
+    content:
+      "Little Witch Academia é encantador e inspirador. Animação linda e história leve.",
+    rating: 5,
+    date: "2025-08-05T21:45:00.000Z",
+    cinematicId: "little-witch-academia",
+    avatarSeed: "Poliana",
+    likes: 14,
+  },
+
+  // Regina Reviews
+  {
+    id: "review-regina-1",
+    author: "Regina",
+    content:
+      "They Live é um clássico cult. Mistura crítica social com ficção científica de forma genial.",
+    rating: 4,
+    date: "2025-08-12T18:00:00.000Z",
+    cinematicId: "they-live",
+    avatarSeed: "Regina",
+    likes: 11,
+  },
+  {
+    id: "review-regina-2",
+    author: "Regina",
+    content:
+      "Escape From New York é ação e tensão do início ao fim. John Carpenter manda muito bem.",
+    rating: 4,
+    date: "2025-08-18T19:15:00.000Z",
+    cinematicId: "escape-from-new-york",
+    avatarSeed: "Regina",
+    likes: 13,
+  },
+
+  // Vagner Reviews
+  {
+    id: "review-vagner-1",
+    author: "Vagner",
+    content:
+      "Futurama é divertido e inteligente. Mistura ficção científica e humor de maneira brilhante.",
+    rating: 5,
+    date: "2025-09-01T20:00:00.000Z",
+    cinematicId: "futurama",
+    avatarSeed: "Vagner",
+    likes: 20,
+  },
+  {
+    id: "review-vagner-2",
+    author: "Vagner",
+    content:
+      "Rick and Morty é uma viagem absurda e hilária. Humor ácido e criatividade sem limites.",
+    rating: 5,
+    date: "2025-09-05T21:15:00.000Z",
+    cinematicId: "rick-and-morty",
+    avatarSeed: "Vagner",
+    likes: 22,
+  },
+
+  // Maira Reviews
+  {
+    id: "review-maira-1",
+    author: "Maira",
+    content:
+      "Katekyou Hitman Reborn! é divertido e cheio de ação. Personagens marcantes e desenvolvimento legal.",
+    rating: 4,
+    date: "2025-09-12T18:30:00.000Z",
+    cinematicId: "katekyou-hitman-reborn",
+    avatarSeed: "Maira",
+    likes: 10,
+  },
+  {
+    id: "review-maira-2",
+    author: "Maira",
+    content:
+      "Durarara!! é cheio de mistérios e personagens complexos. História envolvente do início ao fim.",
+    rating: 5,
+    date: "2025-09-18T19:45:00.000Z",
+    cinematicId: "durarara",
+    avatarSeed: "Maira",
+    likes: 12,
+  },
 ];
 
 export const simulatedUserFavorites: Record<string, FavoriteItem[]> = {
@@ -252,6 +575,127 @@ export const simulatedUserFavorites: Record<string, FavoriteItem[]> = {
       timestamp: 1692370800000,
     },
   ],
+  Kyo: [
+    {
+      id: "barakamon",
+      title: "Barakamon",
+      cover: "/assets/images/animes/barakamon-2014.jpg",
+      type: "anime",
+      timestamp: 1730000000000,
+    },
+    {
+      id: "berserk",
+      title: "Berserk",
+      cover: "/assets/images/animes/berserk-1997.jpg",
+      type: "anime",
+      timestamp: 1730500000000,
+    },
+  ],
+  Iori: [
+    {
+      id: "cowboy-bebop",
+      title: "Cowboy Bebop",
+      cover: "/assets/images/animes/cowboy-bebop-1998.jpg",
+      type: "anime",
+      timestamp: 1731000000000,
+    },
+    {
+      id: "fullmetal-alchemist",
+      title: "Fullmetal Alchemist",
+      cover: "/assets/images/animes/fullmetal-alchemist-2003.jpg",
+      type: "anime",
+      timestamp: 1731500000000,
+    },
+  ],
+  Terry: [
+    {
+      id: "a-time-to-kill",
+      title: "A Time to Kill",
+      cover: "/assets/images/movies/a-time-to-kill-1996.jpg",
+      type: "movie",
+      timestamp: 1732000000000,
+    },
+    {
+      id: "the-godfather",
+      title: "The Godfather",
+      cover: "/assets/images/movies/the-godfather-1972.jpg",
+      type: "movie",
+      timestamp: 1732500000000,
+    },
+  ],
+  Mai: [
+    {
+      id: "kill-la-kill",
+      title: "Kill la Kill",
+      cover: "/assets/images/animes/kill-la-kill-2013.jpg",
+      type: "anime",
+      timestamp: 1733000000000,
+    },
+    {
+      id: "perfect-blue",
+      title: "Perfect Blue",
+      cover: "/assets/images/animes/perfect-blue-1998.jpg",
+      type: "anime",
+      timestamp: 1733500000000,
+    },
+  ],
+  Eikichi: [
+    {
+      id: "great-teacher-onizuka",
+      title: "Great Teacher Onizuka",
+      cover: "/assets/images/animes/great-teacher-onizuka-1999.jpg",
+      type: "anime",
+      timestamp: 1734000000000,
+    },
+  ],
+  Audrey: [
+    {
+      id: "shawshank-redemption",
+      title: "Shawshank Redemption",
+      cover: "/assets/images/movies/the-shawshank-redemption-1994.jpg",
+      type: "movie",
+      timestamp: 1734500000000,
+    },
+    {
+      id: "ip-man",
+      title: "Ip Man",
+      cover: "/assets/images/movies/ip-man-2008.jpg",
+      type: "movie",
+      timestamp: 1734600000000,
+    },
+  ],
+  Charles: [
+    {
+      id: "back-to-the-future",
+      title: "Back To The Future",
+      cover: "/assets/images/movies/back-to-the-future-1985.jpg",
+      type: "movie",
+      timestamp: 1734700000000,
+    },
+    {
+      id: "amadeus",
+      title: "Amadeus",
+      cover: "/assets/images/movies/amadeus-1984.jpg",
+      type: "movie",
+      timestamp: 1734800000000,
+    },
+  ],
+  Danilo: [
+    {
+      id: "breaking-bad",
+      title: "Breaking Bad",
+      cover: "/assets/images/series/breaking-bad-2008.png",
+      type: "serie",
+      timestamp: 1734900000000,
+    },
+    {
+      id: "cobra-kai",
+      title: "Cobra Kai",
+      cover: "/assets/images/series/cobra-kai-2018.jpg",
+      type: "serie",
+      timestamp: 1735000000000,
+    },
+  ],
 };
 
 export const simulatedUserRatings: Record<string, UserRating[]> = {
@@ -281,5 +725,24 @@ export const simulatedUserRatings: Record<string, UserRating[]> = {
     { movieId: "they-live", rating: 4, timestamp: 1692370800000 },
     { movieId: "escape-from-new-york", rating: 4, timestamp: 1692284400000 },
     { movieId: "the-boys", rating: 5, timestamp: 1692198000000 },
+  ],
+  Kyo: [
+    { movieId: "barakamon", rating: 5, timestamp: 1730000000000 },
+    { movieId: "berserk", rating: 5, timestamp: 1730500000000 },
+  ],
+  Iori: [
+    { movieId: "cowboy-bebop", rating: 5, timestamp: 1731000000000 },
+    { movieId: "fullmetal-alchemist", rating: 5, timestamp: 1731500000000 },
+  ],
+  Terry: [
+    { movieId: "a-time-to-kill", rating: 4, timestamp: 1732000000000 },
+    { movieId: "the-godfather", rating: 5, timestamp: 1732500000000 },
+  ],
+  Mai: [
+    { movieId: "kill-la-kill", rating: 5, timestamp: 1733000000000 },
+    { movieId: "perfect-blue", rating: 5, timestamp: 1733500000000 },
+  ],
+  Eikichi: [
+    { movieId: "great-teacher-onizuka", rating: 5, timestamp: 1734000000000 },
   ],
 };
