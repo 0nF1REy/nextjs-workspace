@@ -30,13 +30,12 @@ import {
   getUserRatingFromStorage,
   isFavoriteInStorage,
 } from "@/lib/user/storage";
+import { RATING_MAX } from "./StarRatingInteractive";
 
 interface MovieDetailsProps {
   genre?: string[];
   duration?: number;
 }
-
-const RATING_MAX = 5;
 
 export const getAllUserReviews = (): UserReview[] => {
   return getUserReviewsFromStorage();
@@ -106,97 +105,6 @@ export function StarRating({ rating }: { rating: number }) {
   }
 
   return <div className="flex gap-1">{stars}</div>;
-}
-
-export function InteractiveStarRating({
-  rating,
-  onRatingChange,
-  size = "w-6 h-6",
-}: {
-  rating: number;
-  onRatingChange: (rating: number) => void;
-  size?: string;
-}) {
-  const [hoverRating, setHoverRating] = useState(0);
-
-  const handleStarClick = useCallback(
-    (starIndex: number, isHalf: boolean) => {
-      const newRating = starIndex + (isHalf ? 0.5 : 1);
-      onRatingChange(newRating);
-      setHoverRating(0);
-    },
-    [onRatingChange]
-  );
-
-  const handleStarHover = useCallback((starIndex: number, isHalf: boolean) => {
-    const newRating = starIndex + (isHalf ? 0.5 : 1);
-    setHoverRating(newRating);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setHoverRating(0);
-  }, []);
-
-  const displayRating = hoverRating || rating;
-
-  const renderStar = (starIndex: number) => {
-    const starValue = starIndex + 1;
-
-    const isFull = displayRating >= starValue;
-    const isHalf =
-      displayRating >= starValue - 0.5 && displayRating < starValue;
-
-    return (
-      <div
-        key={starIndex}
-        className="relative flex items-center"
-        style={{ width: size, height: size }}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Metade esquerda da estrela (clicável para 0.5 ou 1.5, etc.) */}
-        <div
-          className="absolute left-0 top-0 w-1/2 h-full overflow-hidden cursor-pointer"
-          onMouseEnter={() => handleStarHover(starIndex, true)}
-          onClick={() => handleStarClick(starIndex, true)}
-        >
-          <FontAwesomeIcon
-            icon={faStar}
-            className={`${size} ${
-              isHalf || isFull ? "text-red-500" : "text-gray-500"
-            } transition-colors duration-200`}
-          />
-        </div>
-
-        {/* Metade direita da estrela (clicável para 1 ou 2, etc.) */}
-        <div
-          className="absolute left-1/2 top-0 w-1/2 h-full overflow-hidden cursor-pointer"
-          onMouseEnter={() => handleStarHover(starIndex, false)}
-          onClick={() => handleStarClick(starIndex, false)}
-        >
-          <FontAwesomeIcon
-            icon={faStar}
-            className={`${size} ${
-              isFull ? "text-red-500" : "text-gray-500"
-            } transition-colors duration-200`}
-          />
-        </div>
-        {/* Estrela de fundo para garantir o espaçamento e a base vazia */}
-        <FontAwesomeIcon
-          icon={faStarRegular}
-          className={`${size} text-gray-500 pointer-events-none`}
-        />
-      </div>
-    );
-  };
-
-  return (
-    <div className="flex gap-1 items-center">
-      {Array.from({ length: RATING_MAX }, (_, i) => renderStar(i))}
-      <span className="ml-2 text-sm text-gray-400">
-        {displayRating.toFixed(1)}/{RATING_MAX}
-      </span>
-    </div>
-  );
 }
 
 function ReviewItem({
@@ -612,7 +520,9 @@ export default function MovieReviews({
     setActiveTab(value);
   }, []);
 
-  const handleNewReview = useCallback((_review: UserReview) => {}, []);
+  const handleNewReview = useCallback(() => {
+
+  }, []);
 
   return (
     <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg h-[600px] flex flex-col">
