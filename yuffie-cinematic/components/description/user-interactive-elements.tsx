@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
+import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart as faHeartRegular,
+  faStar as faStarRegular,
+} from "@fortawesome/free-regular-svg-icons";
 import { Button } from "@/components/ui/button";
 import { FavoriteItem } from "@/lib/user/types";
 import {
@@ -75,7 +78,9 @@ export function UserInteractiveElements({
   }, [favorite, cinematicId, cinematicTitle, cinematicCover, cinematicType]);
 
   const handleStarClick = useCallback(
-    (rating: number) => {
+    (starIndex: number, isHalf: boolean) => {
+      // Calcula o rating baseado no índice da estrela e se é meia
+      const rating = starIndex + (isHalf ? 0.5 : 1);
       setUserRating(rating);
       saveUserRatingToStorage(cinematicId, rating);
 
@@ -90,8 +95,14 @@ export function UserInteractiveElements({
     [cinematicId]
   );
 
-  const handleStarHover = useCallback((rating: number | null) => {
+  const handleStarHover = useCallback((starIndex: number, isHalf: boolean) => {
+    // Calcula o rating de hover baseado no índice da estrela e se é meia
+    const rating = starIndex + (isHalf ? 0.5 : 1);
     setHoveredRating(rating);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredRating(null);
   }, []);
 
   const handleRemoveRating = useCallback(() => {
@@ -107,6 +118,60 @@ export function UserInteractiveElements({
     }
   }, [cinematicId]);
 
+  const renderInteractiveStar = (starIndex: number) => {
+    const starValue = starIndex + 1;
+    const currentRatingToDisplay =
+      hoveredRating !== null ? hoveredRating : userRating || 0;
+
+    // Determina se a estrela deve ser completamente preenchida, meio preenchida ou vazia
+    const isFull = currentRatingToDisplay >= starValue;
+    const isHalf =
+      currentRatingToDisplay >= starValue - 0.5 &&
+      currentRatingToDisplay < starValue;
+
+    return (
+      <div
+        key={starIndex}
+        className="relative text-2xl flex items-center"
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Metade esquerda da estrela (clicável para 0.5 ou 1.5, etc.) */}
+        <div
+          className="absolute left-0 top-0 w-1/2 h-full overflow-hidden cursor-pointer flex items-center justify-start z-10"
+          onMouseEnter={() => handleStarHover(starIndex, true)}
+          onClick={() => handleStarClick(starIndex, true)}
+        >
+          <FontAwesomeIcon
+            icon={isHalf || isFull ? faStar : faStarRegular}
+            className={`transition-colors duration-200 ${
+              isHalf || isFull ? "text-yellow-400" : "text-gray-500"
+            } hover:text-yellow-300`}
+          />
+        </div>
+
+        {/* Metade direita da estrela (clicável para 1 ou 2, etc.) */}
+        <div
+          className="absolute left-1/2 top-0 w-1/2 h-full overflow-hidden cursor-pointer flex items-center justify-end z-10"
+          onMouseEnter={() => handleStarHover(starIndex, false)}
+          onClick={() => handleStarClick(starIndex, false)}
+        >
+          <FontAwesomeIcon
+            icon={isFull ? faStar : faStarRegular}
+            className={`transition-colors duration-200 ${
+              isFull ? "text-yellow-400" : "text-gray-500"
+            } hover:text-yellow-300`}
+          />
+        </div>
+
+        {/* Estrela de fundo para garantir o espaçamento e a base vazia */}
+        <FontAwesomeIcon
+          icon={faStarRegular}
+          className="text-gray-500 pointer-events-none"
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="mt-4 space-y-2">
@@ -114,7 +179,6 @@ export function UserInteractiveElements({
           <div>
             <span className="text-gray-300 text-sm">Avaliação Geral:</span>
             <div className="text-yellow-400">
-              {/* Renderiza a StarRating para a avaliação geral com decimais */}
               <StarRating rating={cinematicRating} />
               <span className="text-gray-400 text-sm ml-2">
                 {cinematicRating}/{RATING_MAX}
@@ -128,32 +192,10 @@ export function UserInteractiveElements({
             Sua Avaliação:
           </span>
           <div className="flex items-center gap-1">
-            {Array.from({ length: RATING_MAX }).map((_, idx) => {
-              const starValue = idx + 1;
-              const isActive = hoveredRating
-                ? starValue <= hoveredRating
-                : userRating !== null && starValue <= userRating;
-
-              return (
-                <button
-                  key={`user-star-${idx}`}
-                  className={`text-2xl transition-colors duration-200 hover:scale-110 transform ${
-                    isActive
-                      ? "text-red-500"
-                      : "text-gray-500 hover:text-red-400"
-                  }`}
-                  onClick={() => handleStarClick(starValue)}
-                  onMouseEnter={() => handleStarHover(starValue)}
-                  onMouseLeave={() => handleStarHover(null)}
-                  aria-label={`Avaliar com ${starValue} estrela${
-                    starValue > 1 ? "s" : ""
-                  }`}
-                >
-                  {isActive ? "★" : "☆"}
-                </button>
-              );
-            })}
-            {userRating && (
+            {Array.from({ length: RATING_MAX }).map((_, idx) =>
+              renderInteractiveStar(idx)
+            )}
+            {userRating !== null && (
               <>
                 <span className="text-gray-400 text-sm ml-2">
                   {userRating}/{RATING_MAX}
@@ -169,7 +211,7 @@ export function UserInteractiveElements({
               </>
             )}
           </div>
-          {userRating && (
+          {userRating !== null && (
             <p className="text-xs text-gray-500 mt-1">
               Avaliação salva localmente
             </p>

@@ -8,13 +8,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faStar,
-  faStarHalf,
   faChevronDown,
   faChevronUp,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as faHeartRegular,
   faStar as faStarRegular,
+  faStarHalfStroke,
 } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
 import { getCurrentUser, getLoggedUsername } from "@/lib/user";
@@ -65,7 +66,6 @@ function MovieDetails({ genre, duration }: MovieDetailsProps) {
   );
 }
 
-// Exporta StarRating para ser usada em outros componentes
 export function StarRating({ rating }: { rating: number }) {
   const stars = [];
   const fullStars = Math.floor(rating);
@@ -88,7 +88,7 @@ export function StarRating({ rating }: { rating: number }) {
     stars.push(
       <FontAwesomeIcon
         key="half"
-        icon={faStarHalf}
+        icon={faStarHalfStroke}
         className="text-yellow-400"
       />
     );
@@ -106,6 +106,97 @@ export function StarRating({ rating }: { rating: number }) {
   }
 
   return <div className="flex gap-1">{stars}</div>;
+}
+
+export function InteractiveStarRating({
+  rating,
+  onRatingChange,
+  size = "w-6 h-6",
+}: {
+  rating: number;
+  onRatingChange: (rating: number) => void;
+  size?: string;
+}) {
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const handleStarClick = useCallback(
+    (starIndex: number, isHalf: boolean) => {
+      const newRating = starIndex + (isHalf ? 0.5 : 1);
+      onRatingChange(newRating);
+      setHoverRating(0);
+    },
+    [onRatingChange]
+  );
+
+  const handleStarHover = useCallback((starIndex: number, isHalf: boolean) => {
+    const newRating = starIndex + (isHalf ? 0.5 : 1);
+    setHoverRating(newRating);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverRating(0);
+  }, []);
+
+  const displayRating = hoverRating || rating;
+
+  const renderStar = (starIndex: number) => {
+    const starValue = starIndex + 1;
+
+    const isFull = displayRating >= starValue;
+    const isHalf =
+      displayRating >= starValue - 0.5 && displayRating < starValue;
+
+    return (
+      <div
+        key={starIndex}
+        className="relative flex items-center"
+        style={{ width: size, height: size }}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Metade esquerda da estrela (clicável para 0.5 ou 1.5, etc.) */}
+        <div
+          className="absolute left-0 top-0 w-1/2 h-full overflow-hidden cursor-pointer"
+          onMouseEnter={() => handleStarHover(starIndex, true)}
+          onClick={() => handleStarClick(starIndex, true)}
+        >
+          <FontAwesomeIcon
+            icon={faStar}
+            className={`${size} ${
+              isHalf || isFull ? "text-red-500" : "text-gray-500"
+            } transition-colors duration-200`}
+          />
+        </div>
+
+        {/* Metade direita da estrela (clicável para 1 ou 2, etc.) */}
+        <div
+          className="absolute left-1/2 top-0 w-1/2 h-full overflow-hidden cursor-pointer"
+          onMouseEnter={() => handleStarHover(starIndex, false)}
+          onClick={() => handleStarClick(starIndex, false)}
+        >
+          <FontAwesomeIcon
+            icon={faStar}
+            className={`${size} ${
+              isFull ? "text-red-500" : "text-gray-500"
+            } transition-colors duration-200`}
+          />
+        </div>
+        {/* Estrela de fundo para garantir o espaçamento e a base vazia */}
+        <FontAwesomeIcon
+          icon={faStarRegular}
+          className={`${size} text-gray-500 pointer-events-none`}
+        />
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex gap-1 items-center">
+      {Array.from({ length: RATING_MAX }, (_, i) => renderStar(i))}
+      <span className="ml-2 text-sm text-gray-400">
+        {displayRating.toFixed(1)}/{RATING_MAX}
+      </span>
+    </div>
+  );
 }
 
 function ReviewItem({
@@ -192,7 +283,7 @@ function ReviewItem({
         )}
       </div>
 
-      {/* Rating (se existir) */}
+      {/* Rating */}
       {review.rating && review.rating > 0 && (
         <div className="flex items-center gap-3">
           <StarRating rating={review.rating} />
@@ -320,8 +411,12 @@ function ReviewForm({
       {/* Aviso se não houver avaliação */}
       {(!userRating || userRating === 0) && (
         <div className="bg-yellow-900/30 border border-yellow-600/50 rounded-lg p-3">
-          <p className="text-yellow-400 text-sm">
-            ⚠️ Você precisa avaliar o filme/série/anime antes de escrever uma
+          <p className="text-yellow-400 text-sm flex items-center gap-2">
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              className="w-4 h-4 text-yellow-400"
+            />
+            Você precisa avaliar o filme/série/anime antes de escrever uma
             review. Use as estrelas na seção principal para dar sua nota.
           </p>
         </div>
@@ -419,7 +514,6 @@ function ReviewsList({
       saveUserReviewToStorage(cinematicId, newReview);
       setUserReviews((prev) => [...prev, newReview]);
       onNewReview(newReview);
-      // Automaticamente mostrar as reviews quando uma nova for adicionada
       setShowReviews(true);
     },
     [cinematicId, onNewReview]
