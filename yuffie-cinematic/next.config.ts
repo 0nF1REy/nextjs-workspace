@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "i.pravatar.cc",
+      },
+      {
+        protocol: "https",
         hostname: "static.independent.co.uk",
       },
       {
@@ -17,7 +21,23 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "i.pravatar.cc",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.squarespace-cdn.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.kinorium.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.shutterstock.com",
+      },
+      {
+        protocol: "https",
+        hostname: "static0.srcdn.com",
       },
     ],
   },
