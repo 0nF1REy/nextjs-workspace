@@ -68,6 +68,18 @@ const DynamicUserReviews = dynamic(
   }
 );
 
+const DynamicUserRatings = dynamic(
+  () => import("@/components/profile/user-ratings"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-center py-12">
+        <p className="text-gray-400">Carregando avaliações...</p>
+      </div>
+    ),
+  }
+);
+
 interface PageProps {
   params: Promise<{
     id: string;
@@ -266,9 +278,7 @@ export default function ProfilePage({ params }: PageProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-400 text-center py-6 md:py-8 text-sm md:text-base">
-                  Seção de avaliações em desenvolvimento...
-                </p>
+                <DynamicUserRatings />
               </CardContent>
             </Card>
           </TabsContent>
