@@ -57,11 +57,11 @@ const StarFilter = ({
   const ratings = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
 
   return (
-    <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+    <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 mb-8">
       <p className="text-sm font-semibold text-gray-300 mr-2">
         Filtrar por nota:
       </p>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap justify-center items-center gap-2">
         {ratings.map((rate) => (
           <button
             key={rate}
@@ -140,7 +140,7 @@ export default function UserRatings() {
       {filteredItems.length > 0 ? (
         <motion.div
           layout
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4"
         >
           {filteredItems.map((item) => (
             <RatedItemCard key={item.id} item={item} />
