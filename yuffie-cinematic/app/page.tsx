@@ -23,7 +23,7 @@ export default function HomePage() {
   );
 
   const highlightIds = useMemo(
-    () => ["a-time-to-kill", "the-x-files", "fallen-angels", "john-wick-2"],
+    () => ["a-time-to-kill", "the-x-files", "gunsmith-cats", "john-wick-2"],
     []
   );
 

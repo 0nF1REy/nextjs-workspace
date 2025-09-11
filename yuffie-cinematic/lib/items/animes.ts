@@ -59,6 +59,7 @@ export const animeItems: Item[] = [
     id: "gunsmith-cats",
     title: "Gunsmith Cats",
     poster: "/assets/images/animes/gunsmith-cats-1995.jpg",
+    video: "/assets/videos/gunsmith-cats.mp4",
     type: "anime",
   },
   {

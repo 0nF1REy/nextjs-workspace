@@ -32,7 +32,9 @@ export function HighlightGrid({
           >
             <div
               className={`overflow-hidden border border-red-900/40 hover:border-red-600 transition rounded-lg shadow-lg ${
-                item.id === "a-time-to-kill" || item.id === "the-x-files"
+                item.id === "a-time-to-kill" ||
+                item.id === "the-x-files" ||
+                item.id === "gunsmith-cats"
                   ? 'bg-gradient-to-br from-gray-900 to-black bg-[url("/assets/animations/space-particles.gif")] bg-cover bg-center bg-no-repeat'
                   : "bg-gradient-to-br from-gray-900 to-black"
               }`}
