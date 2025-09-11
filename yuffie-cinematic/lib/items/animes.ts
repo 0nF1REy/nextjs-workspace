@@ -5,6 +5,7 @@ export const animeItems: Item[] = [
     id: "barakamon",
     title: "Barakamon",
     poster: "/assets/images/animes/barakamon-2014.jpg",
+    video: "/assets/videos/barakamon.mp4",
     type: "anime",
   },
   {
@@ -17,6 +18,7 @@ export const animeItems: Item[] = [
     id: "cowboy-bebop",
     title: "Cowboy Bebop",
     poster: "/assets/images/animes/cowboy-bebop-1998.jpg",
+    video: "/assets/videos/cowboy-bebop.mp4",
     type: "anime",
   },
   {
@@ -29,6 +31,7 @@ export const animeItems: Item[] = [
     id: "durarara",
     title: "Durarara!!",
     poster: "/assets/images/animes/durarara-2010.jpg",
+    video: "/assets/videos/durarara.mp4",
     type: "anime",
   },
   {
@@ -78,18 +81,21 @@ export const animeItems: Item[] = [
     id: "little-witch-academia",
     title: "Little Witch Academia",
     poster: "/assets/images/animes/little-witch-academia-2017.jpg",
+    video: "/assets/videos/little-witch-academia.mp4",
     type: "anime",
   },
   {
     id: "perfect-blue",
     title: "Perfect Blue",
     poster: "/assets/images/animes/perfect-blue-1998.jpg",
+    video: "/assets/videos/perfect-blue.mp4",
     type: "anime",
   },
   {
     id: "steins-gate",
     title: "Steins;Gate",
     poster: "/assets/images/animes/steins-gate-2011.jpg",
+    video: "/assets/videos/steins-gate.mp4",
     type: "anime",
   },
 ];

@@ -48,6 +48,7 @@ export const seriesItems: Item[] = [
     id: "rick-and-morty",
     title: "Rick and Morty",
     poster: "/assets/images/series/rick-and-morty-2013.png",
+    video: "/assets/videos/rick-and-morty.mp4",
     type: "serie",
   },
   {
