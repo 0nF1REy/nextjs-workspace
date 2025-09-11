@@ -131,15 +131,75 @@ export const animeDetails: CinematicDetail[] = [
     id: "gunsmith-cats",
     title: "Gunsmith Cats",
     synopsis:
-      "Rally Vincent e Minnie May Hopkins, duas caçadoras de recompensas em Chicago, se envolvem em perseguições explosivas, tiroteios intensos e intrigas criminosas.",
+      "Rally Vincent e Minnie May Hopkins, duas caçadoras de recompensas em Chicago, se envolvem em perseguições explosivas, tiroteios intensos e intrigas criminosas, tudo enquanto mantêm sua loja de armas, a 'Gunsmith Cats'.",
     year: 1995,
     creator: "Kenichi Sonoda",
     cover: "/assets/images/animes/gunsmith-cats-1995.jpg",
     cast: ["Michie Tomizawa", "Akemi Okamura", "Gara Takashima"],
+    carouselImages: ["/assets/images/gunsmith-cats-banner.png"],
     rating: 4,
-    genre: ["Ação", "Crime", "Aventura"],
+    genre: ["Ação", "Crime", "Aventura", "Comédia"],
     duration: 30,
     type: "anime",
+    galleryImages: [
+      {
+        id: "1",
+        title: "Rally Vincent",
+        src: "/assets/images/gallery/gunsmith-cats/01.jpeg",
+        description:
+          "Rally Vincent, a atiradora habilidosa e protagonista de Gunsmith Cats",
+        photoCredit: "aniDB",
+        sourceLink: "https://anidb.net/character/17243",
+        people: ["Michie Tomizawa (Voz de Rally Vincent)"],
+      },
+      {
+        id: "2",
+        title: "Minnie May Hopkins",
+        src: "/assets/images/gallery/gunsmith-cats/02.png",
+        description:
+          "Minnie May Hopkins, a especialista em explosivos e parceira de Rally.",
+        photoCredit: "Reddit",
+        sourceLink:
+          "https://www.reddit.com/r/GunsmithCats/comments/1cj0a81/i_know_a_ton_of_yall_like_rally_but_what_about/",
+        people: ["Akemi Okamura (Voz de Minnie May Hopkins)"],
+      },
+      {
+        id: "3",
+        title: "Rally, May e Becky",
+        src: "/assets/images/gallery/gunsmith-cats/03.png",
+        description:
+          "Rally, May e Becky observando as informações que estão na tela de um computador.",
+        photoCredit: "aniSearch",
+        sourceLink: "https://www.anisearch.com/",
+        people: [
+          "Michie Tomizawa (Rally Vincent)",
+          "Akemi Okamura (Minnie May Hopkins)",
+          "Yuko Mita (Voz de Becky Farrah)",
+        ],
+      },
+      {
+        id: "4",
+        title: "Becky Farrah",
+        src: "/assets/images/gallery/gunsmith-cats/04.jpg",
+        description:
+          "Becky Farrah, a informante e amiga que ajuda Rally e May com informações.",
+        photoCredit: "Fandom",
+        sourceLink: "https://www.fandom.com",
+        people: ["Yuko Mita (Voz de Becky Farrah)"],
+      },
+      {
+        id: "5",
+        title: "Becky Farrah e Minnie May Hopkins",
+        src: "/assets/images/gallery/gunsmith-cats/05.png",
+        description: "Becky Farrah ajudando a May a subir no carro.",
+        photoCredit: "aniSearch",
+        sourceLink: "https://www.anisearch.com/",
+        people: [
+          "Akemi Okamura (Minnie May Hopkins)",
+          "Yuko Mita (Voz de Becky Farrah)",
+        ],
+      },
+    ],
   },
   {
     id: "katekyou-hitman-reborn",
