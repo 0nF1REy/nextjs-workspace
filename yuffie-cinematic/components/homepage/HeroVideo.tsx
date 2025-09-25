@@ -24,6 +24,7 @@ export function HeroVideo({
   const [currentVideoItem, setCurrentVideoItem] = useState<Item | null>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [playedVideos, setPlayedVideos] = useState<string[]>([]);
+  const [videoLoading, setVideoLoading] = useState(true);
 
   useEffect(() => {
     if (videoItems.length > 0) {
@@ -84,8 +85,14 @@ export function HeroVideo({
           src={currentVideoItem.video}
           autoPlay
           muted
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={() => setVideoLoaded(false)}
+          onLoadedData={() => {
+            setVideoLoaded(true);
+            setVideoLoading(false);
+          }}
+          onError={() => {
+            setVideoLoaded(false);
+            setVideoLoading(false);
+          }}
           onEnded={handleVideoEnd}
           onClick={() => {
             if (videoLoaded && currentVideoItem) {
@@ -95,14 +102,27 @@ export function HeroVideo({
             }
           }}
           className={`absolute inset-0 w-full h-full object-cover transition-all duration-700
-            ${
-              videoLoaded
-                ? "opacity-100 blur-0 cursor-pointer"
-                : "opacity-50 blur-sm cursor-wait"
-            }`}
+      ${
+        videoLoaded
+          ? "opacity-100 blur-0 cursor-pointer"
+          : "opacity-50 blur-sm cursor-wait"
+      }`}
           style={{ willChange: "opacity, transform, filter" }}
         />
-      ) : (
+      ) : null}
+
+      {/* Carregamento */}
+      {videoLoading && currentVideoItem?.video && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mb-2" />
+          <span className="text-gray-400 italic text-lg">
+            Carregando vídeo...
+          </span>
+        </div>
+      )}
+
+      {/* Nenhum vídeo disponível */}
+      {!currentVideoItem?.video && !videoLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/70">
           <span className="text-gray-400 italic text-lg">
             Nenhum vídeo disponível
