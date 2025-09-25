@@ -123,7 +123,7 @@ export function HeroVideo({
       >
         {/* Título Hero Desktop */}
         <motion.h1
-          className="hidden md:block text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-[0_2px_25px_rgba(0,0,0,0.7)] mb-6 tracking-wide leading-tight"
+          className="hidden md:block font-NeomatrixCode text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-[0_2px_25px_rgba(0,0,0,0.7)] mb-6 tracking-wide leading-tight"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.6 }}
@@ -144,7 +144,7 @@ export function HeroVideo({
 
         {/* Subtítulo Mobile */}
         <motion.p
-          className="block md:hidden text-lg sm:text-xl text-gray-200 drop-shadow-lg mb-12 max-w-xs"
+          className="block md:hidden font-NeomatrixCode text-lg sm:text-xl text-gray-200 drop-shadow-lg mb-12 max-w-xs"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.8 }}
