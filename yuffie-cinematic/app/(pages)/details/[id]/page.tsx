@@ -295,142 +295,145 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-13">
-      {/* Rolling Covers */}
-      <section aria-label="Rolling covers">
-        <RollingCovers items={allCinematicsItems} speed={10} />
-      </section>
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 pt-4">
+      {/* Main Container / Constrained Wrapper */}
+      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Rolling Covers */}
+        <section aria-label="Rolling covers">
+          <RollingCovers items={allCinematicsItems} speed={10} />
+        </section>
 
-      {/* Carrossel */}
-      <section aria-label="Cinematic gallery">
-        <MovieCarouselComponent cinematic={cinematic} />
-      </section>
+        {/* Carrossel */}
+        <section aria-label="Cinematic gallery">
+          <MovieCarouselComponent cinematic={cinematic} />
+        </section>
 
-      {/* Cartão de detalhes*/}
-      <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
-          <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
-            {/* Poster */}
-            <div className="flex-shrink-0 flex justify-center md:block">
-              <Image
-                src={cinematic.cover}
-                alt={`${cinematic.title} poster`}
-                width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
-                height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
-                priority
-                className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
-              />
-            </div>
+        {/* Cartão de detalhes*/}
+        <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
+            <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
+              {/* Poster */}
+              <div className="flex-shrink-0 flex justify-center md:block">
+                <Image
+                  src={cinematic.cover}
+                  alt={`${cinematic.title} poster`}
+                  width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
+                  height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
+                  priority
+                  className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
+                />
+              </div>
 
-            {/* Infos */}
-            <div className="flex flex-col justify-between flex-1">
-              <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
-                <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
-                  {cinematic.title}
-                </CardTitle>
-                <CardDescription className="text-sm sm:text-base md:text-gray-400">
-                  {cinematic.year} • {creatorLabel} {cinematic.creator}
-                </CardDescription>
-              </CardHeader>
+              {/* Infos */}
+              <div className="flex flex-col justify-between flex-1">
+                <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
+                  <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
+                    {cinematic.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm sm:text-base md:text-gray-400">
+                    {cinematic.year} • {creatorLabel} {cinematic.creator}
+                  </CardDescription>
+                </CardHeader>
 
-              <CardContent className="space-y-4 p-0">
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-                  {cinematic.synopsis}
-                </p>
+                <CardContent className="space-y-4 p-0">
+                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                    {cinematic.synopsis}
+                  </p>
 
-                <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
-                  {/* Avaliações do Usuário e Favoritar */}
-                  <div className="w-full lg:w-auto">
-                    <Suspense
-                      fallback={
-                        <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse">
-                          <div className="h-4 bg-gray-700 w-3/4 rounded"></div>
-                          <div className="flex gap-2">
-                            <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
-                            <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
-                            <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
+                  <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
+                    {/* Avaliações do Usuário e Favoritar */}
+                    <div className="w-full lg:w-auto">
+                      <Suspense
+                        fallback={
+                          <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse">
+                            <div className="h-4 bg-gray-700 w-3/4 rounded"></div>
+                            <div className="flex gap-2">
+                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
+                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
+                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
+                            </div>
+                            <div className="h-8 w-32 bg-gray-700 rounded-md"></div>
                           </div>
-                          <div className="h-8 w-32 bg-gray-700 rounded-md"></div>
-                        </div>
-                      }
-                    >
-                      <DynamicUserInteractiveElements
-                        cinematicId={cinematic.id}
-                        cinematicRating={cinematic.rating}
-                        cinematicTitle={cinematic.title}
-                        cinematicCover={cinematic.cover}
-                        cinematicType={cinematic.type}
-                      />
-                    </Suspense>
-                  </div>
+                        }
+                      >
+                        <DynamicUserInteractiveElements
+                          cinematicId={cinematic.id}
+                          cinematicRating={cinematic.rating}
+                          cinematicTitle={cinematic.title}
+                          cinematicCover={cinematic.cover}
+                          cinematicType={cinematic.type}
+                        />
+                      </Suspense>
+                    </div>
 
-                  {/* Elenco Principal */}
-                  <div className="w-full lg:w-auto">
-                    <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
-                      Elenco Principal:
-                    </span>
-                    <ul className="list-disc list-inside text-gray-400 space-y-1">
-                      {cinematic.cast.map((actor, idx) => (
-                        <li
-                          key={`${cinematic.id}-cast-${idx}`}
-                          className="text-sm sm:text-base"
-                        >
-                          {actor}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Elenco Principal */}
+                    <div className="w-full lg:w-auto">
+                      <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
+                        Elenco Principal:
+                      </span>
+                      <ul className="list-disc list-inside text-gray-400 space-y-1">
+                        {cinematic.cast.map((actor, idx) => (
+                          <li
+                            key={`${cinematic.id}-cast-${idx}`}
+                            className="text-sm sm:text-base"
+                          >
+                            {actor}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
+                </CardContent>
+              </div>
             </div>
-          </div>
 
-          {/* CardFooter */}
-          <CardFooter className="flex justify-center md:justify-start">
-            <Link href="/">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="hover:bg-red-600 flex items-center gap-2"
-              >
-                <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
-                Voltar para Home
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
+            {/* CardFooter */}
+            <CardFooter className="flex justify-center md:justify-start">
+              <Link href="/">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="hover:bg-red-600 flex items-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
+                  Voltar para Home
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
 
-        {/* Resenhas - DINÂMICAS, carregadas via Suspense */}
-        <Suspense
-          fallback={
-            <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>
-          }
-        >
-          <DynamicMovieReviews
-            genre={cinematic.genre}
-            duration={cinematic.duration}
-            reviews={reviews}
-            cinematicId={cinematic.id}
+          {/* Resenhas - DINÂMICAS, carregadas via Suspense */}
+          <Suspense
+            fallback={
+              <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>
+            }
+          >
+            <DynamicMovieReviews
+              genre={cinematic.genre}
+              duration={cinematic.duration}
+              reviews={reviews}
+              cinematicId={cinematic.id}
+            />
+          </Suspense>
+        </main>
+
+        {/* Seção de Temporadas */}
+        {cinematic.type === "serie" && cinematic.seasons && (
+          <SeasonEpisodes
+            seasons={cinematic.seasons}
+            seriesTitle={cinematic.title}
           />
-        </Suspense>
-      </main>
+        )}
 
-      {/* Seção de Temporadas */}
-      {cinematic.type === "serie" && cinematic.seasons && (
-        <SeasonEpisodes
-          seasons={cinematic.seasons}
-          seriesTitle={cinematic.title}
+        {/* Galeria de Imagens */}
+        <ImageGallery images={galleryImages} />
+
+        {/* Similares */}
+        <SimilarMoviesSectionComponent
+          cinematic={cinematic}
+          similarMovies={similarMovies}
         />
-      )}
-
-      {/* Galeria de Imagens */}
-      <ImageGallery images={galleryImages} />
-
-      {/* Similares */}
-      <SimilarMoviesSectionComponent
-        cinematic={cinematic}
-        similarMovies={similarMovies}
-      />
+      </div>
     </div>
   );
 }
