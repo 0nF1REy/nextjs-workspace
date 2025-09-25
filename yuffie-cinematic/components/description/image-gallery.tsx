@@ -89,7 +89,10 @@ export default function ImageGallery({
             role="button"
             aria-label={`Abrir imagem ${item.title}`}
             key={item.id}
-            className="group relative overflow-hidden border border-gray-800 hover:scale-105 transition-all duration-300 cursor-pointer hover:border-red-500/50 p-0 bg-transparent"
+            className="group relative overflow-hidden border border-gray-800 
+             transition-all duration-300 cursor-pointer p-0 bg-transparent 
+             shadow-lg rounded-xl 
+             hover:scale-105 hover:border-red-500/50 hover:shadow-2xl"
             onClick={() => openViewer(index)}
           >
             <div className="relative aspect-[16/9] w-full h-full">
@@ -98,16 +101,28 @@ export default function ImageGallery({
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                className="object-cover group-hover:brightness-110 transition-all duration-300"
+                className="object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />
+
               <CardFooter className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
                 <div className="w-full">
-                  <p className="text-sm text-gray-200 truncate font-medium mb-1">
+                  <p
+                    className="text-sm text-gray-200 truncate font-medium mb-1 
+                      transition-all duration-500 group-hover:text-cyan-300 
+                      group-hover:translate-y-[-2px]"
+                  >
                     {item.title}
                   </p>
+
                   {item.description && (
-                    <p className="text-xs text-gray-400 truncate">
+                    <p
+                      className="text-xs text-gray-400 truncate 
+                        transition-all duration-500 group-hover:text-red-300 
+                        group-hover:translate-y-[-1px]"
+                    >
                       {item.description}
                     </p>
                   )}

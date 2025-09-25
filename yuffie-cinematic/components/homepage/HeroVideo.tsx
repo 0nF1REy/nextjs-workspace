@@ -77,6 +77,7 @@ export function HeroVideo({
 
   return (
     <section className="relative w-full h-screen flex items-end justify-center overflow-hidden">
+      {/* Vídeo */}
       {currentVideoItem?.video ? (
         <video
           key={currentVideoItem.id}
@@ -93,49 +94,85 @@ export function HeroVideo({
               );
             }
           }}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-            videoLoaded
-              ? "cursor-pointer opacity-100"
-              : "cursor-wait opacity-75"
-          }`}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700
+            ${
+              videoLoaded
+                ? "opacity-100 blur-0 cursor-pointer"
+                : "opacity-50 blur-sm cursor-wait"
+            }`}
+          style={{ willChange: "opacity, transform, filter" }}
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-black/70">
-          <span className="text-gray-400 italic">Nenhum vídeo disponível</span>
+          <span className="text-gray-400 italic text-lg">
+            Nenhum vídeo disponível
+          </span>
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02),transparent_40%)] pointer-events-none" />
+
+      {/* Conteúdo Hero */}
       <motion.div
-        className="relative text-center pb-16 px-4 z-10"
-        initial={{ opacity: 0, y: 40 }}
+        className="relative text-center pb-20 px-6 z-10 flex flex-col items-center"
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2 }}
       >
-        <motion.p
-          className="text-xl sm:text-2xl md:text-3xl font-light text-gray-200 drop-shadow-lg mb-8"
+        {/* Título Hero Desktop */}
+        <motion.h1
+          className="hidden md:block text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-[0_2px_25px_rgba(0,0,0,0.7)] mb-6 tracking-wide leading-tight"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.6 }}
         >
-          Descubra o melhor do cinema
+          Sua plataforma cinematográfica completa
+        </motion.h1>
+
+        {/* Subtítulo Desktop */}
+        <motion.p
+          className="hidden md:block text-lg sm:text-xl text-gray-200 drop-shadow-lg mb-12 max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.5, delay: 0.8 }}
+        >
+          Explore filmes, séries e animes com avaliações, resenhas e informações
+          detalhadas de cada produção.
         </motion.p>
+
+        {/* Subtítulo Mobile */}
+        <motion.p
+          className="block md:hidden text-lg sm:text-xl text-gray-200 drop-shadow-lg mb-12 max-w-xs"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.5, delay: 0.8 }}
+        >
+          Comece sua jornada cinematográfica
+        </motion.p>
+
+        {/* Botão Explorar */}
         <motion.div
-          className="mt-8 cursor-pointer text-red-500 hover:text-red-400 transition-colors drop-shadow-lg"
+          className="cursor-pointer text-red-500 hover:text-red-400 drop-shadow-[0_0_18px_rgba(255,0,0,0.7)] flex flex-col items-center"
           animate={{
-            y: [0, -15, 0],
+            y: [0, -25, 0],
             scale: [1, 1.1, 1],
+            rotate: [0, 3, -3, 0],
           }}
           transition={{
             repeat: Infinity,
-            duration: 2,
+            duration: 3,
             ease: "easeInOut",
           }}
           onClick={() => scrollToRef(destaquesRef)}
-          whileHover={{ scale: 1.2 }}
+          whileHover={{ scale: 1.25, rotate: 0 }}
           whileTap={{ scale: 0.9 }}
         >
           <FontAwesomeIcon icon={faChevronDown} size="3x" />
-          <p className="text-sm mt-2 font-medium">Explorar</p>
+          <span className="text-sm mt-2 font-medium text-white drop-shadow-md">
+            Explorar
+          </span>
         </motion.div>
       </motion.div>
     </section>

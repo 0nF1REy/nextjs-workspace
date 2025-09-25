@@ -184,19 +184,34 @@ const SimilarMovieCard = ({
   movie: CinematicItem;
 }) => (
   <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
+    <div
+      className="group relative bg-gradient-to-br from-gray-900 to-black border border-gray-800 text-gray-200 
+               rounded-lg overflow-hidden shadow-md transition-all duration-500 transform cursor-pointer
+               hover:scale-105 hover:border-red-500/50 hover:brightness-110 hover:shadow-lg"
+    >
       <div className="aspect-[3/4] relative overflow-hidden">
         <Image
           src={similarMovie.cover}
           alt={similarMovie.title}
           width={DEFAULT_IMAGE_DIMENSIONS.similar.width}
           height={DEFAULT_IMAGE_DIMENSIONS.similar.height}
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 group-hover:rotate-0.5"
+        />
+
+        {/* Overlay */}
+        <div
+          className="absolute inset-0 bg-gradient-to-tr from-red-500/0 via-purple-500/10 to-blue-500/0 
+                      opacity-0 group-hover:opacity-20 transition-opacity duration-500"
         />
       </div>
+
       <div className="p-3">
         <div className="w-full text-center">
-          <p className="text-xs font-medium text-gray-200 truncate">
+          <p
+            className="text-xs font-medium text-gray-200 truncate 
+                     transition-all duration-500 group-hover:text-cyan-300 
+                     group-hover:scale-105"
+          >
             {similarMovie.title}
           </p>
         </div>
