@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import ImageGallery from "@/components/description/image-gallery";
 
 const DynamicMovieReviews = dynamic(
-  () => import("@/components/description/movie-reviews"),
+  () => import("@/components/description/reviews"),
   {
     loading: () => (
       <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>

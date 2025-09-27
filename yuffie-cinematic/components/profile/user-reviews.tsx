@@ -12,7 +12,7 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarOutline } from "@fortawesome/free-regular-svg-icons";
-import { getAllUserReviews } from "@/components/description/movie-reviews";
+import { getAllUserReviews } from "@/components/description/reviews/utils";
 import { getUserByUsername, getSimulatedUserReviews } from "@/lib/user";
 import { cinematics } from "@/lib/details";
 import { UserReview } from "@/lib/user/types";

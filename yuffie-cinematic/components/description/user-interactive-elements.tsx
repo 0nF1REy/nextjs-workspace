@@ -15,8 +15,11 @@ import {
   isFavoriteInStorage,
 } from "@/lib/user/storage";
 
-import { StarRating } from "./movie-reviews";
-import { StarRatingInteractive, RATING_MAX } from "./StarRatingInteractive";
+import {
+  StarRating,
+  StarRatingInteractive,
+  RATING_MAX,
+} from "./StarRatingInteractive";
 
 interface UserInteractiveElementsProps {
   cinematicId: string;
