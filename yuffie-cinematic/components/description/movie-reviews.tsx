@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useReducer } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,28 @@ interface MovieDetailsProps {
   genre?: string[];
   duration?: number;
 }
+
+type ReviewsState = {
+  allReviews: ((Review | UserReview) & {
+    likes: number;
+    avatarSeed?: string;
+  })[];
+  likedReviews: string[];
+  userReviews: UserReview[];
+};
+
+type ReviewsAction =
+  | {
+      type: "INITIALIZE";
+      payload: {
+        reviews: Review[];
+        userReviews: UserReview[];
+        likedReviews: string[];
+        cinematicId: string;
+      };
+    }
+  | { type: "TOGGLE_LIKE"; payload: { reviewId: string } }
+  | { type: "ADD_REVIEW"; payload: { newReview: UserReview } };
 
 export const getAllUserReviews = (): UserReview[] => {
   return getUserReviewsFromStorage();
@@ -120,21 +142,20 @@ function ReviewItem({
 }) {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const avatarUrl = review.avatarSeed?.startsWith("/assets/images/profile-avatar/")
+  const avatarUrl = review.avatarSeed?.startsWith(
+    "/assets/images/profile-avatar/"
+  )
     ? review.avatarSeed
     : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
 
-  // Verifica se o review é do usuário
   const isUserReview = review.id.startsWith("user-");
 
-  // Carregar estado inicial do favorito
   useEffect(() => {
     if (isUserReview) {
       setIsFavorited(isFavoriteInStorage(cinematicId));
     }
   }, [isUserReview, cinematicId]);
 
-  // Escutar mudanças de favorito
   useEffect(() => {
     if (!isUserReview) return;
 
@@ -220,7 +241,7 @@ function ReviewItem({
             icon={isLiked ? faHeart : faHeartRegular}
             className="w-4 h-4"
           />
-          Like review ({review.likes || 0})
+          Curtir review ({review.likes || 0})
         </Button>
       </div>
     </div>
@@ -242,13 +263,11 @@ function ReviewForm({
   const userAvatarUrl =
     currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
-  // Carrega o rating do usuário ao montar o componente
   useEffect(() => {
     const rating = getUserRatingFromStorage(cinematicId);
     setUserRating(rating);
   }, [cinematicId]);
 
-  // Escuta o evento 'ratingChanged' para atualizar o userRating
   useEffect(() => {
     const handleRatingChanged = (event: CustomEvent) => {
       if (event.detail.cinematicId === cinematicId) {
@@ -363,6 +382,77 @@ function ReviewForm({
   );
 }
 
+function reviewsReducer(
+  state: ReviewsState,
+  action: ReviewsAction
+): ReviewsState {
+  switch (action.type) {
+    case "INITIALIZE": {
+      const { reviews, userReviews, likedReviews, cinematicId } =
+        action.payload;
+
+      const reviewsFromProps = reviews.map((r) => ({
+        ...r,
+        cinematicId: cinematicId,
+        avatarSeed: r.author,
+        likes: 0,
+      }));
+
+      const allBaseReviews = [...reviewsFromProps, ...userReviews];
+
+      const combinedReviewsWithLikes = allBaseReviews.map((review) => ({
+        ...review,
+        likes: likedReviews.includes(review.id) ? 1 : review.likes,
+      }));
+
+      return {
+        ...state,
+        allReviews: combinedReviewsWithLikes,
+        userReviews: userReviews,
+        likedReviews: likedReviews,
+      };
+    }
+    case "TOGGLE_LIKE": {
+      const { reviewId } = action.payload;
+      const isCurrentlyLiked = state.likedReviews.includes(reviewId);
+
+      if (isCurrentlyLiked) {
+        removeLikedReviewFromStorage(reviewId);
+      } else {
+        saveLikedReviewToStorage(reviewId);
+      }
+
+      return {
+        ...state,
+        likedReviews: isCurrentlyLiked
+          ? state.likedReviews.filter((id) => id !== reviewId)
+          : [...state.likedReviews, reviewId],
+        allReviews: state.allReviews.map((review) =>
+          review.id === reviewId
+            ? {
+                ...review,
+                likes: Math.max(
+                  0,
+                  (review.likes || 0) + (isCurrentlyLiked ? -1 : 1)
+                ),
+              }
+            : review
+        ),
+      };
+    }
+    case "ADD_REVIEW": {
+      const { newReview } = action.payload;
+      return {
+        ...state,
+        userReviews: [...state.userReviews, newReview],
+        allReviews: [...state.allReviews, newReview],
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 function ReviewsList({
   reviews,
   cinematicId,
@@ -372,66 +462,44 @@ function ReviewsList({
   cinematicId: string;
   onNewReview: (review: UserReview) => void;
 }) {
-  const [userReviews, setUserReviews] = useState<UserReview[]>([]);
-  const [likedReviews, setLikedReviews] = useState<string[]>([]);
   const [showReviews, setShowReviews] = useState(false);
 
+  const initialState: ReviewsState = {
+    allReviews: [],
+    likedReviews: [],
+    userReviews: [],
+  };
+
+  const [state, dispatch] = useReducer(reviewsReducer, initialState);
+  const { allReviews, likedReviews } = state;
+
   useEffect(() => {
-    setUserReviews(getUserReviewsFromStorage(cinematicId));
-    setLikedReviews(getLikedReviewsFromStorage());
-  }, [cinematicId]);
+    const userReviewsFromStorage = getUserReviewsFromStorage(cinematicId);
+    const likedReviewsFromStorage = getLikedReviewsFromStorage();
+    dispatch({
+      type: "INITIALIZE",
+      payload: {
+        reviews: reviews,
+        userReviews: userReviewsFromStorage,
+        likedReviews: likedReviewsFromStorage,
+        cinematicId: cinematicId,
+      },
+    });
+  }, [cinematicId, reviews]);
 
-  // Escuta mudanças de favorito para atualizar as reviews do usuário
-  useEffect(() => {
-    const handleFavoriteChanged = (event: CustomEvent) => {
-      if (event.detail.cinematicId === cinematicId) {
-        setUserReviews(getUserReviewsFromStorage(cinematicId));
-      }
-    };
-
-    window.addEventListener(
-      "favoriteChanged",
-      handleFavoriteChanged as EventListener
-    );
-
-    return () => {
-      window.removeEventListener(
-        "favoriteChanged",
-        handleFavoriteChanged as EventListener
-      );
-    };
-  }, [cinematicId]);
-
-  const handleLike = useCallback(
-    (reviewId: string) => {
-      const isCurrentlyLiked = likedReviews.includes(reviewId);
-
-      if (isCurrentlyLiked) {
-        removeLikedReviewFromStorage(reviewId);
-        setLikedReviews((prev) => prev.filter((id) => id !== reviewId));
-      } else {
-        saveLikedReviewToStorage(reviewId);
-        setLikedReviews((prev) => [...prev, reviewId]);
-      }
-    },
-    [likedReviews]
-  );
+  const handleLike = useCallback((reviewId: string) => {
+    dispatch({ type: "TOGGLE_LIKE", payload: { reviewId } });
+  }, []);
 
   const handleNewReview = useCallback(
     (newReview: UserReview) => {
       saveUserReviewToStorage(cinematicId, newReview);
-      setUserReviews((prev) => [...prev, newReview]);
+      dispatch({ type: "ADD_REVIEW", payload: { newReview } });
       onNewReview(newReview);
       setShowReviews(true);
     },
     [cinematicId, onNewReview]
   );
-
-  // Combinar reviews padrão com reviews do usuário
-  const allReviews = [
-    ...reviews.map((r) => ({ ...r, likes: 0, avatarSeed: r.author })),
-    ...userReviews,
-  ];
 
   return (
     <div className="flex flex-col h-full">
