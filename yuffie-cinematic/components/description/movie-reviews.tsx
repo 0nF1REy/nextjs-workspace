@@ -120,9 +120,9 @@ function ReviewItem({
 }) {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const avatarUrl = `https://i.pravatar.cc/300?u=${
-    review.avatarSeed || review.author
-  }`;
+  const avatarUrl = review.avatarSeed?.startsWith("/assets/images/profile-avatar/")
+    ? review.avatarSeed
+    : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
 
   // Verifica se o review é do usuário
   const isUserReview = review.id.startsWith("user-");
@@ -239,6 +239,8 @@ function ReviewForm({
 
   const currentUser = getCurrentUser();
   const username = currentUser?.username || getLoggedUsername();
+  const userAvatarUrl =
+    currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
   // Carrega o rating do usuário ao montar o componente
   useEffect(() => {
@@ -289,7 +291,7 @@ function ReviewForm({
       rating: userRating,
       date: new Date().toISOString(),
       cinematicId,
-      avatarSeed: username,
+      avatarSeed: currentUser?.avatar || username,
       likes: 0,
     };
 
@@ -302,9 +304,7 @@ function ReviewForm({
       <div className="flex items-center gap-3 mb-4">
         <div className="relative w-10 h-10 flex-shrink-0">
           <Image
-            src={
-              currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`
-            }
+            src={userAvatarUrl}
             alt={`Avatar de ${username}`}
             fill
             className="rounded-full object-cover"
@@ -520,9 +520,7 @@ export default function MovieReviews({
     setActiveTab(value);
   }, []);
 
-  const handleNewReview = useCallback(() => {
-
-  }, []);
+  const handleNewReview = useCallback(() => {}, []);
 
   return (
     <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg h-[600px] flex flex-col">
