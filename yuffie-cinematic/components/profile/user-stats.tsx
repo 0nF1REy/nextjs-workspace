@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faHeart, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faHeart, faComments } from "@fortawesome/free-solid-svg-icons";
 import { getUserStats } from "@/lib/user";
 
 interface UserStatsProps {
@@ -31,20 +31,20 @@ export default function UserStats({ userId }: UserStatsProps) {
       borderColor: "border-red-500/30",
     },
     {
-      icon: faStar,
+      icon: faComments,
       label: "Reviews",
       value: stats.totalReviews,
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-600/20",
-      borderColor: "border-yellow-500/30",
-    },
-    {
-      icon: faThumbsUp,
-      label: "Avaliações",
-      value: stats.totalRatings,
       color: "text-blue-400",
       bgColor: "bg-blue-600/20",
       borderColor: "border-blue-500/30",
+    },
+    {
+      icon: faStar,
+      label: "Avaliações",
+      value: stats.totalRatings,
+      color: "text-yellow-400",
+      bgColor: "bg-yellow-600/20",
+      borderColor: "border-yellow-500/30",
     },
   ];
 

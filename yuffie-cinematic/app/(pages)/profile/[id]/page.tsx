@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
-  faThumbsUp,
   faStar,
+  faComments,
   faCalendar,
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
@@ -47,7 +47,10 @@ const DynamicUserFavorites = dynamic(
     loading: () => (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {Array.from({ length: 6 }, (_, i) => (
-          <div key={i} className="bg-gray-800 animate-pulse rounded-lg aspect-[3/4]" />
+          <div
+            key={i}
+            className="bg-gray-800 animate-pulse rounded-lg aspect-[3/4]"
+          />
         ))}
       </div>
     ),
@@ -226,7 +229,7 @@ export default function ProfilePage({ params }: PageProps) {
               className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-sm md:text-base"
             >
               <FontAwesomeIcon
-                icon={faStar}
+                icon={faComments}
                 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2"
               />
               <span>Reviews</span>
@@ -236,7 +239,7 @@ export default function ProfilePage({ params }: PageProps) {
               className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-sm md:text-base"
             >
               <FontAwesomeIcon
-                icon={faThumbsUp}
+                icon={faStar}
                 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2"
               />
               <span className="hidden sm:inline">Avaliações</span>
@@ -247,7 +250,8 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsContent value="favorites">
             <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
               <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl">
+                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
+                  <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
                   Favoritos de {user.username}
                 </CardTitle>
               </CardHeader>
@@ -260,7 +264,8 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsContent value="reviews">
             <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
               <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl">
+                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
+                  <FontAwesomeIcon icon={faComments} className="w-5 h-5" />
                   Reviews de {user.username}
                 </CardTitle>
               </CardHeader>
@@ -273,7 +278,8 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsContent value="ratings">
             <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
               <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl">
+                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
+                  <FontAwesomeIcon icon={faStar} className="w-5 h-5" />
                   Avaliações de {user.username}
                 </CardTitle>
               </CardHeader>
