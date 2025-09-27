@@ -23,6 +23,9 @@ import Image from "next/image";
 import { getCurrentUser, getLoggedUsername } from "@/lib/user";
 import { Review } from "@/lib/details/types";
 import { UserReview } from "@/lib/user/types";
+import { movieItems } from "@/lib/items/movies";
+import { seriesItems } from "@/lib/items/series";
+import { animeItems } from "@/lib/items/animes";
 import {
   getUserReviewsFromStorage,
   saveUserReviewToStorage,
@@ -32,7 +35,27 @@ import {
   getUserRatingFromStorage,
   isFavoriteInStorage,
 } from "@/lib/user/storage";
+
 import { RATING_MAX } from "./StarRatingInteractive";
+
+// Função para detectar o tipo de conteúdo baseado no ID
+const getContentType = (cinematicId: string): "filme" | "série" | "anime" => {
+  const allItems = [...movieItems, ...seriesItems, ...animeItems];
+  const item = allItems.find((item) => item.id === cinematicId);
+
+  if (item?.type === "movie") return "filme";
+  if (item?.type === "serie") return "série";
+  if (item?.type === "anime") return "anime";
+
+  // Fallback
+  if (cinematicId.includes("movie") || cinematicId.includes("film"))
+    return "filme";
+  if (cinematicId.includes("series") || cinematicId.includes("serie"))
+    return "série";
+  if (cinematicId.includes("anime")) return "anime";
+
+  return "filme";
+};
 
 interface MovieDetailsProps {
   genre?: string[];
@@ -64,6 +87,21 @@ type ReviewsAction =
 export const getAllUserReviews = (): UserReview[] => {
   return getUserReviewsFromStorage();
 };
+
+function formatContentTypeWithArticle(type: string) {
+  const lower = type.toLowerCase();
+  switch (lower) {
+    case "filme":
+      return "este filme";
+    case "anime":
+      return "este anime";
+    case "série":
+    case "serie":
+      return "esta série";
+    default:
+      return "esta obra";
+  }
+}
 
 function MovieDetails({ genre, duration }: MovieDetailsProps) {
   return (
@@ -265,6 +303,9 @@ function ReviewForm({
   const userAvatarUrl =
     currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
+  // Detectar tipo de conteúdo dinamicamente
+  const contentType = getContentType(cinematicId);
+
   useEffect(() => {
     const rating = getUserRatingFromStorage(cinematicId);
     setUserRating(rating);
@@ -299,9 +340,7 @@ function ReviewForm({
     }
 
     if (userRating === null || userRating === 0) {
-      alert(
-        "Por favor, avalie o filme/série/anime antes de enviar sua review."
-      );
+      alert(`Por favor, avalie o ${contentType} antes de enviar sua review.`);
       return;
     }
 
@@ -345,8 +384,9 @@ function ReviewForm({
               icon={faExclamationTriangle}
               className="w-4 h-4 text-yellow-400"
             />
-            Você precisa avaliar o filme/série/anime antes de escrever uma
-            review. Use as estrelas na seção principal para dar sua nota.
+            Você precisa avaliar {formatContentTypeWithArticle(contentType)}{" "}
+            antes de escrever uma review. Use as estrelas na seção principal
+            para dar sua nota.
           </p>
         </div>
       )}
@@ -364,7 +404,9 @@ function ReviewForm({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500 min-h-[100px] resize-vertical"
-            placeholder="Escreva sua opinião sobre este filme/série/anime..."
+            placeholder={`Escreva sua opinião sobre ${formatContentTypeWithArticle(
+              contentType
+            )}...`}
             maxLength={500}
           />
           <p className="text-xs text-gray-500 mt-1">
