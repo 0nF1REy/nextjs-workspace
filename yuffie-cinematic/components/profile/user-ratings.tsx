@@ -3,13 +3,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar as faStarSolid,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Image from "next/image";
 
 import { getUserRatings } from "@/lib/user/storage";
+import { getUserFavorites } from "@/components/description/user-interactive-elements";
 import { items } from "@/lib/items";
-import { Card, CardContent } from "@/components/ui/card";
 import { Item as CinematicItem } from "@/lib/items/types";
 import { UserRating } from "@/lib/user/types";
 
@@ -17,36 +20,77 @@ interface RatedCinematicItem extends CinematicItem {
   userRating?: number;
 }
 
-// Componente para exibir um único item cinematográfico
-const RatedItemCard = ({ item }: { item: CinematicItem }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    className="relative group"
-  >
-    <Link href={`/details/${item.id}`}>
-      <Card className="overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:shadow-red-500/30">
-        <CardContent className="p-0">
+const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  useEffect(() => {
+    // Verificar se o item está nos favoritos
+    const userFavorites = getUserFavorites();
+    setIsFavorited(userFavorites.some((fav) => fav.id === item.id));
+  }, [item.id]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="group relative bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl"
+    >
+      <Link href={`/details/${item.id}`}>
+        <div className="relative h-64">
           <Image
             src={item.poster}
             alt={item.title}
-            width={200}
-            height={300}
-            className="w-full h-auto object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
           />
-        </CardContent>
-      </Card>
-      <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <p className="text-white text-center text-sm font-bold p-2">
-          {item.title}
-        </p>
-      </div>
-    </Link>
-  </motion.div>
-);
 
-// Componente para a seleção de estrelas
+          {/* Overlay com informações */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <h4 className="text-white font-semibold text-sm mb-1 line-clamp-2">
+                {item.title}
+              </h4>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300 text-xs capitalize">
+                  {item.type === "movie"
+                    ? "Filme"
+                    : item.type === "serie"
+                    ? "Série"
+                    : "Anime"}
+                </span>
+                {/* Mostrar coração apenas se estiver favoritado */}
+                {isFavorited && (
+                  <div className="flex items-center gap-1">
+                    <FontAwesomeIcon
+                      icon={faHeart}
+                      className="w-3 h-3 text-red-500"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Rating badge no topo direito */}
+          <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1">
+            <div className="flex items-center gap-1">
+              <FontAwesomeIcon
+                icon={faStarSolid}
+                className="w-3 h-3 text-yellow-400"
+              />
+              <span className="text-white text-xs font-semibold">
+                {item.userRating}
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
 const StarFilter = ({
   selectedRating,
   onSelectRating,
@@ -86,7 +130,6 @@ const StarFilter = ({
   );
 };
 
-// Componente principal
 export default function UserRatings() {
   const [ratedItems, setRatedItems] = useState<RatedCinematicItem[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -140,7 +183,7 @@ export default function UserRatings() {
       {filteredItems.length > 0 ? (
         <motion.div
           layout
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
         >
           {filteredItems.map((item) => (
             <RatedItemCard key={item.id} item={item} />
