@@ -11,11 +11,13 @@ import {
   faChevronDown,
   faChevronUp,
   faExclamationTriangle,
+  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as faHeartRegular,
   faStar as faStarRegular,
   faStarHalfStroke,
+  faThumbsUp as faThumbsUpRegular,
 } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
 import { getCurrentUser, getLoggedUsername } from "@/lib/user";
@@ -233,15 +235,15 @@ function ReviewItem({
           onClick={() => onLike(review.id)}
           className={`flex items-center gap-2 text-xs transition-colors ${
             isLiked
-              ? "text-red-400 hover:text-red-300"
-              : "text-gray-400 hover:text-red-400"
+              ? "text-blue-400 hover:text-blue-300"
+              : "text-gray-400 hover:text-blue-400"
           }`}
         >
           <FontAwesomeIcon
-            icon={isLiked ? faHeart : faHeartRegular}
+            icon={isLiked ? faThumbsUp : faThumbsUpRegular}
             className="w-4 h-4"
           />
-          Curtir review ({review.likes || 0})
+          {isLiked ? "Descurtir" : "Curtir"} review ({review.likes || 0})
         </Button>
       </div>
     </div>
@@ -391,23 +393,23 @@ function reviewsReducer(
       const { reviews, userReviews, likedReviews, cinematicId } =
         action.payload;
 
-      const reviewsFromProps = reviews.map((r) => ({
-        ...r,
+      const reviewsFromProps = reviews.map((review) => ({
+        ...review,
         cinematicId: cinematicId,
-        avatarSeed: r.author,
-        likes: 0,
+        avatarSeed: review.author,
+        likes: likedReviews.includes(review.id) ? 1 : 0,
       }));
 
-      const allBaseReviews = [...reviewsFromProps, ...userReviews];
-
-      const combinedReviewsWithLikes = allBaseReviews.map((review) => ({
+      const adjustedUserReviews = userReviews.map((review) => ({
         ...review,
         likes: likedReviews.includes(review.id) ? 1 : review.likes,
       }));
 
+      const combinedReviews = [...reviewsFromProps, ...adjustedUserReviews];
+
       return {
         ...state,
-        allReviews: combinedReviewsWithLikes,
+        allReviews: combinedReviews,
         userReviews: userReviews,
         likedReviews: likedReviews,
       };
