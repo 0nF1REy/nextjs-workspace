@@ -505,12 +505,18 @@ function ReviewsList({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Formulário de review */}
-      <div className="flex-shrink-0 mb-4">
+      {/* Formulário com transição */}
+      <div
+        className={`overflow-hidden transition-all duration-500 ease-in-out mb-4 ${
+          showReviews
+            ? "max-h-0 opacity-0 scale-95"
+            : "max-h-[600px] opacity-100 scale-100"
+        }`}
+      >
         <ReviewForm cinematicId={cinematicId} onSubmit={handleNewReview} />
       </div>
 
-      {/* Botão para mostrar/ocultar reviews */}
+      {/* Botão de toggle */}
       <div className="flex-shrink-0 mb-4">
         <Button
           onClick={() => setShowReviews(!showReviews)}
@@ -533,7 +539,7 @@ function ReviewsList({
         </Button>
       </div>
 
-      {/* Container com scroll para as reviews */}
+      {/* Lista de reviews */}
       {showReviews && (
         <div className="flex-1 min-h-0">
           <div className="h-full overflow-y-auto pr-2 space-y-4 custom-scrollbar">
@@ -559,7 +565,6 @@ function ReviewsList({
         </div>
       )}
 
-      {/* Placeholder quando reviews estão ocultas */}
       {!showReviews && allReviews.length > 0 && (
         <div className="flex-1 flex items-center justify-center text-gray-500">
           <div className="text-center">
