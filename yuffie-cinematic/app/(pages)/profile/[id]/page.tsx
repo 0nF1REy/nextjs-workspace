@@ -47,7 +47,7 @@ const DynamicUserFavorites = dynamic(
     loading: () => (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {Array.from({ length: 6 }, (_, i) => (
-          <div key={i} className="bg-gray-800 animate-pulse rounded-lg h-64" />
+          <div key={i} className="bg-gray-800 animate-pulse rounded-lg aspect-[3/4]" />
         ))}
       </div>
     ),
@@ -121,9 +121,9 @@ export default function ProfilePage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 px-4 py-8">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 pt-10">
       {/* Header do Perfil */}
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl mb-8">
           <CardContent className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">

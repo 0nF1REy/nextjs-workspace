@@ -37,7 +37,7 @@ const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
       className="group relative bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl"
     >
       <Link href={`/details/${item.id}`}>
-        <div className="relative h-64">
+        <div className="relative aspect-[3/4]">
           <Image
             src={item.poster}
             alt={item.title}

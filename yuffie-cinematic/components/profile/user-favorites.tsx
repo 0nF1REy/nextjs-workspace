@@ -42,7 +42,7 @@ export default function UserFavorites({ userId }: UserFavoritesProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {Array.from({ length: 6 }, (_, i) => (
-          <div key={i} className="bg-gray-800 animate-pulse rounded-lg h-64" />
+          <div key={i} className="bg-gray-800 animate-pulse rounded-lg aspect-[3/4]" />
         ))}
       </div>
     );
@@ -79,7 +79,7 @@ export default function UserFavorites({ userId }: UserFavoritesProps) {
             className="group relative bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl"
           >
             <Link href={`/details/${favorite.id}`}>
-              <div className="relative h-64">
+              <div className="relative aspect-[3/4]">
                 <Image
                   src={favorite.cover}
                   alt={favorite.title}
