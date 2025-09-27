@@ -215,7 +215,7 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsList className="grid grid-cols-3 gap-2 mb-6 bg-gray-800">
             <TabsTrigger
               value="favorites"
-              className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-sm md:text-base"
             >
               <FontAwesomeIcon
                 icon={faHeart}
@@ -226,7 +226,7 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="reviews"
-              className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-sm md:text-base"
             >
               <FontAwesomeIcon
                 icon={faComments}
@@ -236,7 +236,7 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="ratings"
-              className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white text-sm md:text-base"
             >
               <FontAwesomeIcon
                 icon={faStar}
@@ -264,7 +264,7 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsContent value="reviews">
             <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
               <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
+                <CardTitle className="text-blue-600 text-lg md:text-xl flex items-center gap-2">
                   <FontAwesomeIcon icon={faComments} className="w-5 h-5" />
                   Reviews de {user.username}
                 </CardTitle>
@@ -278,7 +278,7 @@ export default function ProfilePage({ params }: PageProps) {
           <TabsContent value="ratings">
             <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
               <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
+                <CardTitle className="text-yellow-600 text-lg md:text-xl flex items-center gap-2">
                   <FontAwesomeIcon icon={faStar} className="w-5 h-5" />
                   Avaliações de {user.username}
                 </CardTitle>
