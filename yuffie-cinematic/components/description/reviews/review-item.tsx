@@ -127,7 +127,8 @@ export function ReviewItem({
             icon={isLiked ? faThumbsUp : faThumbsUpRegular}
             className="w-4 h-4"
           />
-          {isLiked ? "Descurtir" : "Curtir"} review ({review.likes || 0})
+          {isLiked ? "Descurtir" : "Curtir"} review ({review.likes || 0}{" "}
+          {(review.likes || 0) === 1 ? "curtida" : "curtidas"})
         </Button>
       </div>
     </div>

@@ -7,13 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faStar,
   faStarHalf,
-  faHeart,
   faCalendar,
   faArrowRight,
+  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarOutline } from "@fortawesome/free-regular-svg-icons";
 import { getAllUserReviews } from "@/components/description/reviews/utils";
 import { getUserByUsername, getSimulatedUserReviews } from "@/lib/user";
+import { getLikedReviewsFromStorage } from "@/lib/user/storage";
 import { cinematics } from "@/lib/details";
 import { UserReview } from "@/lib/user/types";
 
@@ -74,6 +75,10 @@ export default function UserReviews({ userId }: UserReviewsProps) {
         const userReviews = getAllUserReviews().filter(
           (review) => review.author === user.username
         );
+
+        // Obter reviews curtidas do localStorage
+        const likedReviewIds = getLikedReviewsFromStorage();
+
         const typedReviews: UserReview[] = userReviews.map((review) => ({
           id: review.id,
           author: review.author,
@@ -82,11 +87,10 @@ export default function UserReviews({ userId }: UserReviewsProps) {
           date: review.date || new Date().toISOString(),
           cinematicId: review.cinematicId,
           avatarSeed: review.avatarSeed,
-          likes: review.likes,
+          likes: likedReviewIds.includes(review.id) ? 1 : 0,
         }));
         setReviews(typedReviews);
       } else {
-        // Para outros usuários, usar dados simulados
         const simulatedReviews = getSimulatedUserReviews(user.username);
         setReviews(simulatedReviews);
       }
@@ -195,10 +199,32 @@ export default function UserReviews({ userId }: UserReviewsProps) {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
-                    <FontAwesomeIcon icon={faHeart} className="w-3 h-3" />
-                    <span>{review.likes || 0} likes</span>
+                <div
+                  className={`flex items-center justify-between pt-2 border-t ${
+                    (review.likes || 0) > 0
+                      ? "border-blue-700/30"
+                      : "border-gray-700"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-sm">
+                    <FontAwesomeIcon
+                      icon={faThumbsUp}
+                      className={`w-3 h-3 ${
+                        (review.likes || 0) > 0
+                          ? "text-blue-400"
+                          : "text-gray-500"
+                      }`}
+                    />
+                    <span
+                      className={`${
+                        (review.likes || 0) > 0
+                          ? "text-blue-400 font-medium"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {review.likes || 0}{" "}
+                      {(review.likes || 0) === 1 ? "curtida" : "curtidas"}
+                    </span>
                   </div>
 
                   {cinematic && (
