@@ -48,7 +48,7 @@ export default function HomePage() {
   );
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
+    <main className="min-h-screen w-full bg-[#131b22] text-gray-100">
       {/* HeroVideo full screen */}
       <div className="w-full h-screen">
         <HeroVideo

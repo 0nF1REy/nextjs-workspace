@@ -21,7 +21,7 @@ export default function NotFoundPage({ message }: NotFoundPageProps) {
     message || "Parece que você se aventurou no reino digital desconhecido.";
 
   return (
-    <main className="bg-[#0d0d0d] text-gray-200 min-h-screen flex flex-col">
+    <main className="bg-[#131b22] text-gray-200 min-h-screen flex flex-col">
       <section className="flex-grow flex items-center justify-center px-6 py-12 md:px-12">
         <div className="text-center space-y-6">
           <motion.h1

@@ -72,7 +72,7 @@ export default function GenericPage({ items, title }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 pt-4">
+    <main className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
       {/* Main Container / Constrained Wrapper */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <section className="py-12 pt-24">

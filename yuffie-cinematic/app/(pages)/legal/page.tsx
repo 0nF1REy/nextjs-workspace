@@ -15,10 +15,10 @@ export default function LegalPage() {
   }, [initialTab]);
 
   return (
-    <section className="w-full min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-gray-100 flex items-center justify-center px-4 py-12">
+    <section className="w-full min-h-screen bg-[#131b22] text-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-4xl flex flex-col items-center gap-8">
         <motion.h1
-          className="text-2xl sm:text-3xl lg:text-3xl font-bold text-center text-red-600"
+          className="text-2xl sm:text-3xl lg:text-3xl font-bold text-center text-red-500"
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -35,19 +35,19 @@ export default function LegalPage() {
           <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-2xl mx-auto gap-2 h-auto p-2 bg-gray-800/50 backdrop-blur-sm rounded-xl">
             <TabsTrigger
               value="aviso"
-              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-600 data-[state=active]:text-white whitespace-nowrap"
+              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white whitespace-nowrap"
             >
               Aviso Legal
             </TabsTrigger>
             <TabsTrigger
               value="privacidade"
-              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-600 data-[state=active]:text-white whitespace-nowrap"
+              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white whitespace-nowrap"
             >
               Política de Privacidade
             </TabsTrigger>
             <TabsTrigger
               value="termos"
-              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-600 data-[state=active]:text-white whitespace-nowrap"
+              className="text-sm sm:text-base px-3 py-3 text-gray-300 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white whitespace-nowrap"
             >
               Termos de Uso
             </TabsTrigger>

@@ -108,7 +108,7 @@ export default function ProfilePage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center p-4">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500" />
       </div>
     );
@@ -124,7 +124,7 @@ export default function ProfilePage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 pt-10">
+    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10">
       {/* Header do Perfil */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl mb-8">
