@@ -23,7 +23,7 @@ export function CategoryCarouselItem({
   return (
     <motion.div
       key={`${categoryKey}-${item.id}-${idx}`}
-      className="min-w-[200px] flex-shrink-0"
+      className="min-w-[200px] flex-shrink-0 p-2"
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 200 }}
     >

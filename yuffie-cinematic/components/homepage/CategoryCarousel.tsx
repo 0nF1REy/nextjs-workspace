@@ -107,11 +107,13 @@ export function CategoryCarousel({
 
         <motion.div
           ref={carouselRef}
-          className="flex overflow-x-auto gap-6 pb-4 scrollbar-none"
+          className="flex overflow-x-auto gap-4 pb-4 scrollbar-none px-4"
           style={{
             overflowY: "visible",
             paddingTop: "8px",
             paddingBottom: "16px",
+            marginLeft: "-16px",
+            marginRight: "-16px",
           }}
         >
           {filteredItems.map((item, idx) => (
