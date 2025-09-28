@@ -80,7 +80,7 @@ export function CategoryCarousel({
   const filteredItems = items.filter((i) => i.type === category.key);
 
   return (
-    <section className="px-6 md:px-12 py-8">
+    <section className="py-8">
       <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
         {category.label}
       </h2>

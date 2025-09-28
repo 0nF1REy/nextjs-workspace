@@ -19,7 +19,7 @@ export function HighlightGrid({
   destaquesRef,
 }: HighlightGridProps) {
   return (
-    <section ref={destaquesRef} className="px-6 md:px-12 py-12">
+    <section ref={destaquesRef} className="py-12">
       <h2 className="text-3xl md:text-4xl font-bold text-red-500 mb-8">
         Destaques
       </h2>

@@ -49,27 +49,33 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
-      <HeroVideo
-        videoItems={videoItems}
-        getCinematicDetails={getCinematicDetails}
-        scrollToRef={scrollToRef}
-        destaquesRef={destaquesRef}
-      />
-
-      <HighlightGrid
-        highlights={highlights}
-        getCinematicDetails={getCinematicDetails}
-        destaquesRef={destaquesRef}
-      />
-
-      {categories.map((cat) => (
-        <CategoryCarousel
-          key={cat.key}
-          category={cat}
-          items={items}
+      {/* HeroVideo full screen */}
+      <div className="w-full h-screen">
+        <HeroVideo
+          videoItems={videoItems}
           getCinematicDetails={getCinematicDetails}
+          scrollToRef={scrollToRef}
+          destaquesRef={destaquesRef}
         />
-      ))}
+      </div>
+
+      {/* Main Container / Constrained Wrapper */}
+      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <HighlightGrid
+          highlights={highlights}
+          getCinematicDetails={getCinematicDetails}
+          destaquesRef={destaquesRef}
+        />
+
+        {categories.map((cat) => (
+          <CategoryCarousel
+            key={cat.key}
+            category={cat}
+            items={items}
+            getCinematicDetails={getCinematicDetails}
+          />
+        ))}
+      </div>
     </main>
   );
 }
