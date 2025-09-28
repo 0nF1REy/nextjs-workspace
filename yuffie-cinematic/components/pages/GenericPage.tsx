@@ -72,154 +72,157 @@ export default function GenericPage({ items, title }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100">
-      <section className="px-6 md:px-12 py-12 pt-24">
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-4">
-            {title}
-          </h1>
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-            Explore nossa coleção completa de {title.toLowerCase()}. De
-            clássicos marcantes a lançamentos recentes.
-          </p>
-        </motion.div>
-
-        {/* Busca específica da página */}
-        <motion.div
-          className="max-w-2xl mx-auto mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="relative">
-            <Input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={`Buscar ${title.toLowerCase()}...`}
-              className="bg-gray-800 text-white border-gray-700 w-full pl-12 pr-12 py-3 text-lg"
-            />
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"
-            />
-            {searchTerm && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-              >
-                <FontAwesomeIcon icon={faTimes} className="h-5 w-5" />
-              </button>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Controles de ordenação e contador */}
-        <motion.div
-          className="max-w-4xl mx-auto mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-gray-400 text-sm">Ordenar por:</span>
-            <Button
-              variant={sortBy === "title" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => handleSortChange("title")}
-              className="text-xs"
-            >
-              Título {sortBy === "title" && (sortOrder === "asc" ? "↑" : "↓")}
-            </Button>
-            <Button
-              variant={sortBy === "rating" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => handleSortChange("rating")}
-              className="text-xs"
-            >
-              Nota {sortBy === "rating" && (sortOrder === "asc" ? "↑" : "↓")}
-            </Button>
-          </div>
-
-          <p className="text-gray-400 text-center">
-            {filteredAndSortedItems.length} {title.toLowerCase()} encontrado
-            {filteredAndSortedItems.length !== 1 ? "s" : ""}
-            {searchTerm && (
-              <span className="text-red-400 ml-1">
-                para &ldquo;{searchTerm}&rdquo;
-              </span>
-            )}
-          </p>
-        </motion.div>
-      </section>
-
-      <section className="px-6 md:px-12 pb-12">
-        {filteredAndSortedItems.length > 0 ? (
+    <main className="min-h-screen w-full bg-gradient-to-b from-[#0d0d0d] via-gray-900 to-black text-gray-100 pt-4">
+      {/* Main Container / Constrained Wrapper */}
+      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section className="py-12 pt-24">
           <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {filteredAndSortedItems.map((item, idx) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.05 }}
-                whileHover={{ scale: 1.05 }}
+            <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-4">
+              {title}
+            </h1>
+            <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
+              Explore nossa coleção completa de {title.toLowerCase()}. De
+              clássicos marcantes a lançamentos recentes.
+            </p>
+          </motion.div>
+
+          {/* Busca específica da página */}
+          <motion.div
+            className="max-w-2xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="relative">
+              <Input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={`Buscar ${title.toLowerCase()}...`}
+                className="bg-gray-800 text-white border-gray-700 w-full pl-12 pr-12 py-3 text-lg"
+              />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"
+              />
+              {searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                >
+                  <FontAwesomeIcon icon={faTimes} className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Controles de ordenação e contador */}
+          <motion.div
+            className="max-w-4xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-gray-400 text-sm">Ordenar por:</span>
+              <Button
+                variant={sortBy === "title" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleSortChange("title")}
+                className="text-xs"
               >
-                <Link href={`/details/${item.id}`}>
-                  <div className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
-                    <div className="aspect-[3/4] relative overflow-hidden">
-                      <Image
-                        src={item.poster}
-                        alt={item.title}
-                        fill
-                        className="object-cover w-full h-full"
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <div className="w-full text-center">
-                        <h3 className="text-xs font-medium text-gray-200 truncate">
-                          {item.title}
-                        </h3>
+                Título {sortBy === "title" && (sortOrder === "asc" ? "↑" : "↓")}
+              </Button>
+              <Button
+                variant={sortBy === "rating" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleSortChange("rating")}
+                className="text-xs"
+              >
+                Nota {sortBy === "rating" && (sortOrder === "asc" ? "↑" : "↓")}
+              </Button>
+            </div>
+
+            <p className="text-gray-400 text-center">
+              {filteredAndSortedItems.length} {title.toLowerCase()} encontrado
+              {filteredAndSortedItems.length !== 1 ? "s" : ""}
+              {searchTerm && (
+                <span className="text-red-400 ml-1">
+                  para &ldquo;{searchTerm}&rdquo;
+                </span>
+              )}
+            </p>
+          </motion.div>
+        </section>
+
+        <section className="pb-12">
+          {filteredAndSortedItems.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              {filteredAndSortedItems.map((item, idx) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: idx * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <Link href={`/details/${item.id}`}>
+                    <div className="group bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
+                      <div className="aspect-[3/4] relative overflow-hidden">
+                        <Image
+                          src={item.poster}
+                          alt={item.title}
+                          fill
+                          className="object-cover w-full h-full"
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                        />
+                      </div>
+                      <div className="p-3">
+                        <div className="w-full text-center">
+                          <h3 className="text-xs font-medium text-gray-200 truncate group-hover:text-cyan-300 transition-colors duration-300">
+                            {item.title}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            className="text-center py-12 text-gray-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            {searchTerm ? (
-              <div>
-                <p className="text-lg mb-4">
-                  Nenhum {title.toLowerCase()} encontrado para &ldquo;
-                  {searchTerm}&rdquo;
-                </p>
-                <Button onClick={clearSearch} variant="outline" size="sm">
-                  Limpar busca
-                </Button>
-              </div>
-            ) : (
-              <p>Nenhum {title.toLowerCase()} encontrado</p>
-            )}
-          </motion.div>
-        )}
-      </section>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              className="text-center py-12 text-gray-400"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              {searchTerm ? (
+                <div>
+                  <p className="text-lg mb-4">
+                    Nenhum {title.toLowerCase()} encontrado para &ldquo;
+                    {searchTerm}&rdquo;
+                  </p>
+                  <Button onClick={clearSearch} variant="outline" size="sm">
+                    Limpar busca
+                  </Button>
+                </div>
+              ) : (
+                <p>Nenhum {title.toLowerCase()} encontrado</p>
+              )}
+            </motion.div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }
