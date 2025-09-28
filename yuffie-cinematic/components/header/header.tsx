@@ -10,7 +10,7 @@ import { UserProfile } from "./user-profile";
 export function HeaderComponent() {
   return (
     <header className="w-full fixed top-0 z-50 bg-gradient-to-b from-black/90 to-transparent">
-      <div className="max-w-screen-2xl mx-auto flex items-center justify-between px-6 py-4">
+      <div className="max-w-screen-2xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center gap-3">
           <Link href="/">
             <Image

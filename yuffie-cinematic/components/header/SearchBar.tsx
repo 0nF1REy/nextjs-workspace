@@ -94,7 +94,7 @@ export function SearchBar() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setFocused(true)}
-            placeholder="Buscar filmes ou séries..."
+            placeholder="Buscar filmes, animes ou séries..."
             className="bg-gray-800 text-white border-gray-700 w-full"
           />
           <Button
