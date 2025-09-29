@@ -7,7 +7,7 @@ export function BottomBar() {
     <div className="mt-12 border-t-2 border-gray-700 pt-8">
       <div className="flex flex-col gap-6">
         {/* Logos parceiros */}
-        <div className="flex flex-wrap justify-center gap-6 border-b border-gray-700 w-[50%] mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 border-b-2 border-dashed border-gray-700 w-[50%] mx-auto">
           {[
             {
               src: "/assets/images/partners/alpha-logotipo.svg",
