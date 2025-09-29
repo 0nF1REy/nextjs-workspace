@@ -7,7 +7,7 @@ export function BottomBar() {
     <div className="mt-12 border-t-2 border-gray-700 pt-8">
       <div className="flex flex-col gap-6">
         {/* Logos parceiros */}
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-6 border-b border-gray-700 w-[50%] mx-auto">
           {[
             {
               src: "/assets/images/partners/alpha-logotipo.svg",
@@ -60,7 +60,7 @@ export function BottomBar() {
               href={logo.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block cursor-pointer"
+              className="w-1/3 sm:w-auto cursor-pointer flex justify-center mb-4"
             >
               <Image
                 src={logo.src}
@@ -68,41 +68,61 @@ export function BottomBar() {
                 width={60}
                 height={30}
                 className="
-                    opacity-60
-                    grayscale
-                    brightness-75
-                    contrast-90
-                    hover:opacity-90
-                    hover:grayscale-0
-                    hover:brightness-80
-                    hover:contrast-95
-                    hover:scale-110
-                    hover:rotate-12
-                    hover:-translate-y-1
-                    hover:drop-shadow-[0_0_8px_rgb(255,0,0)]
-                    transition
-                    duration-300
-                    ease-in-out
-                  "
+                  opacity-60
+                  grayscale
+                  brightness-75
+                  contrast-90
+                  hover:opacity-90
+                  hover:grayscale-0
+                  hover:brightness-80
+                  hover:contrast-95
+                  hover:scale-110
+                  hover:rotate-12
+                  hover:-translate-y-1
+                  hover:drop-shadow-[0_0_8px_rgb(255,0,0)]
+                  transition
+                  duration-300
+                  ease-in-out
+                "
               />
             </a>
           ))}
         </div>
 
         {/* Legal + copyright */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col items-center gap-4 pt-6 md:flex-row md:justify-between md:items-center border-b border-gray-700 pb-4">
+          {/* Links legais */}
+          <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-6 md:flex-1">
             {legalLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm text-gray-400 transition-colors hover:text-white"
+                className="
+                  relative
+                  text-sm text-gray-400
+                  transition-all duration-300
+                  hover:text-white
+                  hover:scale-110
+                  hover:brightness-125
+                  hover:drop-shadow-lg
+                  after:content-['']
+                  after:block
+                  after:h-[2px]
+                  after:bg-red-500
+                  after:scale-x-0
+                  after:origin-left
+                  after:transition-transform
+                  after:duration-300
+                  hover:after:scale-x-100
+                "
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <p className="text-sm text-gray-500 text-center">
+
+          {/* Copyright */}
+          <p className="text-sm text-gray-500 text-center mt-6 md:mt-0 md:text-right">
             &copy; {new Date().getFullYear()} Yuffie&apos;s Cinematic. Todos os
             direitos reservados.
           </p>
