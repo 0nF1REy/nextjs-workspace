@@ -99,7 +99,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Audrey",
     bio: "Especialista em Urgência e Emergência, dedicada à saúde.",
     joinDate: "2015-06-13",
-    favoriteGenres: ["Medical", "Health", "Drama"],
+    favoriteGenres: ["Drama", "Biography", "Romance"],
   },
   {
     id: "Charles",
@@ -108,7 +108,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Charles",
     bio: "Doutor em Desenvolvimento de Sistemas, apaixonado por tecnologia.",
     joinDate: "2010-05-15",
-    favoriteGenres: ["Technology", "Programming", "Innovation"],
+    favoriteGenres: ["Sci-Fi", "Thriller", "Drama"],
   },
   {
     id: "Danilo",
@@ -117,7 +117,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Danilo",
     bio: "Especialista em Programação Web, sempre buscando aprender mais.",
     joinDate: "2008-02-20",
-    favoriteGenres: ["Web Development", "Programming", "Technology"],
+    favoriteGenres: ["Action", "Adventure", "Comedy"],
   },
   {
     id: "Elaine",
@@ -135,7 +135,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Joao",
     bio: "Doutor em Segurança de Sistemas de Informação. Focado em proteção digital.",
     joinDate: "1990-03-12",
-    favoriteGenres: ["Cybersecurity", "Technology", "Research"],
+    favoriteGenres: ["Crime", "Mystery", "Thriller"],
   },
   {
     id: "Poliana",
@@ -144,7 +144,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Poliana",
     bio: "Especialista em Obstetrícia, cuidando da saúde materna.",
     joinDate: "2003-07-08",
-    favoriteGenres: ["Medical", "Health", "Education"],
+    favoriteGenres: ["Drama", "Family", "Biography"],
   },
   {
     id: "Regina",
@@ -153,7 +153,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Regina",
     bio: "Mestre em Vigilância Sanitária, comprometida com a prevenção.",
     joinDate: "2021-01-05",
-    favoriteGenres: ["Health", "Sanitation", "Research"],
+    favoriteGenres: ["Documentary", "Drama", "Biography"],
   },
   {
     id: "Vagner",
@@ -162,7 +162,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Vagner",
     bio: "Doutor em Gerontogeriátrica, especialista em cuidado a idosos.",
     joinDate: "2012-06-17",
-    favoriteGenres: ["Health", "Research", "Elder Care"],
+    favoriteGenres: ["Drama", "Comedy", "Family"],
   },
   {
     id: "Maira",
@@ -171,7 +171,7 @@ export const users: UserProfile[] = [
     avatar: "https://i.pravatar.cc/300?u=Maira",
     bio: "Especialista em Banco de Dados, apaixonada por organização de informações.",
     joinDate: "2024-09-25",
-    favoriteGenres: ["Database", "Technology", "Data Analysis"],
+    favoriteGenres: ["Mystery", "Crime", "Thriller"],
   },
 ];
 
