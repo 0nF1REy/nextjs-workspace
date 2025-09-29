@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function BrandLogo() {
   return (
-    <div className="flex justify-center md:justify-start">
+    <div className="flex items-center justify-center md:justify-start">
       <Link href="/">
         <Image
           src="/assets/images/brand/yuffie-cinematic-logotipo-02.png"

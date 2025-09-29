@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function BrandIsotype() {
   return (
-    <div className="flex justify-center lg:justify-end">
+    <div className="flex items-center justify-center lg:justify-end">
       <Link href="/">
         <Image
           src="/assets/images/brand/yuffie-cinematic-isotipo.png"
