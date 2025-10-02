@@ -81,9 +81,15 @@ export function CategoryCarousel({
 
   return (
     <section className="py-8">
-      <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-4">
-        {category.label}
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-red-500 mb-2 flex items-center gap-3">
+          <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+            <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+          </div>
+          {category.label}
+        </h2>
+        <div className="h-1 w-16 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
+      </div>
       <div className="relative py-2">
         {canScrollLeft && (
           <button

@@ -33,32 +33,34 @@ export function CategoryCarouselItem({
         )}`}
       >
         <div
-          className="group relative overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-red-900/40 
-                    hover:border-red-600 transition-all duration-500 rounded-lg shadow-md hover:shadow-lg cursor-pointer
-                    hover:brightness-110 transform"
+          className="group relative bg-[#0d1118] border border-red-900/40 text-gray-200 
+                   rounded-xl overflow-hidden shadow-lg transition-all duration-500 transform cursor-pointer
+                   hover:scale-105 hover:border-red-500/50 hover:brightness-110 
+                   hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
         >
+          {/* Gradient overlay */}
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none 
+                       transition-opacity duration-500 ease-out group-hover:from-red-500/8 group-hover:to-purple-500/8"
+          ></div>
+
           {/* Imagem */}
           <div className="relative h-60 overflow-hidden">
             <Image
               src={item.poster}
               alt={item.title}
               fill
-              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 group-hover:rotate-0.5"
+              className="object-cover w-full h-full transition-transform duration-500 
+                       group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
               priority={priority}
-            />
-
-            {/* Overlay */}
-            <div
-              className="absolute inset-0 bg-gradient-to-tr from-red-500/0 via-purple-500/10 to-blue-500/0 
-                        opacity-0 group-hover:opacity-20 transition-opacity duration-500"
             />
           </div>
 
           {/* Título */}
-          <div className="p-4">
+          <div className="relative z-10 p-4">
             <h3
-              className="text-base font-semibold text-gray-100 line-clamp-1 
-                       transition-all duration-500 group-hover:text-cyan-300 group-hover:scale-105"
+              className="text-base font-semibold text-gray-200 line-clamp-1 
+                       transition-all duration-500 group-hover:text-red-300 group-hover:scale-105"
             >
               {item.title}
             </h3>
