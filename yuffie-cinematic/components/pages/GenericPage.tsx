@@ -82,9 +82,15 @@ export default function GenericPage({ items, title }: PageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-4">
-              {title}
-            </h1>
+            <div className="mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-2 flex items-center justify-center gap-4">
+                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-red-500 rounded-full"></div>
+                </div>
+                {title}
+              </h1>
+              <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-red-400 rounded-full mx-auto"></div>
+            </div>
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
               Explore nossa coleção completa de {title.toLowerCase()}. De
               clássicos marcantes a lançamentos recentes.
@@ -104,16 +110,19 @@ export default function GenericPage({ items, title }: PageProps) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={`Buscar ${title.toLowerCase()}...`}
-                className="bg-gray-800 text-white border-gray-700 w-full pl-12 pr-12 py-3 text-lg"
+                className="bg-[#131b22]/80 text-white border border-gray-700/50 w-full pl-12 pr-12 py-3 text-lg
+                         focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 transition-all duration-300 
+                         rounded-lg placeholder:text-gray-500 backdrop-blur-sm"
               />
               <FontAwesomeIcon
                 icon={faSearch}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-400 h-5 w-5"
               />
               {searchTerm && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 
+                           transition-colors duration-300 hover:scale-110"
                 >
                   <FontAwesomeIcon icon={faTimes} className="h-5 w-5" />
                 </button>
@@ -128,13 +137,20 @@ export default function GenericPage({ items, title }: PageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-gray-400 text-sm">Ordenar por:</span>
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <span className="text-gray-400 text-sm font-medium">
+                Ordenar por:
+              </span>
               <Button
                 variant={sortBy === "title" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => handleSortChange("title")}
-                className="text-xs"
+                className={`text-sm transition-all duration-300 rounded-lg px-4 py-2
+                  ${
+                    sortBy === "title"
+                      ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold shadow-lg hover:shadow-red-500/25 border border-red-500/20"
+                      : "bg-gray-800/50 hover:bg-red-600/20 border border-gray-700/30 hover:border-red-500/50 text-gray-300 hover:text-red-300"
+                  }`}
               >
                 Título {sortBy === "title" && (sortOrder === "asc" ? "↑" : "↓")}
               </Button>
@@ -142,21 +158,31 @@ export default function GenericPage({ items, title }: PageProps) {
                 variant={sortBy === "rating" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => handleSortChange("rating")}
-                className="text-xs"
+                className={`text-sm transition-all duration-300 rounded-lg px-4 py-2
+                  ${
+                    sortBy === "rating"
+                      ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold shadow-lg hover:shadow-red-500/25 border border-red-500/20"
+                      : "bg-gray-800/50 hover:bg-red-600/20 border border-gray-700/30 hover:border-red-500/50 text-gray-300 hover:text-red-300"
+                  }`}
               >
                 Nota {sortBy === "rating" && (sortOrder === "asc" ? "↑" : "↓")}
               </Button>
             </div>
 
-            <p className="text-gray-400 text-center">
-              {filteredAndSortedItems.length} {title.toLowerCase()} encontrado
-              {filteredAndSortedItems.length !== 1 ? "s" : ""}
-              {searchTerm && (
-                <span className="text-red-400 ml-1">
-                  para &ldquo;{searchTerm}&rdquo;
-                </span>
-              )}
-            </p>
+            <div className="text-center bg-[#0d1118]/50 border border-red-900/40 rounded-xl p-4 backdrop-blur-sm">
+              <p className="text-gray-300 font-medium">
+                {filteredAndSortedItems.length} {title.toLowerCase()} encontrado
+                {filteredAndSortedItems.length !== 1 ? "s" : ""}
+                {searchTerm && (
+                  <span className="text-red-400 ml-1">
+                    para{" "}
+                    <span className="font-semibold">
+                      &ldquo;{searchTerm}&rdquo;
+                    </span>
+                  </span>
+                )}
+              </p>
+            </div>
           </motion.div>
         </section>
 
@@ -177,19 +203,36 @@ export default function GenericPage({ items, title }: PageProps) {
                   whileHover={{ scale: 1.05 }}
                 >
                   <Link href={`/details/${item.id}`}>
-                    <div className="group bg-gradient-to-br from-gray-900 to-black border border-red-900/40 text-gray-200 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg overflow-hidden">
+                    <div
+                      className="group relative bg-[#0d1118] border border-red-900/40 text-gray-200 
+                               rounded-xl overflow-hidden shadow-lg transition-all duration-500 transform cursor-pointer
+                               hover:scale-105 hover:border-red-500/50 hover:brightness-110 
+                               hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
+                    >
+                      {/* Gradient overlay */}
+                      <div
+                        className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none 
+                                   transition-opacity duration-500 ease-out group-hover:from-red-500/8 group-hover:to-purple-500/8"
+                      ></div>
+
                       <div className="aspect-[3/4] relative overflow-hidden">
                         <Image
                           src={item.poster}
                           alt={item.title}
                           fill
-                          className="object-cover w-full h-full"
+                          className="object-cover w-full h-full transition-transform duration-500 
+                                   group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
                           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
                         />
                       </div>
-                      <div className="p-3">
+
+                      <div className="relative z-10 p-3">
                         <div className="w-full text-center">
-                          <h3 className="text-xs font-medium text-gray-200 truncate group-hover:text-cyan-300 transition-colors duration-300">
+                          <h3
+                            className="text-xs font-medium text-gray-200 truncate 
+                                     transition-all duration-500 group-hover:text-red-300 
+                                     group-hover:scale-105"
+                          >
                             {item.title}
                           </h3>
                         </div>
@@ -201,24 +244,55 @@ export default function GenericPage({ items, title }: PageProps) {
             </motion.div>
           ) : (
             <motion.div
-              className="text-center py-12 text-gray-400"
+              className="text-center py-12"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              {searchTerm ? (
-                <div>
-                  <p className="text-lg mb-4">
-                    Nenhum {title.toLowerCase()} encontrado para &ldquo;
-                    {searchTerm}&rdquo;
-                  </p>
-                  <Button onClick={clearSearch} variant="outline" size="sm">
-                    Limpar busca
-                  </Button>
+              <div
+                className="max-w-md mx-auto bg-[#0d1118] border border-red-900/40 rounded-2xl p-8 
+                         shadow-lg backdrop-blur-sm"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none rounded-2xl"></div>
+
+                <div className="relative z-10">
+                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-8 h-8 bg-red-500/50 rounded-full"></div>
+                  </div>
+
+                  {searchTerm ? (
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold text-gray-200 mb-2">
+                        Nenhum resultado encontrado
+                      </h3>
+                      <p className="text-gray-400 mb-6">
+                        Nenhum {title.toLowerCase()} encontrado para{" "}
+                        <span className="text-red-400 font-semibold">
+                          &ldquo;{searchTerm}&rdquo;
+                        </span>
+                      </p>
+                      <Button
+                        onClick={clearSearch}
+                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 
+                                 text-white font-semibold shadow-lg transition-all duration-300 
+                                 hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] 
+                                 border border-red-500/20 rounded-lg"
+                      >
+                        Limpar busca
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-200 mb-2">
+                        Nenhum conteúdo disponível
+                      </h3>
+                      <p className="text-gray-400">
+                        Nenhum {title.toLowerCase()} encontrado
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <p>Nenhum {title.toLowerCase()} encontrado</p>
-              )}
+              </div>
             </motion.div>
           )}
         </section>
