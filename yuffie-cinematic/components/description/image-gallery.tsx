@@ -78,10 +78,10 @@ export default function ImageGallery({
             </div>
           ))}
         </div>
-        <p className="text-gray-400 mt-6 text-center flex items-center justify-center gap-2">
+        <div className="text-gray-400 mt-6 text-center flex items-center justify-center gap-2">
           <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div>
           Carregando imagens...
-        </p>
+        </div>
       </section>
     );
   }
