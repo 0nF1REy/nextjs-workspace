@@ -63,26 +63,30 @@ export default function LoginPage() {
       {/* Main Container / Constrained Wrapper */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-25 min-h-screen flex items-center justify-center">
         <Card
-          className="relative w-full max-w-md bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl rounded-2xl backdrop-blur-lg overflow-hidden
-                 transform transition-all duration-500 ease-in-out
-                 hover:scale-[1.01] hover:shadow-2xl hover:shadow-red-500/20"
+          className="relative w-full max-w-md bg-[#0d1118] 
+             border border-red-900/40 shadow-2xl rounded-2xl overflow-hidden
+             transition-all duration-700 ease-out
+             hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_40px_rgba(239,68,68,0.1)]
+             hover:border-red-800/60
+             hover:scale-[1.02]
+             hover:bg-[#0f141d]"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-purple-500/5 pointer-events-none transition-opacity duration-700 ease-out hover:from-red-500/8 hover:to-purple-500/8"></div>
+
           <CardHeader className="text-center space-y-4 pt-8 pb-6 relative z-10">
             {/* Isotipo */}
             <div className="flex justify-center">
               <Link
                 href="/"
                 className="group relative inline-block transform transition-all duration-500 ease-in-out 
-               hover:scale-108 hover:rotate-2 cursor-pointer
-               hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]
-               active:scale-95 active:rotate-0"
+                   hover:scale-108 hover:rotate-2 cursor-pointer
+                   hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]
+                   active:scale-95 active:rotate-0"
               >
-                {/* Imagem principal */}
                 <div
                   className="relative z-10 transition-all duration-500 ease-in-out
-                 group-hover:brightness-115 group-hover:contrast-110
-                 group-hover:saturate-130"
+                     group-hover:brightness-115 group-hover:contrast-110
+                     group-hover:saturate-130"
                 >
                   <Image
                     src="/assets/images/brand/yuffie-cinematic-isotipo.png"
@@ -90,7 +94,7 @@ export default function LoginPage() {
                     width={100}
                     height={100}
                     className="drop-shadow-lg transition-all duration-500 ease-in-out
-                   group-hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"
+                       group-hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"
                     priority
                   />
                 </div>
@@ -98,19 +102,19 @@ export default function LoginPage() {
                 {/* Partículas de brilho */}
                 <div
                   className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2
-                 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-200"
+                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-200"
                 >
                   <div className="w-1 h-1 bg-red-400 rounded-full animate-ping"></div>
                 </div>
                 <div
                   className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1
-                 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-300"
+                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-300"
                 >
                   <div className="w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
                 </div>
                 <div
                   className="absolute top-1/2 left-0 transform -translate-x-2 -translate-y-1/2
-                 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-400"
+                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-400"
                 >
                   <div className="w-1 h-1 bg-cyan-400 rounded-full animate-ping"></div>
                 </div>
