@@ -2,31 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Item } from "@/lib/items";
 
 interface CategoryCarouselItemProps {
   item: Item;
-  categoryKey: string;
   getCinematicDetails: (id: string) => { id: string } | undefined;
   priority: boolean;
-  idx: number;
 }
 
 export function CategoryCarouselItem({
   item,
-  categoryKey,
   getCinematicDetails,
   priority,
-  idx,
 }: CategoryCarouselItemProps) {
   return (
-    <motion.div
-      key={`${categoryKey}-${item.id}-${idx}`}
-      className="min-w-[200px] flex-shrink-0 p-2"
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 200 }}
-    >
+    <div className="min-w-[200px] flex-shrink-0 p-2">
       <Link
         href={`/details/${encodeURIComponent(
           getCinematicDetails(item.id)?.id || item.id
@@ -67,6 +57,6 @@ export function CategoryCarouselItem({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

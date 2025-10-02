@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -26,56 +26,19 @@ export function CategoryCarousel({
   items,
   getCinematicDetails,
 }: CategoryCarouselProps) {
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    dragFree: true,
+    containScroll: "trimSnaps",
+    align: "start",
+  });
 
-  const checkScrollState = useCallback(() => {
-    const el = carouselRef.current;
-    if (!el) return;
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
 
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
-  }, []);
-
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-
-    const handleScroll = () => checkScrollState();
-    const handleResize = () => {
-      setTimeout(() => checkScrollState(), 100);
-    };
-
-    el.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
-
-    const timeoutId = setTimeout(() => checkScrollState(), 100);
-
-    return () => {
-      el.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(timeoutId);
-    };
-  }, [checkScrollState]);
-
-  const scrollCarousel = useCallback(
-    (direction: "left" | "right") => {
-      const el = carouselRef.current;
-      if (!el) return;
-
-      const amount = el.clientWidth * 0.8;
-      el.scrollBy({
-        left: direction === "right" ? amount : -amount,
-        behavior: "smooth",
-      });
-
-      setTimeout(() => {
-        checkScrollState();
-      }, 300);
-    },
-    [checkScrollState]
-  );
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   const filteredItems = items.filter((i) => i.type === category.key);
 
@@ -91,48 +54,38 @@ export function CategoryCarousel({
         <div className="h-1 w-16 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
       </div>
       <div className="relative py-2">
-        {canScrollLeft && (
-          <button
-            onClick={() => scrollCarousel("left")}
-            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
-            aria-label="Scroll left"
-          >
-            <FontAwesomeIcon icon={faChevronLeft} size="lg" />
-          </button>
-        )}
-
-        {canScrollRight && (
-          <button
-            onClick={() => scrollCarousel("right")}
-            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
-            aria-label="Scroll right"
-          >
-            <FontAwesomeIcon icon={faChevronRight} size="lg" />
-          </button>
-        )}
-
-        <motion.div
-          ref={carouselRef}
-          className="flex overflow-x-auto gap-4 pb-4 scrollbar-none px-4"
-          style={{
-            overflowY: "visible",
-            paddingTop: "8px",
-            paddingBottom: "16px",
-            marginLeft: "-16px",
-            marginRight: "-16px",
-          }}
+        <button
+          onClick={scrollPrev}
+          className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+          aria-label="Scroll left"
         >
-          {filteredItems.map((item, idx) => (
-            <CategoryCarouselItem
-              key={`${category.key}-${item.id}-${idx}`}
-              item={item}
-              categoryKey={category.key}
-              getCinematicDetails={getCinematicDetails}
-              priority={idx < 3}
-              idx={idx}
-            />
-          ))}
-        </motion.div>
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+        </button>
+
+        <button
+          onClick={scrollNext}
+          className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-black/70 hover:bg-black/90 p-3 rounded-full text-red-500 transition shadow-lg"
+          aria-label="Scroll right"
+        >
+          <FontAwesomeIcon icon={faChevronRight} size="lg" />
+        </button>
+
+        <div className="embla" ref={emblaRef}>
+          <div className="embla__container flex gap-4">
+            {filteredItems.map((item, idx) => (
+              <div
+                key={`${category.key}-${item.id}-${idx}`}
+                className="embla__slide flex-none"
+              >
+                <CategoryCarouselItem
+                  item={item}
+                  getCinematicDetails={getCinematicDetails}
+                  priority={idx < 3}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
