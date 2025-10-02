@@ -127,59 +127,109 @@ export default function ProfilePage({ params }: PageProps) {
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10">
       {/* Header do Perfil */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl mb-8">
-          <CardContent className="p-4 md:p-6">
-            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
+        <Card
+          className="relative bg-[#0d1118] border border-red-900/40 shadow-2xl rounded-2xl overflow-hidden mb-8
+                       transition-all duration-700 ease-out
+                       hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_40px_rgba(239,68,68,0.1)]
+                       hover:border-red-800/60
+                       hover:scale-[1.01]"
+        >
+          {/* Gradient overlay */}
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-purple-500/5 pointer-events-none 
+                         transition-opacity duration-700 ease-out hover:from-red-500/8 hover:to-purple-500/8"
+          ></div>
+
+          <CardContent className="relative z-10 p-6 md:p-8">
+            <div className="flex flex-col md:flex-row gap-8 items-center">
               {/* Avatar */}
-              <div className="flex-shrink-0">
-                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-red-500/30">
-                  <Image
-                    src={
-                      user.avatar ||
-                      `https://i.pravatar.cc/300?u=${user.username}`
-                    }
-                    alt={`Avatar de ${user.username}`}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+              <div className="flex-shrink-0 md:self-center">
+                <div className="relative group">
+                  <div
+                    className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden 
+                                border-4 border-red-500/30 shadow-2xl
+                                transition-all duration-500 ease-out
+                                group-hover:border-red-400/50 group-hover:scale-105
+                                group-hover:shadow-[0_0_30px_rgba(239,68,68,0.4)]"
+                  >
+                    <Image
+                      src={
+                        user.avatar ||
+                        `https://i.pravatar.cc/300?u=${user.username}`
+                      }
+                      alt={`Avatar de ${user.username}`}
+                      fill
+                      className="object-cover transition-all duration-500 ease-out
+                               group-hover:brightness-110 group-hover:contrast-105"
+                      priority
+                    />
+                  </div>
+
+                  {/* Glow effect */}
+                  <div
+                    className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500/20 to-purple-500/20 
+                                 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out 
+                                 blur-xl -z-10"
+                  ></div>
                 </div>
               </div>
 
               {/* Informações do Usuário */}
-              <div className="flex-1 text-center md:text-left space-y-4">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-red-500 mb-1 md:mb-2">
+              <div className="flex-1 text-center md:text-left space-y-6 md:self-center">
+                <div className="space-y-3">
+                  <h1
+                    className="text-3xl md:text-4xl font-bold text-red-500 mb-2 
+                               tracking-tight drop-shadow-lg"
+                  >
                     {user.username}
                   </h1>
                   {user.displayName && (
-                    <p className="text-lg md:text-xl text-gray-300 mb-1 md:mb-2">
+                    <p className="text-xl md:text-2xl text-gray-300 font-medium mb-2">
                       {user.displayName}
                     </p>
                   )}
-                  <div className="flex items-center justify-center md:justify-start gap-2 text-gray-400 text-sm md:text-base">
-                    <FontAwesomeIcon icon={faCalendar} className="w-4 h-4" />
-                    <span>Membro desde {memberSince}</span>
+                  <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-gray-800/50 rounded-full border border-gray-700/30">
+                      <FontAwesomeIcon
+                        icon={faCalendar}
+                        className="w-4 h-4 text-red-400"
+                      />
+                      <span className="text-sm font-medium">
+                        Membro desde {memberSince}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {user.bio && (
-                  <p className="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl">
-                    {user.bio}
-                  </p>
+                  <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700/30">
+                    <p className="text-gray-300 leading-relaxed max-w-2xl text-center md:text-left">
+                      {user.bio}
+                    </p>
+                  </div>
                 )}
 
                 {/* Gêneros Favoritos */}
                 {user.favoriteGenres && user.favoriteGenres.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wide">
+                  <div className="space-y-3">
+                    <p
+                      className="text-sm font-semibold text-red-400 uppercase tracking-wide 
+                                 flex items-center justify-center md:justify-start gap-2"
+                    >
+                      <span className="w-2 h-2 bg-red-500 rounded-full"></span>
                       Gêneros Favoritos
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                       {user.favoriteGenres.map((genre: string) => (
                         <span
                           key={genre}
-                          className="px-2 py-1 md:px-3 md:py-1 bg-red-600/20 border border-red-500/30 rounded-full text-xs md:text-sm text-red-300"
+                          className="px-3 py-2 bg-gradient-to-r from-red-600/20 to-red-500/20 
+                                   border border-red-500/30 rounded-full text-sm text-red-300 
+                                   font-medium backdrop-blur-sm
+                                   transition-all duration-300 ease-out
+                                   hover:from-red-600/30 hover:to-red-500/30 
+                                   hover:border-red-400/50 hover:text-red-200
+                                   hover:scale-105 hover:shadow-lg"
                         >
                           {genre}
                         </span>
@@ -212,10 +262,12 @@ export default function ProfilePage({ params }: PageProps) {
 
         {/* Conteúdo em Abas */}
         <Tabs defaultValue="favorites" className="w-full">
-          <TabsList className="grid grid-cols-3 gap-2 mb-6 bg-gray-800">
+          <TabsList className="grid grid-cols-3 gap-2 mb-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 rounded-xl p-1 h-15">
             <TabsTrigger
               value="favorites"
-              className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-red-500 data-[state=active]:text-white 
+                       text-sm md:text-base transition-all duration-300 ease-out
+                       hover:bg-red-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faHeart}
@@ -226,7 +278,9 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="reviews"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white 
+                       text-sm md:text-base transition-all duration-300 ease-out
+                       hover:bg-blue-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faComments}
@@ -236,7 +290,9 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="ratings"
-              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white text-sm md:text-base"
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white 
+                       text-sm md:text-base transition-all duration-300 ease-out
+                       hover:bg-yellow-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faStar}
@@ -248,42 +304,60 @@ export default function ProfilePage({ params }: PageProps) {
           </TabsList>
 
           <TabsContent value="favorites">
-            <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
-              <CardHeader>
-                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-2">
-                  <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
+            <Card
+              className="relative bg-[#0d1118] border border-red-900/40 rounded-2xl overflow-hidden
+                           transition-all duration-500 ease-out hover:border-red-800/60"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-red-500/3 pointer-events-none"></div>
+              <CardHeader className="relative z-10">
+                <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-3 font-semibold">
+                  <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <FontAwesomeIcon icon={faHeart} className="w-4 h-4" />
+                  </div>
                   Favoritos de {user.username}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <DynamicUserFavorites userId={user.id} />
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="reviews">
-            <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
-              <CardHeader>
-                <CardTitle className="text-blue-600 text-lg md:text-xl flex items-center gap-2">
-                  <FontAwesomeIcon icon={faComments} className="w-5 h-5" />
+            <Card
+              className="relative bg-[#0d1118] border border-blue-900/40 rounded-2xl overflow-hidden
+                           transition-all duration-500 ease-out hover:border-blue-800/60"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-transparent to-blue-500/3 pointer-events-none"></div>
+              <CardHeader className="relative z-10">
+                <CardTitle className="text-blue-600 text-lg md:text-xl flex items-center gap-3 font-semibold">
+                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <FontAwesomeIcon icon={faComments} className="w-4 h-4" />
+                  </div>
                   Reviews de {user.username}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <DynamicUserReviews userId={user.id} />
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="ratings">
-            <Card className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40">
-              <CardHeader>
-                <CardTitle className="text-yellow-600 text-lg md:text-xl flex items-center gap-2">
-                  <FontAwesomeIcon icon={faStar} className="w-5 h-5" />
+            <Card
+              className="relative bg-[#0d1118] border border-yellow-900/40 rounded-2xl overflow-hidden
+                           transition-all duration-500 ease-out hover:border-yellow-800/60"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/3 via-transparent to-yellow-500/3 pointer-events-none"></div>
+              <CardHeader className="relative z-10">
+                <CardTitle className="text-yellow-600 text-lg md:text-xl flex items-center gap-3 font-semibold">
+                  <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                    <FontAwesomeIcon icon={faStar} className="w-4 h-4" />
+                  </div>
                   Avaliações de {user.username}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <DynamicUserRatings />
               </CardContent>
             </Card>
@@ -291,12 +365,16 @@ export default function ProfilePage({ params }: PageProps) {
         </Tabs>
 
         {/* Botão Voltar */}
-        <div className="flex justify-center mt-6 md:mt-8">
+        <div className="flex justify-center mt-8">
           <Link href="/">
             <Button
               variant="secondary"
-              size="sm"
-              className="hover:bg-red-600 text-sm md:text-base md:px-4 md:py-2 flex items-center gap-2"
+              size="lg"
+              className="bg-gray-800/50 hover:bg-red-600/80 border border-gray-700/30 hover:border-red-500/50
+                       text-gray-300 hover:text-white transition-all duration-300 ease-out
+                       backdrop-blur-sm rounded-xl px-6 py-3
+                       hover:scale-105 hover:shadow-lg hover:shadow-red-500/20
+                       flex items-center gap-3 font-medium"
             >
               <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
               Voltar para Home
