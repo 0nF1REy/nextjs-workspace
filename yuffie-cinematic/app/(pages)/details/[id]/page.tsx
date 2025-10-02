@@ -185,31 +185,33 @@ const SimilarMovieCard = ({
 }) => (
   <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
     <div
-      className="group relative bg-gradient-to-br from-gray-900 to-black border border-gray-800 text-gray-200 
-               rounded-lg overflow-hidden shadow-md transition-all duration-500 transform cursor-pointer
-               hover:scale-105 hover:border-red-500/50 hover:brightness-110 hover:shadow-lg"
+      className="group relative bg-[#0d1118] border border-red-900/40 text-gray-200 
+               rounded-xl overflow-hidden shadow-lg transition-all duration-500 transform cursor-pointer
+               hover:scale-105 hover:border-red-500/50 hover:brightness-110 
+               hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
     >
+      {/* Gradient overlay */}
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none 
+                     transition-opacity duration-500 ease-out group-hover:from-red-500/8 group-hover:to-purple-500/8"
+      ></div>
+
       <div className="aspect-[3/4] relative overflow-hidden">
         <Image
           src={similarMovie.cover}
           alt={similarMovie.title}
           width={DEFAULT_IMAGE_DIMENSIONS.similar.width}
           height={DEFAULT_IMAGE_DIMENSIONS.similar.height}
-          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 group-hover:rotate-0.5"
-        />
-
-        {/* Overlay */}
-        <div
-          className="absolute inset-0 bg-gradient-to-tr from-red-500/0 via-purple-500/10 to-blue-500/0 
-                      opacity-0 group-hover:opacity-20 transition-opacity duration-500"
+          className="object-cover w-full h-full transition-transform duration-500 
+                   group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
         />
       </div>
 
-      <div className="p-3">
+      <div className="relative z-10 p-3">
         <div className="w-full text-center">
           <p
             className="text-xs font-medium text-gray-200 truncate 
-                     transition-all duration-500 group-hover:text-cyan-300 
+                     transition-all duration-500 group-hover:text-red-300 
                      group-hover:scale-105"
           >
             {similarMovie.title}
@@ -239,9 +241,15 @@ const SimilarMoviesSectionComponent = ({
 
   return (
     <section className="mt-12">
-      <h2 className="text-xl font-bold text-red-500 mb-4">
-        {typeLabel} Semelhantes
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-red-500 mb-2 flex items-center gap-3">
+          <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+          </div>
+          {typeLabel} Semelhantes
+        </h2>
+        <div className="h-1 w-16 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
+      </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
         {similarMovies.map((similarMovie) => (
           <SimilarMovieCard key={similarMovie.id} movie={similarMovie} />
