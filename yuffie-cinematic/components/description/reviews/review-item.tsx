@@ -182,15 +182,42 @@ export function ReviewItem({
             <h3 className="text-lg font-bold text-yellow-400 mb-4">
               Editar Review
             </h3>
-            <textarea
-              className="w-full p-3 rounded bg-gray-800 text-gray-100 border border-gray-700 mb-4 resize-none focus:border-yellow-400 focus:outline-none transition-colors"
-              value={editContent}
-              onChange={(e) => setEditContent(e.target.value)}
-              rows={4}
-              minLength={15}
-              maxLength={500}
-              placeholder="Escreva sua review aqui..."
-            />
+
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2 font-medium">
+                Sua review:
+              </label>
+              <textarea
+                className={`w-full p-3 rounded bg-gray-800 text-gray-100 border resize-none focus:outline-none transition-colors ${
+                  editContent.length < 15
+                    ? "border-red-500 focus:border-red-400"
+                    : "border-gray-700 focus:border-yellow-400"
+                }`}
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                rows={4}
+                minLength={15}
+                maxLength={500}
+                placeholder="Escreva sua review aqui..."
+              />
+
+              {/* Contador de caracteres e validação */}
+              <div className="flex justify-between items-center mt-2">
+                <div className="text-sm">
+                  {editContent.length < 15 ? (
+                    <span className="text-red-400">
+                      Mínimo 15 caracteres (faltam {15 - editContent.length})
+                    </span>
+                  ) : (
+                    <span className="text-green-400">✓ Review válida</span>
+                  )}
+                </div>
+                <div className="text-sm text-gray-400">
+                  {editContent.length}/500
+                </div>
+              </div>
+            </div>
+
             <div className="mb-6">
               <label className="block text-gray-300 mb-2 font-medium">
                 Sua avaliação:
@@ -198,8 +225,10 @@ export function ReviewItem({
               <StarRatingInput
                 rating={editRating}
                 onRatingChange={setEditRating}
+                size="md"
               />
             </div>
+
             <div className="flex gap-3 justify-end">
               <Button
                 variant="secondary"
@@ -212,9 +241,18 @@ export function ReviewItem({
               <Button
                 variant="default"
                 size="sm"
-                className="bg-yellow-500 hover:bg-yellow-600 text-black px-4"
+                className={`px-4 transition-all duration-200 ${
+                  editContent.length < 15
+                    ? "bg-gray-600 hover:bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "bg-yellow-500 hover:bg-yellow-600 text-black"
+                }`}
                 onClick={handleEdit}
                 disabled={editContent.length < 15}
+                title={
+                  editContent.length < 15
+                    ? "Sua review deve ter pelo menos 15 caracteres"
+                    : "Salvar alterações"
+                }
               >
                 Salvar
               </Button>

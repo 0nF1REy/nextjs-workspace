@@ -9,12 +9,14 @@ interface StarRatingInputProps {
   rating: number;
   onRatingChange: (rating: number) => void;
   className?: string;
+  size?: "sm" | "md" | "lg";
 }
 
 export function StarRatingInput({
   rating,
   onRatingChange,
   className = "",
+  size = "md",
 }: StarRatingInputProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
@@ -34,55 +36,68 @@ export function StarRatingInput({
     setHoverRating(null);
   };
 
+  const getSizeClasses = () => {
+    switch (size) {
+      case "sm":
+        return "text-lg";
+      case "lg":
+        return "text-3xl";
+      default:
+        return "text-2xl";
+    }
+  };
+
   const renderStar = (starIndex: number) => {
     const starValue = starIndex + 1;
-    const isFilled = displayRating >= starValue;
-    const isHalfFilled =
+    const isFull = displayRating >= starValue;
+    const isHalf =
       displayRating >= starIndex + 0.5 && displayRating < starValue;
 
     return (
-      <div key={starIndex} className="relative inline-block cursor-pointer">
-        <FontAwesomeIcon
-          icon={faStarRegular}
-          className={`w-6 h-6 text-gray-400 transition-colors duration-200 ${className}`}
-        />
-
-        {isFilled && (
+      <div
+        key={starIndex}
+        className={`relative ${getSizeClasses()} flex items-center cursor-pointer`}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Metade esquerda da estrela (0.5) */}
+        <div
+          className="absolute left-0 top-0 w-1/2 h-full overflow-hidden cursor-pointer flex items-center justify-start z-10"
+          onMouseEnter={() => handleMouseEnter(starIndex, true)}
+          onClick={() => handleClick(starIndex, true)}
+        >
           <FontAwesomeIcon
-            icon={faStar}
-            className={`absolute top-0 left-0 w-6 h-6 text-yellow-400 transition-colors duration-200 ${className}`}
-          />
-        )}
-
-        {isHalfFilled && (
-          <div className="absolute top-0 left-0 overflow-hidden w-3">
-            <FontAwesomeIcon
-              icon={faStar}
-              className={`w-6 h-6 text-yellow-400 transition-colors duration-200 ${className}`}
-            />
-          </div>
-        )}
-
-        <div className="absolute top-0 left-0 w-full h-full flex">
-          <div
-            className="w-1/2 h-full"
-            onClick={() => handleClick(starIndex, true)}
-            onMouseEnter={() => handleMouseEnter(starIndex, true)}
-            onMouseLeave={handleMouseLeave}
-          />
-          <div
-            className="w-1/2 h-full"
-            onClick={() => handleClick(starIndex, false)}
-            onMouseEnter={() => handleMouseEnter(starIndex, false)}
-            onMouseLeave={handleMouseLeave}
+            icon={isHalf || isFull ? faStar : faStarRegular}
+            className={`transition-colors duration-200 ${
+              isHalf || isFull ? "text-yellow-400" : "text-gray-500"
+            } hover:text-yellow-300`}
           />
         </div>
+
+        {/* Metade direita da estrela (1.0) */}
+        <div
+          className="absolute left-1/2 top-0 w-1/2 h-full overflow-hidden cursor-pointer flex items-center justify-end z-10"
+          onMouseEnter={() => handleMouseEnter(starIndex, false)}
+          onClick={() => handleClick(starIndex, false)}
+        >
+          <FontAwesomeIcon
+            icon={isFull ? faStar : faStarRegular}
+            className={`transition-colors duration-200 ${
+              isFull ? "text-yellow-400" : "text-gray-500"
+            } hover:text-yellow-300`}
+          />
+        </div>
+
+        {/* Estrela de fundo */}
+        <FontAwesomeIcon
+          icon={faStarRegular}
+          className="text-gray-500 pointer-events-none"
+        />
       </div>
     );
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={`flex items-center gap-1 ${className}`}>
       {[0, 1, 2, 3, 4].map(renderStar)}
       <span className="ml-2 text-sm text-gray-400">
         {displayRating.toFixed(1)}/5
