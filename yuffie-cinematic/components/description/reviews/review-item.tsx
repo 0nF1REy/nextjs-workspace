@@ -3,12 +3,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart,
+  faThumbsUp,
+  faEdit,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as faHeartRegular,
   faThumbsUp as faThumbsUpRegular,
 } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
+import Link from "next/link";
 import { isFavoriteInStorage } from "@/lib/user/storage";
 import { StarRating } from "./star-rating";
 import { StarRatingInput } from "./star-rating-input";
@@ -91,7 +97,10 @@ export function ReviewItem({
     <div className="space-y-4 p-4 bg-black/40 border border-gray-800 rounded-lg shadow-md">
       {/* Header da Review */}
       <div className="flex items-center gap-3">
-        <div className="relative w-12 h-12 flex-shrink-0">
+        <Link
+          href={`/profile/${encodeURIComponent(review.author)}`}
+          className="relative w-12 h-12 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <Image
             src={avatarUrl}
             alt={`Avatar de ${review.author}`}
@@ -99,10 +108,16 @@ export function ReviewItem({
             className="rounded-full object-cover"
             sizes="48px"
           />
-        </div>
+        </Link>
         <div className="flex-1 flex items-center gap-2">
           <p className="font-semibold text-red-400 text-sm sm:text-base">
-            Review por {review.author}
+            Review por{" "}
+            <Link
+              href={`/profile/${encodeURIComponent(review.author)}`}
+              className="hover:text-red-300 transition-colors cursor-pointer underline-offset-2 hover:underline"
+            >
+              {review.author}
+            </Link>
           </p>
           {isUserReview && (
             <FontAwesomeIcon
@@ -140,7 +155,7 @@ export function ReviewItem({
           variant="ghost"
           size="sm"
           onClick={() => onLike(review.id)}
-          className={`flex items-center gap-2 text-xs transition-colors ${
+          className={`flex items-center cursor-pointer gap-2 text-xs transition-colors ${
             isLiked
               ? "text-blue-400 hover:text-blue-300"
               : "text-gray-400 hover:text-blue-400"
@@ -158,18 +173,20 @@ export function ReviewItem({
             <Button
               variant="outline"
               size="sm"
-              className="text-yellow-400 border-yellow-400 hover:bg-yellow-100/10"
+              className="text-yellow-400 border-yellow-400 hover:bg-yellow-100/10 p-2 cursor-pointer"
               onClick={() => setEditOpen(true)}
+              title="Editar review"
             >
-              Editar
+              <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="text-red-400 border-red-400 hover:bg-red-100/10"
+              className="text-red-400 border-red-400 hover:bg-red-100/10 p-2 cursor-pointer"
               onClick={() => setDeleteOpen(true)}
+              title="Excluir review"
             >
-              Excluir
+              <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
             </Button>
           </div>
         )}
@@ -234,14 +251,14 @@ export function ReviewItem({
                 variant="secondary"
                 size="sm"
                 onClick={() => setEditOpen(false)}
-                className="px-4"
+                className="px-4 cursor-pointer"
               >
                 Cancelar
               </Button>
               <Button
                 variant="default"
                 size="sm"
-                className={`px-4 transition-all duration-200 ${
+                className={`px-4 cursor-pointer transition-all duration-200 ${
                   editContent.length < 15
                     ? "bg-gray-600 hover:bg-gray-600 text-gray-400 cursor-not-allowed"
                     : "bg-yellow-500 hover:bg-yellow-600 text-black"
@@ -263,24 +280,42 @@ export function ReviewItem({
 
       {/* Modal de confirmação de exclusão */}
       {deleteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-700">
-            <h3 className="text-lg font-bold text-red-400 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 w-full max-w-md shadow-2xl border border-red-500/20 animate-in fade-in-0 zoom-in-95 duration-200">
+            {/* Ícone de alerta */}
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-red-500/10 rounded-full border border-red-500/20">
+              <FontAwesomeIcon
+                icon={faTrash}
+                className="w-6 h-6 text-red-400"
+              />
+            </div>
+
+            <h3 className="text-xl font-bold text-red-400 mb-3 text-center">
               Excluir Review
             </h3>
-            <p className="text-gray-300 mb-4">
-              Tem certeza que deseja excluir esta review? Esta ação não pode ser
-              desfeita.
+
+            <p className="text-gray-300 mb-8 text-center leading-relaxed">
+              Tem certeza que deseja excluir esta review?{" "}
+              <span className="text-red-300 font-medium">
+                Esta ação não pode ser desfeita.
+              </span>
             </p>
-            <div className="flex gap-2 justify-end">
+
+            <div className="flex gap-4 justify-center">
               <Button
-                variant="secondary"
-                size="sm"
+                variant="outline"
+                size="lg"
                 onClick={() => setDeleteOpen(false)}
+                className="px-8 py-3 border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:border-gray-500 transition-all duration-200 font-medium cursor-pointer"
               >
                 Cancelar
               </Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete}>
+              <Button
+                size="lg"
+                onClick={handleDelete}
+                className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-500 hover:from-red-600 hover:to-red-600 text-white border-0 shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faTrash} className="w-4 h-4 mr-2" />
                 Excluir
               </Button>
             </div>
