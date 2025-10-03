@@ -1,14 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import Image from "next/image";
+
+import { Button } from "@/components/ui/button";
 import { getCurrentUser, getLoggedUsername } from "@/lib/user";
 import { getUserRatingFromStorage } from "@/lib/user/storage";
 import { getContentType, formatContentTypeWithArticle } from "./utils";
 import { UserReview } from "./types";
+
+const reviewSchema = z.object({
+  content: z
+    .string()
+    .min(15, "Sua review deve ter pelo menos 15 caracteres.")
+    .max(500, "A review não pode exceder 500 caracteres."),
+});
+
+type ReviewFormData = z.infer<typeof reviewSchema>;
 
 interface ReviewFormProps {
   cinematicId: string;
@@ -16,7 +29,6 @@ interface ReviewFormProps {
 }
 
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
-  const [content, setContent] = useState("");
   const [userRating, setUserRating] = useState<number | null>(null);
 
   const currentUser = getCurrentUser();
@@ -24,15 +36,27 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
   const userAvatarUrl =
     currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
-  // Detectar tipo de conteúdo dinamicamente
   const contentType = getContentType(cinematicId);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      content: "",
+    },
+  });
+
+  const watchedContent = watch("content");
 
   useEffect(() => {
     const rating = getUserRatingFromStorage(cinematicId);
     setUserRating(rating);
-  }, [cinematicId]);
 
-  useEffect(() => {
     const handleRatingChanged = (event: CustomEvent) => {
       if (event.detail.cinematicId === cinematicId) {
         setUserRating(getUserRatingFromStorage(cinematicId));
@@ -52,23 +76,15 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
     };
   }, [cinematicId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!content.trim()) {
-      alert("Por favor, escreva sua review.");
-      return;
-    }
-
+  const onFormSubmit = (data: ReviewFormData) => {
     if (userRating === null || userRating === 0) {
-      alert(`Por favor, avalie o ${contentType} antes de enviar sua review.`);
       return;
     }
 
     const newReview: UserReview = {
       id: `user-${Date.now()}`,
       author: username,
-      content: content.trim(),
+      content: data.content.trim(),
       rating: userRating,
       date: new Date().toISOString(),
       cinematicId,
@@ -77,7 +93,7 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
     };
 
     onSubmit(newReview);
-    setContent("");
+    reset();
   };
 
   return (
@@ -97,7 +113,6 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
         </h3>
       </div>
 
-      {/* Aviso se não houver avaliação */}
       {(!userRating || userRating === 0) && (
         <div className="bg-yellow-900/30 border border-yellow-600/50 rounded-lg p-3">
           <p className="text-yellow-400 text-sm flex items-center gap-2">
@@ -106,13 +121,12 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
               className="w-4 h-4 text-yellow-400"
             />
             Você precisa avaliar {formatContentTypeWithArticle(contentType)}{" "}
-            antes de escrever uma review. Use as estrelas na seção principal
-            para dar sua nota.
+            antes de escrever uma review.
           </p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
         <div>
           <label
             htmlFor="content"
@@ -122,25 +136,35 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
           </label>
           <textarea
             id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500 min-h-[100px] resize-vertical"
+            {...register("content")}
+            className={`w-full px-3 py-2 bg-gray-800 border rounded-md text-white focus:outline-none focus:ring-2 min-h-[100px] resize-vertical ${
+              errors.content
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-700 focus:ring-red-500"
+            }`}
             placeholder={`Escreva sua opinião sobre ${formatContentTypeWithArticle(
               contentType
             )}...`}
             maxLength={500}
           />
-          <p className="text-xs text-gray-500 mt-1">
-            {content.length}/500 caracteres
-          </p>
+          <div className="flex justify-between items-center mt-1">
+            {errors.content ? (
+              <p className="text-red-500 text-xs">{errors.content.message}</p>
+            ) : (
+              <span></span>
+            )}
+            <p className="text-xs text-gray-500">
+              {watchedContent.length}/500 caracteres
+            </p>
+          </div>
         </div>
 
         <Button
           type="submit"
           className="w-full bg-red-600 hover:bg-red-700 text-white disabled:bg-gray-600 disabled:cursor-not-allowed"
-          disabled={!content.trim() || !userRating || userRating === 0}
+          disabled={isSubmitting || !userRating || userRating === 0}
         >
-          Publicar Review
+          {isSubmitting ? "Publicando..." : "Publicar Review"}
         </Button>
       </form>
     </div>
