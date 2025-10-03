@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faHeart, faComments } from "@fortawesome/free-solid-svg-icons";
 import { getUserStats } from "@/lib/user";
@@ -16,10 +16,31 @@ export default function UserStats({ userId }: UserStatsProps) {
     totalRatings: 0,
   });
 
-  useEffect(() => {
+  const loadStats = useCallback(() => {
     const userStats = getUserStats(userId);
     setStats(userStats);
   }, [userId]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
+
+  useEffect(() => {
+    // Escutar eventos de atualização de reviews e outros dados do usuário
+    const handleReviewsUpdate = () => {
+      loadStats();
+    };
+
+    window.addEventListener("userReviewsUpdated", handleReviewsUpdate);
+    window.addEventListener("userFavoritesUpdated", handleReviewsUpdate);
+    window.addEventListener("userRatingsUpdated", handleReviewsUpdate);
+
+    return () => {
+      window.removeEventListener("userReviewsUpdated", handleReviewsUpdate);
+      window.removeEventListener("userFavoritesUpdated", handleReviewsUpdate);
+      window.removeEventListener("userRatingsUpdated", handleReviewsUpdate);
+    };
+  }, [loadStats]);
 
   const statsData = [
     {

@@ -62,6 +62,32 @@ export function reviewsReducer(
         ),
       };
     }
+    case "EDIT_REVIEW": {
+      const { reviewId, newContent, newRating } = action.payload;
+      return {
+        ...state,
+        allReviews: state.allReviews.map((review) =>
+          review.id === reviewId
+            ? { ...review, content: newContent, rating: newRating }
+            : review
+        ),
+        userReviews: state.userReviews.map((review) =>
+          review.id === reviewId
+            ? { ...review, content: newContent, rating: newRating }
+            : review
+        ),
+      };
+    }
+    case "DELETE_REVIEW": {
+      const { reviewId } = action.payload;
+      return {
+        ...state,
+        allReviews: state.allReviews.filter((review) => review.id !== reviewId),
+        userReviews: state.userReviews.filter(
+          (review) => review.id !== reviewId
+        ),
+      };
+    }
     case "ADD_REVIEW": {
       const { newReview } = action.payload;
       return {

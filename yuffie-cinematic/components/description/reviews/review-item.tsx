@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { isFavoriteInStorage } from "@/lib/user/storage";
 import { StarRating } from "./star-rating";
+import { StarRatingInput } from "./star-rating-input";
 import { Review, UserReview } from "./types";
 
 interface ReviewItemProps {
@@ -25,8 +26,17 @@ export function ReviewItem({
   onLike,
   isLiked,
   cinematicId,
-}: ReviewItemProps) {
+  onEdit,
+  onDelete,
+}: ReviewItemProps & {
+  onEdit?: (reviewId: string, content: string, rating: number) => void;
+  onDelete?: (reviewId: string) => void;
+}) {
   const [isFavorited, setIsFavorited] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editContent, setEditContent] = useState(review.content);
+  const [editRating, setEditRating] = useState(review.rating || 0);
 
   const avatarUrl = review.avatarSeed?.startsWith(
     "/assets/images/profile-avatar/"
@@ -44,18 +54,15 @@ export function ReviewItem({
 
   useEffect(() => {
     if (!isUserReview) return;
-
     const handleFavoriteChanged = (event: CustomEvent) => {
       if (event.detail.cinematicId === cinematicId) {
         setIsFavorited(event.detail.favorite);
       }
     };
-
     window.addEventListener(
       "favoriteChanged",
       handleFavoriteChanged as EventListener
     );
-
     return () => {
       window.removeEventListener(
         "favoriteChanged",
@@ -63,6 +70,22 @@ export function ReviewItem({
       );
     };
   }, [isUserReview, cinematicId]);
+
+  // Handler para editar
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(review.id, editContent, editRating);
+      setEditOpen(false);
+    }
+  };
+
+  // Handler para excluir
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(review.id);
+      setDeleteOpen(false);
+    }
+  };
 
   return (
     <div className="space-y-4 p-4 bg-black/40 border border-gray-800 rounded-lg shadow-md">
@@ -111,7 +134,7 @@ export function ReviewItem({
         &ldquo;{review.content}&rdquo;
       </p>
 
-      {/* Like Button */}
+      {/* Like Button e ações do usuário */}
       <div className="flex items-center justify-between pt-2 border-t border-gray-700">
         <Button
           variant="ghost"
@@ -130,7 +153,102 @@ export function ReviewItem({
           {isLiked ? "Descurtir" : "Curtir"} review ({review.likes || 0}{" "}
           {(review.likes || 0) === 1 ? "curtida" : "curtidas"})
         </Button>
+        {isUserReview && (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-yellow-400 border-yellow-400 hover:bg-yellow-100/10"
+              onClick={() => setEditOpen(true)}
+            >
+              Editar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-400 border-red-400 hover:bg-red-100/10"
+              onClick={() => setDeleteOpen(true)}
+            >
+              Excluir
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Modal de edição */}
+      {editOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-700">
+            <h3 className="text-lg font-bold text-yellow-400 mb-4">
+              Editar Review
+            </h3>
+            <textarea
+              className="w-full p-3 rounded bg-gray-800 text-gray-100 border border-gray-700 mb-4 resize-none focus:border-yellow-400 focus:outline-none transition-colors"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              rows={4}
+              minLength={15}
+              maxLength={500}
+              placeholder="Escreva sua review aqui..."
+            />
+            <div className="mb-6">
+              <label className="block text-gray-300 mb-2 font-medium">
+                Sua avaliação:
+              </label>
+              <StarRatingInput
+                rating={editRating}
+                onRatingChange={setEditRating}
+              />
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setEditOpen(false)}
+                className="px-4"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="bg-yellow-500 hover:bg-yellow-600 text-black px-4"
+                onClick={handleEdit}
+                disabled={editContent.length < 15}
+              >
+                Salvar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmação de exclusão */}
+      {deleteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-700">
+            <h3 className="text-lg font-bold text-red-400 mb-4">
+              Excluir Review
+            </h3>
+            <p className="text-gray-300 mb-4">
+              Tem certeza que deseja excluir esta review? Esta ação não pode ser
+              desfeita.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setDeleteOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDelete}>
+                Excluir
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

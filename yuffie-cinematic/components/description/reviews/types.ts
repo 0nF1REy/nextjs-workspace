@@ -26,6 +26,15 @@ export type ReviewsAction =
       };
     }
   | { type: "TOGGLE_LIKE"; payload: { reviewId: string } }
-  | { type: "ADD_REVIEW"; payload: { newReview: UserReview } };
+  | { type: "ADD_REVIEW"; payload: { newReview: UserReview } }
+  | {
+      type: "EDIT_REVIEW";
+      payload: {
+        reviewId: string;
+        newContent: string;
+        newRating: number;
+      };
+    }
+  | { type: "DELETE_REVIEW"; payload: { reviewId: string } };
 
 export type { Review, UserReview };

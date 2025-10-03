@@ -48,6 +48,48 @@ export const saveUserReviewToStorage = (
   }
 };
 
+export const updateUserReviewInStorage = (
+  cinematicId: string,
+  reviewId: string,
+  newContent: string,
+  newRating: number
+): void => {
+  if (typeof window === "undefined") return;
+  try {
+    const existingReviews = getUserReviewsFromStorage(cinematicId);
+    const updatedReviews = existingReviews.map((review) =>
+      review.id === reviewId
+        ? { ...review, content: newContent, rating: newRating }
+        : review
+    );
+    localStorage.setItem(
+      `user-reviews-${cinematicId}`,
+      JSON.stringify(updatedReviews)
+    );
+  } catch (error) {
+    console.error("Falha ao atualizar a review:", error);
+  }
+};
+
+export const deleteUserReviewFromStorage = (
+  cinematicId: string,
+  reviewId: string
+): void => {
+  if (typeof window === "undefined") return;
+  try {
+    const existingReviews = getUserReviewsFromStorage(cinematicId);
+    const filteredReviews = existingReviews.filter(
+      (review) => review.id !== reviewId
+    );
+    localStorage.setItem(
+      `user-reviews-${cinematicId}`,
+      JSON.stringify(filteredReviews)
+    );
+  } catch (error) {
+    console.error("Falha ao deletar a review:", error);
+  }
+};
+
 // ==================== LIKES ====================
 export const getLikedReviewsFromStorage = (): string[] => {
   if (typeof window === "undefined") return [];

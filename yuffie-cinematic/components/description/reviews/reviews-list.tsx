@@ -12,6 +12,8 @@ import {
   getUserReviewsFromStorage,
   saveUserReviewToStorage,
   getLikedReviewsFromStorage,
+  updateUserReviewInStorage,
+  deleteUserReviewFromStorage,
 } from "@/lib/user/storage";
 import { ReviewForm } from "./review-form";
 import { ReviewItem } from "./review-item";
@@ -68,9 +70,33 @@ export function ReviewsList({
     [cinematicId, onNewReview]
   );
 
+  const handleEditReview = useCallback(
+    (reviewId: string, newContent: string, newRating: number) => {
+      dispatch({
+        type: "EDIT_REVIEW",
+        payload: { reviewId, newContent, newRating },
+      });
+
+      updateUserReviewInStorage(cinematicId, reviewId, newContent, newRating);
+
+      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
+    },
+    [cinematicId]
+  );
+
+  const handleDeleteReview = useCallback(
+    (reviewId: string) => {
+      dispatch({ type: "DELETE_REVIEW", payload: { reviewId } });
+      deleteUserReviewFromStorage(cinematicId, reviewId);
+
+      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
+    },
+    [cinematicId]
+  );
+
   return (
     <div className="flex flex-col h-full">
-      {/* Formulário com transição */}
+      {/* Formulário */}
       <div
         className={`overflow-hidden transition-all duration-500 ease-in-out mb-4 ${
           showReviews
@@ -116,6 +142,8 @@ export function ReviewsList({
                   onLike={handleLike}
                   isLiked={likedReviews.includes(review.id)}
                   cinematicId={cinematicId}
+                  onEdit={handleEditReview}
+                  onDelete={handleDeleteReview}
                 />
               ))
             ) : (

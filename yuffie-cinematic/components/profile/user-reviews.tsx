@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -66,7 +66,7 @@ export default function UserReviews({ userId }: UserReviewsProps) {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadReviews = useCallback(() => {
     try {
       const user = getUserByUsername(userId) || { username: userId };
 
@@ -100,6 +100,23 @@ export default function UserReviews({ userId }: UserReviewsProps) {
       setLoading(false);
     }
   }, [userId]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
+
+  useEffect(() => {
+    // Escutar eventos de atualização de reviews
+    const handleReviewsUpdate = () => {
+      loadReviews();
+    };
+
+    window.addEventListener("userReviewsUpdated", handleReviewsUpdate);
+
+    return () => {
+      window.removeEventListener("userReviewsUpdated", handleReviewsUpdate);
+    };
+  }, [loadReviews]);
 
   if (loading) {
     return (
