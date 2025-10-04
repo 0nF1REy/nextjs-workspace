@@ -100,9 +100,19 @@ export function SearchBar() {
           <Button
             type="submit"
             size="icon"
-            className="bg-red-500 hover:bg-red-600"
+            className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                       shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:shadow-xl
+                       border border-red-400/30 hover:border-red-300/50
+                       transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                       backdrop-blur-sm cursor-pointer group relative overflow-hidden
+                       before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent 
+                       before:via-white/10 before:to-transparent before:translate-x-[-100%] 
+                       hover:before:translate-x-[100%] before:transition-transform before:duration-700"
           >
-            <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
+            <FontAwesomeIcon 
+              icon={faSearch} 
+              className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-active:scale-95 relative z-10" 
+            />
           </Button>
         </div>
         <AnimatePresence>
@@ -156,9 +166,19 @@ export function SearchBar() {
       <Button
         onClick={openMobileSearch}
         size="icon"
-        className="md:hidden bg-red-500 hover:bg-red-600"
+        className="md:hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                   shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:shadow-xl
+                   border border-red-400/30 hover:border-red-300/50
+                   transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                   backdrop-blur-sm cursor-pointer group relative overflow-hidden
+                   before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent 
+                   before:via-white/10 before:to-transparent before:translate-x-[-100%] 
+                   hover:before:translate-x-[100%] before:transition-transform before:duration-700"
       >
-        <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
+        <FontAwesomeIcon 
+          icon={faSearch} 
+          className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-active:scale-95 relative z-10" 
+        />
       </Button>
 
       {/* Mobile Search Dropdown */}
@@ -193,9 +213,19 @@ export function SearchBar() {
                   <Button
                     type="submit"
                     size="icon"
-                    className="bg-red-500 hover:bg-red-600"
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                               shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:shadow-xl
+                               border border-red-400/30 hover:border-red-300/50
+                               transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                               backdrop-blur-sm cursor-pointer group relative overflow-hidden
+                               before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent 
+                               before:via-white/10 before:to-transparent before:translate-x-[-100%] 
+                               hover:before:translate-x-[100%] before:transition-transform before:duration-700"
                   >
-                    <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
+                    <FontAwesomeIcon 
+                      icon={faSearch} 
+                      className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-active:scale-95 relative z-10" 
+                    />
                   </Button>
                   <Button
                     type="button"

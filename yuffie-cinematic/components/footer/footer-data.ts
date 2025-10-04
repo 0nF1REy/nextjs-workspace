@@ -36,6 +36,6 @@ export const socialLinks = [
 
 export const legalLinks = [
   { href: "/legal?tab=aviso", label: "AVISO LEGAL" },
-  { href: "/legal?tab=termos", label: "TERMOS DE USO" },
   { href: "/legal?tab=privacidade", label: "POLÍTICA DE PRIVACIDADE" },
+  { href: "/legal?tab=termos", label: "TERMOS DE USO" },
 ];
