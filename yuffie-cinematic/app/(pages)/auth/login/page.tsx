@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import {
@@ -19,21 +18,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
-const loginSchema = z.object({
-  email: z
-    .email("E-mail inválido.")
-    .min(10, "O e-mail deve ter no mínimo 10 caracteres."),
-  password: z
-    .string()
-    .min(8, "A senha deve ter no mínimo 8 caracteres.")
-    .max(25, "A senha deve ter no máximo 25 caracteres."),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
+// Schema de validação Zod
+import { loginSchema, LoginForm } from "@/lib/validations/login";
 
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
+
+  // Estados para controlar o foco dos inputs
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -42,7 +36,7 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginForm) => {
+  const onSubmit: SubmitHandler<LoginForm> = (data) => {
     if (
       data.email === "admin@dominio.com.br" &&
       data.password === "Admin@123"
@@ -50,7 +44,7 @@ export default function LoginPage() {
       setError("");
       // Marca como autenticado
       sessionStorage.setItem("admin-authenticated", "true");
-      router.push("/welcome");
+      router.push("/admin/dashboard");
     } else {
       setError("Usuário ou senha inválidos.");
     }
@@ -138,7 +132,9 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className="text-sm font-medium text-gray-300 block"
+                  className={`text-sm font-medium block transition-colors duration-200 ${
+                    focusedField === "email" ? "text-red-400" : "text-gray-300"
+                  }`}
                 >
                   E-mail
                 </label>
@@ -148,6 +144,8 @@ export default function LoginPage() {
                   placeholder="seu@email.com"
                   {...register("email")}
                   className="bg-[#131b22]/80 text-white border border-gray-700/50 focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 transition-all duration-300 rounded-lg h-11 px-4 placeholder:text-gray-500 backdrop-blur-sm"
+                  onFocus={() => setFocusedField("email")}
+                  onBlur={() => setFocusedField(null)}
                 />
                 {errors.email && (
                   <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
@@ -160,7 +158,11 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <label
                   htmlFor="password"
-                  className="text-sm font-medium text-gray-300 block"
+                  className={`text-sm font-medium block transition-colors duration-200 ${
+                    focusedField === "password"
+                      ? "text-red-400"
+                      : "text-gray-300"
+                  }`}
                 >
                   Senha
                 </label>
@@ -170,6 +172,8 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   {...register("password")}
                   className="bg-[#131b22]/80 text-white border border-gray-700/50 focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 transition-all duration-300 rounded-lg h-11 px-4 placeholder:text-gray-500 backdrop-blur-sm"
+                  onFocus={() => setFocusedField("password")}
+                  onBlur={() => setFocusedField(null)}
                 />
                 {errors.password && (
                   <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
@@ -190,7 +194,8 @@ export default function LoginPage() {
               <div className="w-full space-y-4">
                 <Button
                   type="submit"
-                  className="w-full cursor-pointer bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] border border-red-500/20"
+                  disabled={Object.keys(errors).length > 0}
+                  className="w-full cursor-pointer bg-gradient-to-r from-red-600 to-red-700 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   Entrar na Plataforma
                 </Button>
