@@ -88,7 +88,7 @@ export function ReviewsList({
       {/* Lista de reviews */}
       {showReviews && (
         <div className="flex-1 min-h-0">
-          <div className="h-full overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+          <div className="h-full overflow-y-auto pr-2 space-y-4 scrollbar-cinema">
             {allReviews.length > 0 ? (
               allReviews.map((review) => (
                 <ReviewItem
