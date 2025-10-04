@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { HeaderComponent } from "@/components/header/header";
 import { FooterComponent } from "@/components/footer/footer";
+import { StoreProvider } from "@/components/providers/StoreProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +29,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
       >
-        <HeaderComponent />
-        <main className="flex-1">{children}</main>
-        <FooterComponent />
+        <StoreProvider>
+          <HeaderComponent />
+          <main className="flex-1">{children}</main>
+          <FooterComponent />
+        </StoreProvider>
       </body>
     </html>
   );

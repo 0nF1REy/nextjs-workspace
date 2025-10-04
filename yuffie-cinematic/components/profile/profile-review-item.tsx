@@ -13,16 +13,13 @@ import { StarRating } from "@/components/description/reviews/star-rating";
 import { EditReviewModal } from "@/components/description/reviews/edit-review-modal";
 import { DeleteReviewModal } from "@/components/description/reviews/delete-review-modal";
 import { ReviewActions } from "@/components/description/reviews/review-actions";
-import {
-  updateUserReviewInStorage,
-  deleteUserReviewFromStorage,
-} from "@/lib/user/storage";
+import { useReviewsStore } from "@/stores";
 import { cinematics } from "@/lib/details";
 import { UserReview } from "@/lib/user/types";
 
 interface ProfileReviewItemProps {
   review: UserReview;
-  onReviewUpdated: () => void;
+  onReviewUpdated?: () => void;
 }
 
 export function ProfileReviewItem({
@@ -32,24 +29,23 @@ export function ProfileReviewItem({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
+  // Zustand store
+  const { updateReview, deleteReview } = useReviewsStore();
+
   const cinematic = cinematics.find((item) => item.id === review.cinematicId);
   const isUserReview = review.id.startsWith("user-");
 
   const handleEdit = (content: string, rating: number) => {
     if (review.cinematicId) {
-      updateUserReviewInStorage(review.cinematicId, review.id, content, rating);
-      // Disparar evento para atualizar outros componentes
-      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
-      onReviewUpdated();
+      updateReview(review.cinematicId, review.id, content, rating);
+      onReviewUpdated?.();
     }
   };
 
   const handleDelete = () => {
     if (review.cinematicId) {
-      deleteUserReviewFromStorage(review.cinematicId, review.id);
-      // Disparar evento para atualizar outros componentes
-      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
-      onReviewUpdated();
+      deleteReview(review.cinematicId, review.id);
+      onReviewUpdated?.();
     }
   };
 

@@ -1,19 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { Button } from "@/components/ui/button";
 import { FavoriteItem } from "@/lib/user/types";
-import {
-  getUserRatingFromStorage,
-  saveUserRatingToStorage,
-  getFavoritesFromStorage,
-  saveFavoriteToStorage,
-  removeFavoriteFromStorage,
-  isFavoriteInStorage,
-} from "@/lib/user/storage";
+import { useFavoritesStore, useRatingsStore } from "@/stores";
 
 import {
   StarRating,
@@ -36,73 +29,33 @@ export function UserInteractiveElements({
   cinematicCover,
   cinematicType,
 }: UserInteractiveElementsProps) {
-  const [favorite, setFavorite] = useState(false);
-  const [userRating, setUserRating] = useState<number | null>(null);
+  // Zustand stores
+  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const { getRating, setRating, removeRating } = useRatingsStore();
 
-  // Carregar estado inicial dos favoritos e ratings
-  useEffect(() => {
-    setFavorite(isFavoriteInStorage(cinematicId));
-    const savedRating = getUserRatingFromStorage(cinematicId);
-    if (savedRating !== null) {
-      setUserRating(savedRating);
-    }
-  }, [cinematicId]);
+  // Estado local
+  const favorite = isFavorite(cinematicId);
+  const userRating = getRating(cinematicId);
 
-  const handleFavoriteToggle = useCallback(() => {
-    const newFavoriteState = !favorite;
-    setFavorite(newFavoriteState);
+  const handleFavoriteToggle = () => {
+    const favoriteItem: FavoriteItem = {
+      id: cinematicId,
+      title: cinematicTitle,
+      cover: cinematicCover,
+      type: cinematicType,
+      timestamp: Date.now(),
+    };
 
-    if (newFavoriteState) {
-      // Adicionar aos favoritos
-      const favoriteItem: FavoriteItem = {
-        id: cinematicId,
-        title: cinematicTitle,
-        cover: cinematicCover,
-        type: cinematicType,
-        timestamp: Date.now(),
-      };
-      saveFavoriteToStorage(favoriteItem);
-    } else {
-      removeFavoriteFromStorage(cinematicId);
-    }
+    toggleFavorite(favoriteItem);
+  };
 
-    // Disparar evento para notificar outros componentes
-    if (typeof window !== "undefined") {
-      const event = new CustomEvent("favoriteChanged", {
-        detail: { cinematicId, favorite: newFavoriteState },
-      });
-      window.dispatchEvent(event);
-    }
-  }, [favorite, cinematicId, cinematicTitle, cinematicCover, cinematicType]);
+  const handleStarRatingChange = (rating: number) => {
+    setRating(cinematicId, rating);
+  };
 
-  const handleStarRatingChange = useCallback(
-    (rating: number) => {
-      setUserRating(rating);
-      saveUserRatingToStorage(cinematicId, rating);
-
-      // Disparar evento personalizado para notificar outros componentes
-      if (typeof window !== "undefined") {
-        const event = new CustomEvent("ratingChanged", {
-          detail: { cinematicId, rating },
-        });
-        window.dispatchEvent(event);
-      }
-    },
-    [cinematicId]
-  );
-
-  const handleRemoveRating = useCallback(() => {
-    setUserRating(null);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(`movie-rating-${cinematicId}`);
-
-      // Disparar evento para notificar a remoção do rating
-      const event = new CustomEvent("ratingChanged", {
-        detail: { cinematicId, rating: null },
-      });
-      window.dispatchEvent(event);
-    }
-  }, [cinematicId]);
+  const handleRemoveRating = () => {
+    removeRating(cinematicId);
+  };
 
   return (
     <>
@@ -187,7 +140,7 @@ export function UserInteractiveElements({
   );
 }
 
-// Função utilitária para ser usada na página de perfil
+// Função utilitária
 export const getUserFavorites = (): FavoriteItem[] => {
-  return getFavoritesFromStorage();
+  return useFavoritesStore.getState().favorites;
 };

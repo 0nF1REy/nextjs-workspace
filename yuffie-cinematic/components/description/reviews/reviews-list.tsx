@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useReducer } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,17 +8,10 @@ import {
   faChevronDown,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  getUserReviewsFromStorage,
-  saveUserReviewToStorage,
-  getLikedReviewsFromStorage,
-  updateUserReviewInStorage,
-  deleteUserReviewFromStorage,
-} from "@/lib/user/storage";
+import { useReviewsStore } from "@/stores";
 import { ReviewForm } from "./review-form";
 import { ReviewItem } from "./review-item";
-import { reviewsReducer } from "./reviews-reducer";
-import { Review, UserReview, ReviewsState } from "./types";
+import { Review, UserReview } from "./types";
 
 interface ReviewsListProps {
   reviews: Review[];
@@ -33,65 +26,27 @@ export function ReviewsList({
 }: ReviewsListProps) {
   const [showReviews, setShowReviews] = useState(false);
 
-  const initialState: ReviewsState = {
-    allReviews: [],
-    likedReviews: [],
-    userReviews: [],
-  };
+  // Zustand store
+  const { getReviewsByCinematic, addReview } = useReviewsStore();
 
-  const [state, dispatch] = useReducer(reviewsReducer, initialState);
-  const { allReviews, likedReviews } = state;
-
-  useEffect(() => {
-    const userReviewsFromStorage = getUserReviewsFromStorage(cinematicId);
-    const likedReviewsFromStorage = getLikedReviewsFromStorage();
-    dispatch({
-      type: "INITIALIZE",
-      payload: {
-        reviews: reviews,
-        userReviews: userReviewsFromStorage,
-        likedReviews: likedReviewsFromStorage,
-        cinematicId: cinematicId,
-      },
-    });
-  }, [cinematicId, reviews]);
-
-  const handleLike = useCallback((reviewId: string) => {
-    dispatch({ type: "TOGGLE_LIKE", payload: { reviewId } });
-  }, []);
+  // Combinar reviews externas com reviews do usuário
+  const userReviews = getReviewsByCinematic(cinematicId);
+  const allReviews = [
+    ...reviews.map((review) => ({
+      ...review,
+      likes: 0,
+      avatarSeed: `review-${review.id}`,
+    })),
+    ...userReviews,
+  ];
 
   const handleNewReview = useCallback(
     (newReview: UserReview) => {
-      saveUserReviewToStorage(cinematicId, newReview);
-      dispatch({ type: "ADD_REVIEW", payload: { newReview } });
+      addReview(cinematicId, newReview);
       onNewReview(newReview);
       setShowReviews(true);
     },
-    [cinematicId, onNewReview]
-  );
-
-  const handleEditReview = useCallback(
-    (reviewId: string, newContent: string, newRating: number) => {
-      dispatch({
-        type: "EDIT_REVIEW",
-        payload: { reviewId, newContent, newRating },
-      });
-
-      updateUserReviewInStorage(cinematicId, reviewId, newContent, newRating);
-
-      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
-    },
-    [cinematicId]
-  );
-
-  const handleDeleteReview = useCallback(
-    (reviewId: string) => {
-      dispatch({ type: "DELETE_REVIEW", payload: { reviewId } });
-      deleteUserReviewFromStorage(cinematicId, reviewId);
-
-      window.dispatchEvent(new CustomEvent("userReviewsUpdated"));
-    },
-    [cinematicId]
+    [cinematicId, addReview, onNewReview]
   );
 
   return (
@@ -139,11 +94,7 @@ export function ReviewsList({
                 <ReviewItem
                   key={review.id}
                   review={review}
-                  onLike={handleLike}
-                  isLiked={likedReviews.includes(review.id)}
                   cinematicId={cinematicId}
-                  onEdit={handleEditReview}
-                  onDelete={handleDeleteReview}
                 />
               ))
             ) : (

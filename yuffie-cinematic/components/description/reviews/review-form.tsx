@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,7 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentUser, getLoggedUsername } from "@/lib/user";
-import { getUserRatingFromStorage } from "@/lib/user/storage";
+import { useRatingsStore } from "@/stores";
 import { getContentType, formatContentTypeWithArticle } from "./utils";
 import { UserReview } from "./types";
 
@@ -29,7 +29,10 @@ interface ReviewFormProps {
 }
 
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
-  const [userRating, setUserRating] = useState<number | null>(null);
+  // Zustand store
+  const { getRating } = useRatingsStore();
+
+  const userRating = getRating(cinematicId);
 
   const currentUser = getCurrentUser();
   const username = currentUser?.username || getLoggedUsername();
@@ -52,29 +55,6 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
   });
 
   const watchedContent = watch("content");
-
-  useEffect(() => {
-    const rating = getUserRatingFromStorage(cinematicId);
-    setUserRating(rating);
-
-    const handleRatingChanged = (event: CustomEvent) => {
-      if (event.detail.cinematicId === cinematicId) {
-        setUserRating(getUserRatingFromStorage(cinematicId));
-      }
-    };
-
-    window.addEventListener(
-      "ratingChanged",
-      handleRatingChanged as EventListener
-    );
-
-    return () => {
-      window.removeEventListener(
-        "ratingChanged",
-        handleRatingChanged as EventListener
-      );
-    };
-  }, [cinematicId]);
 
   const onFormSubmit = (data: ReviewFormData) => {
     if (userRating === null || userRating === 0) {

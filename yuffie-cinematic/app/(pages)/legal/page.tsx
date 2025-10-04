@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
 
-export default function LegalPage() {
+function LegalContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "aviso";
   const [tabValue, setTabValue] = useState(initialTab);
@@ -19,12 +18,7 @@ export default function LegalPage() {
       {/* Main Container / Constrained Wrapper */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8 pt-16">
-          <motion.div
-            className="text-center mb-8"
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-          >
+          <div className="text-center mb-8">
             <div className="mb-6">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-red-500 mb-2 flex items-center justify-center gap-4">
                 <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
@@ -38,7 +32,7 @@ export default function LegalPage() {
               Conheça nossos termos, políticas e avisos legais para garantir uma
               experiência transparente e segura.
             </p>
-          </motion.div>
+          </div>
 
           <Tabs
             value={tabValue}
@@ -88,12 +82,9 @@ export default function LegalPage() {
             {/* Conteúdo das abas */}
             <div className="w-full mt-8">
               <TabsContent value="aviso" className="mt-0">
-                <motion.div
+                <div
                   className="relative bg-[#0d1118] border border-red-900/40 rounded-2xl overflow-hidden
                              transition-all duration-500 ease-out hover:border-red-800/60"
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
                 >
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-red-500/3 pointer-events-none"></div>
@@ -123,16 +114,13 @@ export default function LegalPage() {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </TabsContent>
 
               <TabsContent value="privacidade" className="mt-0">
-                <motion.div
+                <div
                   className="relative bg-[#0d1118] border border-blue-900/40 rounded-2xl overflow-hidden
                              transition-all duration-500 ease-out hover:border-blue-800/60"
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
                 >
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-transparent to-blue-500/3 pointer-events-none"></div>
@@ -160,16 +148,13 @@ export default function LegalPage() {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </TabsContent>
 
               <TabsContent value="termos" className="mt-0">
-                <motion.div
+                <div
                   className="relative bg-[#0d1118] border border-purple-900/40 rounded-2xl overflow-hidden
                              transition-all duration-500 ease-out hover:border-purple-800/60"
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
                 >
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/3 via-transparent to-purple-500/3 pointer-events-none"></div>
@@ -200,12 +185,26 @@ export default function LegalPage() {
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </TabsContent>
             </div>
           </Tabs>
         </div>
       </div>
     </section>
+  );
+}
+
+export default function LegalPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500"></div>
+        </div>
+      }
+    >
+      <LegalContent />
+    </Suspense>
   );
 }

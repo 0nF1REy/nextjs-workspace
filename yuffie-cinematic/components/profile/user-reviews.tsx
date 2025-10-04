@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { getAllUserReviews } from "@/components/description/reviews/utils";
+import { useReviewsStore, useUserStore } from "@/stores";
 import { getUserByUsername, getSimulatedUserReviews } from "@/lib/user";
-import { getLikedReviewsFromStorage } from "@/lib/user/storage";
 import { UserReview } from "@/lib/user/types";
 import { ProfileReviewItem } from "./profile-review-item";
 
@@ -15,30 +14,21 @@ export default function UserReviews({ userId }: UserReviewsProps) {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Zustand stores
+  const { getAllReviews } = useReviewsStore();
+  const { getUsername } = useUserStore();
+
   const loadReviews = useCallback(() => {
     try {
       const user = getUserByUsername(userId) || { username: userId };
 
-      // Se for o usuário logado (0nF1REy), usar localStorage
-      if (user.username === "0nF1REy") {
-        const userReviews = getAllUserReviews().filter(
+      // Se for o usuário logado (0nF1REy), usar Zustand
+      if (user.username === "0nF1REy" || user.username === getUsername()) {
+        const allReviews = getAllReviews();
+        const userReviews = allReviews.filter(
           (review) => review.author === user.username
         );
-
-        // Obter reviews curtidas do localStorage
-        const likedReviewIds = getLikedReviewsFromStorage();
-
-        const typedReviews: UserReview[] = userReviews.map((review) => ({
-          id: review.id,
-          author: review.author,
-          content: review.content,
-          rating: review.rating || 0,
-          date: review.date || new Date().toISOString(),
-          cinematicId: review.cinematicId,
-          avatarSeed: review.avatarSeed,
-          likes: likedReviewIds.includes(review.id) ? 1 : 0,
-        }));
-        setReviews(typedReviews);
+        setReviews(userReviews);
       } else {
         const simulatedReviews = getSimulatedUserReviews(user.username);
         setReviews(simulatedReviews);
@@ -48,23 +38,10 @@ export default function UserReviews({ userId }: UserReviewsProps) {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, getAllReviews, getUsername]);
 
   useEffect(() => {
     loadReviews();
-  }, [loadReviews]);
-
-  useEffect(() => {
-    // Escutar eventos de atualização de reviews
-    const handleReviewsUpdate = () => {
-      loadReviews();
-    };
-
-    window.addEventListener("userReviewsUpdated", handleReviewsUpdate);
-
-    return () => {
-      window.removeEventListener("userReviewsUpdated", handleReviewsUpdate);
-    };
   }, [loadReviews]);
 
   if (loading) {

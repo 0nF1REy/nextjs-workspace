@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
 import Link from "next/link";
-import { isFavoriteInStorage } from "@/lib/user/storage";
+import { useFavoritesStore, useReviewsStore } from "@/stores";
 import { StarRating } from "./star-rating";
 import { EditReviewModal } from "./edit-review-modal";
 import { DeleteReviewModal } from "./delete-review-modal";
@@ -19,25 +19,17 @@ import { Review, UserReview } from "./types";
 
 interface ReviewItemProps {
   review: (Review | UserReview) & { likes: number; avatarSeed?: string };
-  onLike: (reviewId: string) => void;
-  isLiked: boolean;
   cinematicId: string;
 }
 
-export function ReviewItem({
-  review,
-  onLike,
-  isLiked,
-  cinematicId,
-  onEdit,
-  onDelete,
-}: ReviewItemProps & {
-  onEdit?: (reviewId: string, content: string, rating: number) => void;
-  onDelete?: (reviewId: string) => void;
-}) {
-  const [isFavorited, setIsFavorited] = useState(false);
+export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  // Zustand stores
+  const { isFavorite } = useFavoritesStore();
+  const { toggleLike, isReviewLiked, updateReview, deleteReview } =
+    useReviewsStore();
 
   const avatarUrl = review.avatarSeed?.startsWith(
     "/assets/images/profile-avatar/"
@@ -46,44 +38,20 @@ export function ReviewItem({
     : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
 
   const isUserReview = review.id.startsWith("user-");
+  const isFavorited = isUserReview ? isFavorite(cinematicId) : false;
+  const isLiked = isReviewLiked(review.id);
 
-  useEffect(() => {
-    if (isUserReview) {
-      setIsFavorited(isFavoriteInStorage(cinematicId));
-    }
-  }, [isUserReview, cinematicId]);
-
-  useEffect(() => {
-    if (!isUserReview) return;
-    const handleFavoriteChanged = (event: CustomEvent) => {
-      if (event.detail.cinematicId === cinematicId) {
-        setIsFavorited(event.detail.favorite);
-      }
-    };
-    window.addEventListener(
-      "favoriteChanged",
-      handleFavoriteChanged as EventListener
-    );
-    return () => {
-      window.removeEventListener(
-        "favoriteChanged",
-        handleFavoriteChanged as EventListener
-      );
-    };
-  }, [isUserReview, cinematicId]);
-
-  // Handler para editar
+  // Handlers
   const handleEdit = (content: string, rating: number) => {
-    if (onEdit) {
-      onEdit(review.id, content, rating);
-    }
+    updateReview(cinematicId, review.id, content, rating);
   };
 
-  // Handler para excluir
   const handleDelete = () => {
-    if (onDelete) {
-      onDelete(review.id);
-    }
+    deleteReview(cinematicId, review.id);
+  };
+
+  const handleLike = () => {
+    toggleLike(review.id);
   };
 
   return (
@@ -147,7 +115,7 @@ export function ReviewItem({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onLike(review.id)}
+          onClick={handleLike}
           className={`flex items-center gap-2 text-xs transition-colors ${
             isLiked
               ? "text-blue-400 hover:text-blue-300"
