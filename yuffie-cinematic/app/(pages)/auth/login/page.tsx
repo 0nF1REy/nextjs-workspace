@@ -48,6 +48,8 @@ export default function LoginPage() {
       data.password === "Admin@123"
     ) {
       setError("");
+      // Marca como autenticado
+      sessionStorage.setItem("admin-authenticated", "true");
       router.push("/welcome");
     } else {
       setError("Usuário ou senha inválidos.");
