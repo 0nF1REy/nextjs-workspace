@@ -87,14 +87,14 @@ export function EditReviewModal({
             variant="secondary"
             size="sm"
             onClick={onClose}
-            className="px-4"
+            className="px-4 cursor-pointer"
           >
             Cancelar
           </Button>
           <Button
             variant="default"
             size="sm"
-            className={`px-4 transition-all duration-200 ${
+            className={`px-4 cursor-pointer transition-all duration-200 ${
               editContent.length < 15
                 ? "bg-gray-600 hover:bg-gray-600 text-gray-400 cursor-not-allowed"
                 : "bg-yellow-500 hover:bg-yellow-600 text-black"
