@@ -21,7 +21,7 @@ export const footerSections = [
     title: "Empresa",
     links: [
       { href: "#", label: "Sobre Nós" },
-      { href: "#", label: "Contato" },
+      { href: "/contact", label: "Contato" },
       { href: "#", label: "Carreiras" },
     ],
   },
