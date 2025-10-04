@@ -21,9 +21,15 @@ import Link from "next/link";
 // Schema de validação Zod
 import { loginSchema, LoginForm } from "@/lib/validations/login";
 
+// Importação de usuários e tipos
+import { users } from "@/lib/user/users";
+import { UserProfile } from "@/lib/user/types";
+import { useAuth } from "@/hooks/useAuth";
+
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const { login } = useAuth();
 
   // Estados para controlar o foco dos inputs
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -37,14 +43,28 @@ export default function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<LoginForm> = (data) => {
-    if (
-      data.email === "admin@dominio.com.br" &&
-      data.password === "Admin@123"
-    ) {
+    const user = users.find(
+      (u: UserProfile) => u.email === data.email && u.password === data.password
+    );
+    if (user) {
       setError("");
-      // Marca como autenticado
-      sessionStorage.setItem("admin-authenticated", "true");
-      router.push("/admin/dashboard");
+
+      const userData = {
+        id: user.id,
+        email: user.email!,
+        username: user.username,
+        userType: user.userType || ("regular" as const),
+      };
+
+      login(userData);
+
+      // Redireciona baseado no tipo de usuário
+      const userType = user.userType || "regular";
+      if (userType === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
     } else {
       setError("Usuário ou senha inválidos.");
     }

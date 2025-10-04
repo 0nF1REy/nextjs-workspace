@@ -18,6 +18,7 @@ import {
 
 // Schema de validação Zod
 import { contactSchema, ContactForm } from "@/lib/validations/contact";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -72,29 +73,32 @@ export default function ContactPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center">
-        <Card className="w-full max-w-md bg-[#0d1118] border border-green-900/40">
-          <CardContent className="text-center py-16">
-            <FontAwesomeIcon
-              icon={faCheck}
-              className="text-6xl text-green-500 mb-6"
-            />
-            <h2 className="text-2xl font-bold text-green-500 mb-4">
-              Mensagem Enviada!
-            </h2>
-            <p className="text-gray-300 mb-4">
-              Obrigado pelo contato. Nossa equipe retornará em breve.
-            </p>
-            <p className="text-sm text-gray-400">
-              Protocolo: #YC-{Math.floor(Math.random() * 100000)}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <ProtectedRoute>
+        <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center">
+          <Card className="w-full max-w-md bg-[#0d1118] border border-green-900/40">
+            <CardContent className="text-center py-16">
+              <FontAwesomeIcon
+                icon={faCheck}
+                className="text-6xl text-green-500 mb-6"
+              />
+              <h2 className="text-2xl font-bold text-green-500 mb-4">
+                Mensagem Enviada!
+              </h2>
+              <p className="text-gray-300 mb-4">
+                Obrigado pelo contato. Nossa equipe retornará em breve.
+              </p>
+              <p className="text-sm text-gray-400">
+                Protocolo: #YC-{Math.floor(Math.random() * 100000)}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </ProtectedRoute>
     );
   }
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100 relative">
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
@@ -367,6 +371,7 @@ export default function ContactPage() {
           </Link>
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

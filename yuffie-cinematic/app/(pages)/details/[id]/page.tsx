@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -22,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import ImageGallery from "@/components/description/image-gallery";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const DynamicMovieReviews = dynamic(
   () => import("@/components/description/reviews"),
@@ -259,16 +262,37 @@ const SimilarMoviesSectionComponent = ({
   );
 };
 
-// É um Server Component
-export default async function CinematicDescriptionPage({ params }: PageProps) {
-  const { id } = await params;
+// Client Component
+export default function CinematicDescriptionPage({ params }: PageProps) {
+  const [id, setId] = useState<string>("");
+
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setId(resolvedParams.id);
+    });
+  }, [params]);
+
+  if (!id) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Carregando...</p>
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   const decodedId = decodeURIComponent(id);
   const cinematic = cinematics.find((c) => c.id === decodedId);
 
   if (!cinematic) {
     return (
-      <NotFoundPage message="O item que você está procurando não existe ou foi removido." />
+      <ProtectedRoute>
+        <NotFoundPage message="O item que você está procurando não existe ou foi removido." />
+      </ProtectedRoute>
     );
   }
 
@@ -318,7 +342,8 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
-    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
+    <ProtectedRoute>
+      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
       {/* Main Container / Constrained Wrapper */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Rolling Covers */}
@@ -457,6 +482,7 @@ export default async function CinematicDescriptionPage({ params }: PageProps) {
           similarMovies={similarMovies}
         />
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

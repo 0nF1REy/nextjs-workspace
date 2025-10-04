@@ -32,6 +32,7 @@ import {
 
 import { useProfile } from "@/hooks/useProfile";
 import { useProfileEdit } from "@/hooks/useProfileEdit";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NotFoundPage from "@/app/not-found";
 
 // Componentes dinâmicos para dados do lado client
@@ -151,7 +152,8 @@ export default function ProfilePage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10 scrollbar-cinema">
+    <ProtectedRoute>
+      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10 scrollbar-cinema">
       {/* Header do Perfil */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card
@@ -590,6 +592,7 @@ export default function ProfilePage({ params }: PageProps) {
           </Link>
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
