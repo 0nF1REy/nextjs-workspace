@@ -5,6 +5,9 @@ export interface User {
   avatar?: string;
   bio?: string;
   joinDate: string;
+  email?: string;
+  password?: string;
+  userType?: "admin" | "regular";
 }
 
 export interface UserProfile extends User {
