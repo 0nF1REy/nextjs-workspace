@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import Link from "next/link";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,49 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // Schema de validação Zod
-const contactSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nome é obrigatório")
-    .min(2, "Nome deve ter pelo menos 2 caracteres")
-    .max(50, "Nome deve ter no máximo 50 caracteres")
-    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
-
-  email: z
-    .email({ message: "E-mail inválido" })
-    .min(10, "E-mail deve ter pelo menos 10 caracteres"),
-
-  phone: z
-    .string()
-    .min(1, "Telefone é obrigatório")
-    .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Formato deve ser (11) 99999-9999"),
-
-  subject: z
-    .string()
-    .min(1, "Selecione um assunto")
-    .refine((val) => ["suporte", "bug", "sugestao", "outros"].includes(val), {
-      message: "Selecione um assunto válido",
-    }),
-
-  priority: z
-    .string()
-    .min(1, "Selecione uma prioridade")
-    .refine((val) => ["baixa", "media", "alta", "urgente"].includes(val), {
-      message: "Selecione uma prioridade válida",
-    }),
-
-  message: z
-    .string()
-    .min(1, "Mensagem é obrigatória")
-    .min(20, "Mensagem deve ter pelo menos 20 caracteres")
-    .max(500, "Mensagem deve ter no máximo 500 caracteres"),
-
-  agreeTerms: z.boolean().refine((val) => val === true, {
-    message: "Você deve aceitar os termos para continuar",
-  }),
-});
-
-type ContactForm = z.infer<typeof contactSchema>;
+import { contactSchema, ContactForm } from "@/lib/validations/contact";
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -82,7 +39,7 @@ export default function ContactPage() {
   const watchedMessage = watch("message", "");
   const messageLength = watchedMessage.length;
 
-  const onSubmit = async (data: ContactForm) => {
+  const onSubmit: SubmitHandler<ContactForm> = async (data) => {
     // Simula envio
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -380,8 +337,8 @@ export default function ContactPage() {
               <div className="flex justify-end pt-4">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-8 cursor-pointer"
+                  disabled={isSubmitting || Object.keys(errors).length > 0}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-8 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FontAwesomeIcon
                     icon={faPaperPlane}
