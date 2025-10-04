@@ -7,6 +7,17 @@ import { Suspense, useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
@@ -14,10 +25,13 @@ import {
   faComments,
   faCalendar,
   faArrowLeft,
+  faEdit,
+  faSave,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { getUserById } from "@/lib/user";
-import { UserProfile } from "@/lib/user/types";
+import { useProfile } from "@/hooks/useProfile";
+import { useProfileEdit } from "@/hooks/useProfileEdit";
 import NotFoundPage from "@/app/not-found";
 
 // Componentes dinâmicos para dados do lado client
@@ -90,22 +104,35 @@ interface PageProps {
 }
 
 export default function ProfilePage({ params }: PageProps) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>("");
 
+  // Hooks customizados
+  const { user, loading, error, isOwnProfile, refetch } = useProfile({
+    userId,
+  });
+  const {
+    isOpen: editModalOpen,
+    openModal: openEditModal,
+    closeModal: closeEditModal,
+    showSuccessMessage,
+    form,
+    handleSubmit,
+  } = useProfileEdit({
+    user,
+    isOwnProfile,
+    onSuccess: refetch,
+  });
+
+  // Obter parâmetros da URL
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
-
-      // Buscar usuário pelo ID
-      const foundUser = getUserById(resolvedParams.id);
-      setUser(foundUser || null);
-      setLoading(false);
+      setUserId(resolvedParams.id);
     };
-
     getParams();
   }, [params]);
 
+  // Estados de carregamento e erro
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center p-4">
@@ -114,7 +141,7 @@ export default function ProfilePage({ params }: PageProps) {
     );
   }
 
-  if (!user) {
+  if (error || !user) {
     return <NotFoundPage message="Usuário não encontrado." />;
   }
 
@@ -177,17 +204,173 @@ export default function ProfilePage({ params }: PageProps) {
               {/* Informações do Usuário */}
               <div className="flex-1 text-center md:text-left space-y-6 md:self-center">
                 <div className="space-y-3">
-                  <h1
-                    className="text-3xl md:text-4xl font-bold text-red-500 mb-2 
-                               tracking-tight drop-shadow-lg"
-                  >
-                    {user.username}
-                  </h1>
-                  {user.displayName && (
-                    <p className="text-xl md:text-2xl text-gray-300 font-medium mb-2">
-                      {user.displayName}
-                    </p>
-                  )}
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                      <h1
+                        className="text-3xl md:text-4xl font-bold text-red-500 mb-2 
+                                   tracking-tight drop-shadow-lg"
+                      >
+                        {user.username}
+                      </h1>
+                      {user.displayName && (
+                        <p className="text-xl md:text-2xl text-gray-300 font-medium mb-2">
+                          {user.displayName}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Botão Editar Perfil */}
+                    {isOwnProfile && (
+                      <Dialog
+                        open={editModalOpen}
+                        onOpenChange={(open) => !open && closeEditModal()}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            onClick={openEditModal}
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
+                                       shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl
+                                       border border-blue-400/30 hover:border-blue-300/50
+                                       transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                                       text-white font-medium px-4 py-2 rounded-lg
+                                       flex items-center gap-2 cursor-pointer"
+                          >
+                            <FontAwesomeIcon
+                              icon={faEdit}
+                              className="w-4 h-4"
+                            />
+                            Editar Perfil
+                          </Button>
+                        </DialogTrigger>
+
+                        <DialogContent
+                          className="sm:max-w-md bg-[#0d1118] border border-gray-700/50 
+                                                  [&>button[data-slot='dialog-close']]:bg-gray-800/50 
+                                                  [&>button[data-slot='dialog-close']]:border 
+                                                  [&>button[data-slot='dialog-close']]:border-gray-600/50 
+                                                  [&>button[data-slot='dialog-close']]:text-gray-400 
+                                                  [&>button[data-slot='dialog-close']]:hover:bg-red-600/20 
+                                                  [&>button[data-slot='dialog-close']]:hover:border-red-500/50 
+                                                  [&>button[data-slot='dialog-close']]:hover:text-red-300
+                                                  [&>button[data-slot='dialog-close']]:transition-all 
+                                                  [&>button[data-slot='dialog-close']]:duration-300 
+                                                  [&>button[data-slot='dialog-close']]:hover:scale-110
+                                                  [&>button[data-slot='dialog-close']]:hover:rotate-90
+                                                  [&>button[data-slot='dialog-close']]:rounded-lg
+                                                  [&>button[data-slot='dialog-close']]:backdrop-blur-sm
+                                                  [&>button[data-slot='dialog-close']]:hover:shadow-lg
+                                                  [&>button[data-slot='dialog-close']]:hover:shadow-red-500/20"
+                        >
+                          <DialogHeader>
+                            <DialogTitle className="text-xl font-bold text-red-500 flex items-center gap-2">
+                              <FontAwesomeIcon
+                                icon={faEdit}
+                                className="w-5 h-5"
+                              />
+                              Editar Perfil
+                            </DialogTitle>
+                          </DialogHeader>
+
+                          <form
+                            onSubmit={handleSubmit}
+                            className="space-y-4 mt-4"
+                          >
+                            <div className="space-y-2">
+                              <Label
+                                htmlFor="displayName"
+                                className="text-sm font-medium text-gray-300"
+                              >
+                                Nome de Exibição *
+                              </Label>
+                              <Input
+                                id="displayName"
+                                {...form.register("displayName")}
+                                placeholder="Digite seu nome de exibição"
+                                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400
+                                           focus:border-red-500/50 focus:ring-red-500/20"
+                              />
+                              {form.formState.errors.displayName && (
+                                <p className="text-red-400 text-xs mt-1">
+                                  {form.formState.errors.displayName.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label
+                                htmlFor="bio"
+                                className="text-sm font-medium text-gray-300"
+                              >
+                                Biografia
+                              </Label>
+                              <textarea
+                                id="bio"
+                                {...form.register("bio")}
+                                placeholder="Conte um pouco sobre você..."
+                                rows={4}
+                                className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md
+                                           text-white placeholder:text-gray-400
+                                           focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20
+                                           resize-none"
+                              />
+                              {form.formState.errors.bio && (
+                                <p className="text-red-400 text-xs mt-1">
+                                  {form.formState.errors.bio.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-4">
+                              <DialogClose asChild>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="group bg-gray-800/50 border-gray-600/50 text-gray-300 
+                                           hover:bg-red-600/20 hover:border-red-500/50 hover:text-red-300
+                                           transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                                           backdrop-blur-sm rounded-lg px-4 py-2
+                                           hover:shadow-lg hover:shadow-red-500/10
+                                           flex items-center gap-2 cursor-pointer font-medium"
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faTimes}
+                                    className="w-4 h-4 transition-all duration-300 ease-out
+                                             group-hover:rotate-90 group-hover:text-red-400"
+                                  />
+                                  Cancelar
+                                </Button>
+                              </DialogClose>
+
+                              <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                                className="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
+                                           shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl
+                                           border border-blue-400/30 hover:border-blue-300/50
+                                           transition-all duration-300 ease-out hover:scale-105 active:scale-95
+                                           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 
+                                           cursor-pointer text-white font-medium px-4 py-2 rounded-lg
+                                           flex items-center gap-2"
+                              >
+                                <FontAwesomeIcon
+                                  icon={faSave}
+                                  className={`w-4 h-4 transition-all duration-300 ease-out ${
+                                    form.formState.isSubmitting
+                                      ? "animate-spin"
+                                      : "group-hover:scale-110 group-hover:text-red-100"
+                                  }`}
+                                />
+                                {form.formState.isSubmitting
+                                  ? "Salvando..."
+                                  : "Salvar Alterações"}
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                  </div>
+
                   <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
                     <div className="flex items-center gap-2 px-3 py-1 bg-gray-800/50 rounded-full border border-gray-700/30">
                       <FontAwesomeIcon
@@ -241,6 +424,31 @@ export default function ProfilePage({ params }: PageProps) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Mensagem de Sucesso */}
+        {showSuccessMessage && (
+          <div className="mb-6">
+            <div
+              className="bg-green-600/20 border border-green-500/30 rounded-xl p-4 
+                            backdrop-blur-sm flex items-center gap-3 animate-in fade-in duration-300"
+            >
+              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                <FontAwesomeIcon
+                  icon={faSave}
+                  className="w-4 h-4 text-green-400"
+                />
+              </div>
+              <div>
+                <p className="text-green-300 font-medium">
+                  Perfil atualizado com sucesso!
+                </p>
+                <p className="text-green-400/80 text-sm">
+                  Suas alterações foram salvas.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Estatísticas */}
         <Suspense

@@ -11,6 +11,7 @@ interface UserState {
   login: (user: User) => void;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  clearUserData: () => void;
 
   // Seletores (Getters)
   getCurrentUser: () => User | null;
@@ -20,11 +21,11 @@ interface UserState {
 
 const DEFAULT_USER: User = {
   id: "0nF1REy",
-  username: "FireyGamer",
-  displayName: "Firey Gamer",
-  avatar: "/assets/images/profile-avatar/user-avatar.png",
-  bio: "Amante de filmes, séries e animes. Sempre em busca de novas experiências cinematográficas!",
-  joinDate: "2023-01-15",
+  username: "0nF1REy",
+  displayName: "Alan Ryan",
+  avatar: "/assets/images/profile-avatar/alan-ryan.jpg",
+  bio: "Dono e administrador do site",
+  joinDate: "2025-10-01",
 };
 
 export const useUserStore = create<UserState>()(
@@ -53,6 +54,23 @@ export const useUserStore = create<UserState>()(
             ? { ...state.currentUser, ...updates }
             : null,
         })),
+
+      // Função para limpar dados e resetar
+      clearUserData: () => {
+        // Remove dados do localStorage
+        localStorage.removeItem("user-store");
+        localStorage.removeItem("yuffie-migrated-to-zustand");
+
+        // Reseta para o estado inicial
+        set(() => ({
+          currentUser: DEFAULT_USER,
+          isLoggedIn: true,
+        }));
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("Dados do usuário limpos e resetados para padrão");
+        }
+      },
 
       // Seletores (Getters)
       getCurrentUser: () => {
