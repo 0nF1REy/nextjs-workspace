@@ -27,9 +27,7 @@ const contactSchema = z.object({
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
 
   email: z
-    .string()
-    .min(1, "E-mail é obrigatório")
-    .email("E-mail inválido")
+    .email({ message: "E-mail inválido" })
     .min(10, "E-mail deve ter pelo menos 10 caracteres"),
 
   phone: z
@@ -38,14 +36,16 @@ const contactSchema = z.object({
     .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Formato deve ser (11) 99999-9999"),
 
   subject: z
-    .enum(["suporte", "bug", "sugestao", "outros"])
-    .refine((val) => val !== undefined, {
+    .string()
+    .min(1, "Selecione um assunto")
+    .refine((val) => ["suporte", "bug", "sugestao", "outros"].includes(val), {
       message: "Selecione um assunto válido",
     }),
 
   priority: z
-    .enum(["baixa", "media", "alta", "urgente"])
-    .refine((val) => val !== undefined, {
+    .string()
+    .min(1, "Selecione uma prioridade")
+    .refine((val) => ["baixa", "media", "alta", "urgente"].includes(val), {
       message: "Selecione uma prioridade válida",
     }),
 
@@ -64,6 +64,9 @@ type ContactForm = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Estados para controlar o foco dos inputs
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const {
     register,
@@ -141,7 +144,7 @@ export default function ContactPage() {
       </div>
 
       <div className="relative z-10 w-full max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header Centralizado */}
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-500 flex items-center justify-center gap-3">
             <FontAwesomeIcon icon={faEnvelope} />
@@ -166,7 +169,11 @@ export default function ContactPage() {
                 <div>
                   <Label
                     htmlFor="name"
-                    className="text-gray-300 font-medium mb-2 block"
+                    className={`font-medium mb-2 block transition-colors duration-200 ${
+                      focusedField === "name"
+                        ? "text-blue-400"
+                        : "text-gray-300"
+                    }`}
                   >
                     Nome Completo *
                   </Label>
@@ -174,7 +181,9 @@ export default function ContactPage() {
                     id="name"
                     {...register("name")}
                     placeholder="Seu nome completo"
-                    className="bg-gray-800/50 border-gray-600 text-white"
+                    className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                    onFocus={() => setFocusedField("name")}
+                    onBlur={() => setFocusedField(null)}
                   />
                   {errors.name && (
                     <p className="text-red-400 text-sm mt-1">
@@ -186,7 +195,11 @@ export default function ContactPage() {
                 <div>
                   <Label
                     htmlFor="email"
-                    className="text-gray-300 font-medium mb-2 block"
+                    className={`font-medium mb-2 block transition-colors duration-200 ${
+                      focusedField === "email"
+                        ? "text-blue-400"
+                        : "text-gray-300"
+                    }`}
                   >
                     E-mail *
                   </Label>
@@ -195,7 +208,9 @@ export default function ContactPage() {
                     type="email"
                     {...register("email")}
                     placeholder="seu@email.com"
-                    className="bg-gray-800/50 border-gray-600 text-white"
+                    className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                    onFocus={() => setFocusedField("email")}
+                    onBlur={() => setFocusedField(null)}
                   />
                   {errors.email && (
                     <p className="text-red-400 text-sm mt-1">
@@ -209,7 +224,9 @@ export default function ContactPage() {
               <div>
                 <Label
                   htmlFor="phone"
-                  className="text-gray-300 font-medium mb-2 block"
+                  className={`font-medium mb-2 block transition-colors duration-200 ${
+                    focusedField === "phone" ? "text-blue-400" : "text-gray-300"
+                  }`}
                 >
                   Telefone *
                 </Label>
@@ -218,7 +235,9 @@ export default function ContactPage() {
                   {...register("phone")}
                   placeholder="(11) 99999-9999"
                   onChange={handlePhoneChange}
-                  className="bg-gray-800/50 border-gray-600 text-white"
+                  className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                  onFocus={() => setFocusedField("phone")}
+                  onBlur={() => setFocusedField(null)}
                 />
                 {errors.phone && (
                   <p className="text-red-400 text-sm mt-1">
@@ -232,14 +251,20 @@ export default function ContactPage() {
                 <div>
                   <Label
                     htmlFor="subject"
-                    className="text-gray-300 font-medium mb-2 block"
+                    className={`font-medium mb-2 block transition-colors duration-200 ${
+                      focusedField === "subject"
+                        ? "text-blue-400"
+                        : "text-gray-300"
+                    }`}
                   >
                     Assunto *
                   </Label>
                   <select
                     id="subject"
                     {...register("subject")}
-                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all duration-200"
+                    onFocus={() => setFocusedField("subject")}
+                    onBlur={() => setFocusedField(null)}
                   >
                     <option value="">Selecione o assunto</option>
                     <option value="suporte">Suporte Técnico</option>
@@ -257,14 +282,20 @@ export default function ContactPage() {
                 <div>
                   <Label
                     htmlFor="priority"
-                    className="text-gray-300 font-medium mb-2 block"
+                    className={`font-medium mb-2 block transition-colors duration-200 ${
+                      focusedField === "priority"
+                        ? "text-blue-400"
+                        : "text-gray-300"
+                    }`}
                   >
                     Prioridade *
                   </Label>
                   <select
                     id="priority"
                     {...register("priority")}
-                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all duration-200"
+                    onFocus={() => setFocusedField("priority")}
+                    onBlur={() => setFocusedField(null)}
                   >
                     <option value="">Selecione a prioridade</option>
                     <option value="baixa">Baixa</option>
@@ -285,7 +316,11 @@ export default function ContactPage() {
                 <div className="flex justify-between items-center mb-2">
                   <Label
                     htmlFor="message"
-                    className="text-gray-300 font-medium"
+                    className={`font-medium transition-colors duration-200 ${
+                      focusedField === "message"
+                        ? "text-blue-400"
+                        : "text-gray-300"
+                    }`}
                   >
                     Mensagem *
                   </Label>
@@ -302,7 +337,9 @@ export default function ContactPage() {
                   {...register("message")}
                   placeholder="Descreva sua dúvida, problema ou sugestão..."
                   rows={5}
-                  className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  onFocus={() => setFocusedField("message")}
+                  onBlur={() => setFocusedField(null)}
                 />
                 {errors.message && (
                   <p className="text-red-400 text-sm mt-1">
