@@ -1,27 +1,27 @@
 import { create } from "zustand";
 
 interface UIState {
-  // Loading states
+  // Estados de carregamento
   isLoading: boolean;
   loadingMessage: string;
-  
-  // Modal states
+
+  // Estados dos modais
   modals: {
     editReview: boolean;
     deleteReview: boolean;
     imageGallery: boolean;
     userProfile: boolean;
   };
-  
-  // Search state
+
+  // Estado da pesquisa
   searchQuery: string;
   searchHistory: string[];
-  
-  // Theme and preferences
+
+  // Tema e preferências
   theme: "dark" | "light";
   sidebarCollapsed: boolean;
-  
-  // Actions
+
+  // Ações
   setLoading: (loading: boolean, message?: string) => void;
   toggleModal: (modal: keyof UIState["modals"]) => void;
   setModalOpen: (modal: keyof UIState["modals"], open: boolean) => void;
@@ -34,24 +34,24 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  // Initial state
+  // Estado inicial
   isLoading: false,
   loadingMessage: "",
-  
+
   modals: {
     editReview: false,
     deleteReview: false,
     imageGallery: false,
     userProfile: false,
   },
-  
+
   searchQuery: "",
   searchHistory: [],
-  
+
   theme: "dark",
   sidebarCollapsed: false,
 
-  // Actions
+  // Ações
   setLoading: (loading, message = "") =>
     set({
       isLoading: loading,
@@ -74,21 +74,19 @@ export const useUIStore = create<UIState>((set) => ({
       },
     })),
 
-  setSearchQuery: (query) =>
-    set({ searchQuery: query }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   addToSearchHistory: (query) =>
     set((state) => {
       if (!query.trim() || state.searchHistory.includes(query)) {
         return state;
       }
-      
+
       const newHistory = [query, ...state.searchHistory.slice(0, 9)]; // Keep last 10
       return { searchHistory: newHistory };
     }),
 
-  clearSearchHistory: () =>
-    set({ searchHistory: [] }),
+  clearSearchHistory: () => set({ searchHistory: [] }),
 
   toggleTheme: () =>
     set((state) => ({

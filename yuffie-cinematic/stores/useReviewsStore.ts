@@ -3,17 +3,22 @@ import { persist } from "zustand/middleware";
 import { UserReview } from "@/lib/user/types";
 
 interface ReviewsState {
-  // State
+  // Estado
   reviews: Record<string, UserReview[]>; // cinematicId -> reviews
   likedReviews: string[]; // reviewIds
-  
-  // Actions
+
+  // Ações
   addReview: (cinematicId: string, review: UserReview) => void;
-  updateReview: (cinematicId: string, reviewId: string, content: string, rating: number) => void;
+  updateReview: (
+    cinematicId: string,
+    reviewId: string,
+    content: string,
+    rating: number
+  ) => void;
   deleteReview: (cinematicId: string, reviewId: string) => void;
   toggleLike: (reviewId: string) => void;
-  
-  // Getters
+
+  // Seletores (Getters)
   getReviewsByCinematic: (cinematicId: string) => UserReview[];
   getAllReviews: () => UserReview[];
   isReviewLiked: (reviewId: string) => boolean;
@@ -23,11 +28,11 @@ interface ReviewsState {
 export const useReviewsStore = create<ReviewsState>()(
   persist(
     (set, get) => ({
-      // Initial state
+      // Estado inicial
       reviews: {},
       likedReviews: [],
 
-      // Actions
+      // Ações
       addReview: (cinematicId, review) =>
         set((state) => ({
           reviews: {
@@ -41,9 +46,7 @@ export const useReviewsStore = create<ReviewsState>()(
           reviews: {
             ...state.reviews,
             [cinematicId]: (state.reviews[cinematicId] || []).map((review) =>
-              review.id === reviewId
-                ? { ...review, content, rating }
-                : review
+              review.id === reviewId ? { ...review, content, rating } : review
             ),
           },
         })),
@@ -70,7 +73,7 @@ export const useReviewsStore = create<ReviewsState>()(
           };
         }),
 
-      // Getters
+      // Seletores (Getters)
       getReviewsByCinematic: (cinematicId) => {
         const state = get();
         return state.reviews[cinematicId] || [];
@@ -79,11 +82,11 @@ export const useReviewsStore = create<ReviewsState>()(
       getAllReviews: () => {
         const state = get();
         const allReviews: UserReview[] = [];
-        
+
         Object.values(state.reviews).forEach((cinematicReviews) => {
           allReviews.push(...cinematicReviews);
         });
-        
+
         return allReviews.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );

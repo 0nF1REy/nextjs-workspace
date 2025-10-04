@@ -3,16 +3,16 @@ import { persist } from "zustand/middleware";
 import { User } from "@/lib/user/types";
 
 interface UserState {
-  // State
+  // Estado
   currentUser: User | null;
   isLoggedIn: boolean;
-  
-  // Actions
+
+  // Ações
   login: (user: User) => void;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
-  
-  // Getters
+
+  // Seletores (Getters)
   getCurrentUser: () => User | null;
   getUserId: () => string | null;
   getUsername: () => string | null;
@@ -30,11 +30,11 @@ const DEFAULT_USER: User = {
 export const useUserStore = create<UserState>()(
   persist(
     (set, get) => ({
-      // Initial state - auto login com usuário padrão
+      // Estado inicial - auto login com usuário padrão
       currentUser: DEFAULT_USER,
       isLoggedIn: true,
 
-      // Actions
+      // Ações
       login: (user) =>
         set({
           currentUser: user,
@@ -54,7 +54,7 @@ export const useUserStore = create<UserState>()(
             : null,
         })),
 
-      // Getters
+      // Seletores (Getters)
       getCurrentUser: () => {
         const state = get();
         return state.currentUser;

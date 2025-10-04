@@ -65,7 +65,10 @@ export const useMigrateLocalStorage = () => {
       // Marcar como migrado
       localStorage.setItem("yuffie-migrated-to-zustand", "true");
 
-      console.log("Migração para Zustand concluída!");
+      // Log apenas em desenvolvimento
+      if (process.env.NODE_ENV === "development") {
+        console.log("Migração para Zustand concluída!");
+      }
     } catch (error) {
       console.error("Erro na migração:", error);
     }
@@ -96,9 +99,12 @@ export const useClearOldStorage = () => {
       localStorage.removeItem(key);
     });
 
-    console.log(
-      `Removidas ${keysToRemove.length} chaves antigas do localStorage`
-    );
+    // Log apenas em desenvolvimento
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `Removidas ${keysToRemove.length} chaves antigas do localStorage`
+      );
+    }
   };
 
   return { clearOldStorage };
