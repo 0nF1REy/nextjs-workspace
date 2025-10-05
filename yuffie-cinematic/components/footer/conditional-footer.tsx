@@ -1,13 +1,14 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { FooterComponent } from "./footer";
+import { useConditionalDisplay } from "@/hooks/useConditionalDisplay";
 
 export function ConditionalFooter() {
-  const pathname = usePathname();
+  const shouldShow = useConditionalDisplay({
+    hideOnPaths: ["/admin"],
+  });
 
-  // Não mostrar footer nas páginas admin
-  if (pathname?.startsWith("/admin")) {
+  if (!shouldShow) {
     return null;
   }
 

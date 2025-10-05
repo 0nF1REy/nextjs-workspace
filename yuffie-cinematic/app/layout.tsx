@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { HeaderComponent } from "@/components/header/header";
-import { ConditionalFooter } from "@/components/footer/conditional-footer";
+import { FooterComponent } from "@/components/footer/footer";
+import { ConditionalWrapper } from "@/components/ConditionalWrapper";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 
 const geistSans = Geist({
@@ -30,9 +31,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
       >
         <StoreProvider>
-          <HeaderComponent />
+          <ConditionalWrapper hideOnPaths={["/admin"]}>
+            <HeaderComponent />
+          </ConditionalWrapper>
           <main className="flex-1">{children}</main>
-          <ConditionalFooter />
+          <ConditionalWrapper hideOnPaths={["/admin"]}>
+            <FooterComponent />
+          </ConditionalWrapper>
         </StoreProvider>
       </body>
     </html>

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
@@ -10,13 +9,6 @@ import { SearchBar } from "./SearchBar";
 import { UserProfile } from "./user-profile";
 
 export function HeaderComponent() {
-  const pathname = usePathname();
-  
-  // Não mostrar header nas páginas admin
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
-
   return (
     <header className="w-full fixed top-0 z-50 bg-gradient-to-b from-black/90 to-transparent">
       <div className="max-w-screen-2xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2">
