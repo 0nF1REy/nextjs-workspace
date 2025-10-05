@@ -8,8 +8,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { getUserById } from "@/lib/user/users";
 
 export function UserProfile() {
-  const { user: authUser, logout, isAuthenticated } = useAuth();
+  const { user: authUser, logout, isAuthenticated, isAdmin } = useAuth();
 
+  // Se não estiver autenticado, mostra link de login
   if (!isAuthenticated || !authUser) {
     return (
       <Link
@@ -24,6 +25,11 @@ export function UserProfile() {
         </span>
       </Link>
     );
+  }
+
+  // Se for admin, não mostra o header de usuário
+  if (isAdmin) {
+    return null;
   }
 
   const user = getUserById(authUser.id);

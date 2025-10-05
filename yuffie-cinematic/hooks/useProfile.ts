@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { UserProfile } from "@/lib/user/types";
-import { useUserStore } from "@/stores";
+import { useAuth } from "@/hooks/useAuth";
 import { getUserById } from "@/lib/user";
 
 interface UseProfileOptions {
@@ -26,9 +26,8 @@ export function useProfile({ userId }: UseProfileOptions): UseProfileReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Zustand store
-  const { getCurrentUser } = useUserStore();
-  const currentUser = getCurrentUser();
+  // Hook de autenticação
+  const { user: currentUser } = useAuth();
 
   // Verificar se é o próprio perfil
   const isOwnProfile = Boolean(currentUser && currentUser.id === userId);
@@ -41,11 +40,20 @@ export function useProfile({ userId }: UseProfileOptions): UseProfileReturn {
       let userData: UserProfile | null = null;
 
       if (isOwnProfile && currentUser) {
-        // Para o usuário logado, usar dados do Zustand
-        userData = {
-          ...currentUser,
-          favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
-        } as UserProfile;
+        // Para o usuário logado, buscar dados completos do getUserById
+        const fullUserData = getUserById(currentUser.id);
+        if (fullUserData) {
+          userData = {
+            ...fullUserData,
+            favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
+          } as UserProfile;
+        } else {
+          // Fallback para dados do useAuth se não encontrar no getUserById
+          userData = {
+            ...currentUser,
+            favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
+          } as UserProfile;
+        }
       } else {
         // Para outros usuários, buscar dados estáticos ou API
         userData = getUserById(userId) || null;

@@ -32,7 +32,7 @@ import {
 
 import { useProfile } from "@/hooks/useProfile";
 import { useProfileEdit } from "@/hooks/useProfileEdit";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { useConditionalRedirect } from "@/hooks/useConditionalRedirect";
 import NotFoundPage from "@/app/not-found";
 
 // Componentes dinâmicos para dados do lado client
@@ -107,6 +107,13 @@ interface PageProps {
 export default function ProfilePage({ params }: PageProps) {
   const [userId, setUserId] = useState<string>("");
 
+  // Hook para redirecionamento condicional
+  const { shouldRender } = useConditionalRedirect({
+    requireAuth: true,
+    redirectUnauthenticatedTo: "/auth/login",
+    redirectAdminTo: "/admin/dashboard",
+  });
+
   // Hooks customizados
   const { user, loading, error, isOwnProfile, refetch } = useProfile({
     userId,
@@ -134,6 +141,17 @@ export default function ProfilePage({ params }: PageProps) {
   }, [params]);
 
   // Estados de carregamento e erro
+  if (!shouldRender) {
+    return (
+      <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecionando...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center p-4">
@@ -152,8 +170,7 @@ export default function ProfilePage({ params }: PageProps) {
   });
 
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10 scrollbar-cinema">
+    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10 scrollbar-cinema">
       {/* Header do Perfil */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card
@@ -592,7 +609,6 @@ export default function ProfilePage({ params }: PageProps) {
           </Link>
         </div>
       </div>
-      </div>
-    </ProtectedRoute>
+    </div>
   );
 }

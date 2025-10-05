@@ -3,6 +3,7 @@
 import { useRef, useMemo, useCallback } from "react";
 import { items } from "@/lib/items";
 import { cinematics, CinematicDetail } from "@/lib/details";
+import { useConditionalRedirect } from "@/hooks/useConditionalRedirect";
 
 import { HeroVideo } from "@/components/homepage/HeroVideo";
 import { HighlightGrid } from "@/components/homepage/HighlightGrid";
@@ -10,6 +11,11 @@ import { CategoryCarousel } from "@/components/homepage/CategoryCarousel";
 
 export default function HomePage() {
   const destaquesRef = useRef<HTMLDivElement | null>(null);
+
+  // Redirecionar admin para dashboard, mas permitir acesso público
+  const { shouldRender } = useConditionalRedirect({
+    redirectAdminTo: "/admin/dashboard",
+  });
 
   const videoItems = useMemo(() => items.filter((i) => i.video), []);
 
@@ -47,10 +53,22 @@ export default function HomePage() {
     []
   );
 
+  // Mostrar loading ou não renderizar se deve redirecionar
+  if (!shouldRender) {
+    return (
+      <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecionando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <main className="min-h-screen w-full bg-[#131b22] text-gray-100">
-      {/* HeroVideo full screen */}
-      <div className="w-full h-screen">
+    <main className="min-h-screen bg-[#131b22] text-gray-100">
+      {/* Hero Video Section */}
+      <div className="relative h-screen overflow-hidden">
         <HeroVideo
           videoItems={videoItems}
           getCinematicDetails={getCinematicDetails}

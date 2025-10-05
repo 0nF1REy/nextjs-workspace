@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -15,21 +13,13 @@ import {
   faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 import { ClientOnly } from "@/components/client-only";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AdminDashboardPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Simulação simples de verificação de autenticação
-    const isAuthenticated = sessionStorage.getItem("admin-authenticated");
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [router]);
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    sessionStorage.removeItem("admin-authenticated");
-    router.push("/");
+    logout();
   };
 
   return (

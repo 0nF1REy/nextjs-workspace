@@ -16,7 +16,7 @@ export const users: UserProfile[] = [
     username: "0nF1REy",
     displayName: "Alan Ryan",
     avatar: "/assets/images/profile-avatar/alan-ryan.jpg",
-    bio: "Apaixonado por explorar universos de ficção científica, desvendar mistérios complexos e acompanhar tramas criminais envolventes. Fascinado pela riqueza da cultura japonesa, desde suas tradições até suas narrativas em anime, busco constantemente novas histórias que desafiem a imaginação e provoquem reflexão. Sempre em busca de experiências culturais e literárias que unam ação, suspense e criatividade.",
+    bio: "Apaixonado por explorar universos de ficção científica, desvendar mistérios complexos e acompanhar tramas criminais envolventes. Fascinado pela riqueza da cultura japonesa.",
     joinDate: "2025-10-01",
     favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
     email: "alanryan619@gmail.com",

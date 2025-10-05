@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,27 +16,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AdminRoute } from "@/components/AdminRoute";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    // Verificação de autenticação
-    const isAuthenticated = sessionStorage.getItem("admin-authenticated");
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [router]);
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    sessionStorage.removeItem("admin-authenticated");
-    router.push("/");
+    logout();
   };
 
   const toggleSidebar = () => {
@@ -194,7 +187,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="min-h-[calc(100vh-73px)]">{children}</main>
+        <main className="min-h-[calc(100vh-73px)]">
+          <AdminRoute>{children}</AdminRoute>
+        </main>
       </div>
     </div>
   );
