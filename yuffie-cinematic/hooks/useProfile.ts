@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { UserProfile } from "@/lib/user/types";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserById } from "@/lib/user";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface UseProfileOptions {
   userId: string;
@@ -40,19 +41,28 @@ export function useProfile({ userId }: UseProfileOptions): UseProfileReturn {
       let userData: UserProfile | null = null;
 
       if (isOwnProfile && currentUser) {
-        // Para o usuário logado, buscar dados completos do getUserById
-        const fullUserData = getUserById(currentUser.id);
-        if (fullUserData) {
+        // Para o usuário logado, usar dados do Zustand store (mais atualizados)
+        const storeUser = useUserStore.getState().currentUser;
+        if (storeUser && storeUser.id === userId) {
           userData = {
-            ...fullUserData,
+            ...storeUser,
             favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
           } as UserProfile;
         } else {
-          // Fallback para dados do useAuth se não encontrar no getUserById
-          userData = {
-            ...currentUser,
-            favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
-          } as UserProfile;
+          // Fallback para dados do getUserById se não encontrar no store
+          const fullUserData = getUserById(currentUser.id);
+          if (fullUserData) {
+            userData = {
+              ...fullUserData,
+              favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
+            } as UserProfile;
+          } else {
+            // Fallback final para dados do useAuth
+            userData = {
+              ...currentUser,
+              favoriteGenres: ["Sci-Fi", "Crime", "Anime", "Mystery"],
+            } as UserProfile;
+          }
         }
       } else {
         // Para outros usuários, buscar dados estáticos ou API
@@ -77,6 +87,17 @@ export function useProfile({ userId }: UseProfileOptions): UseProfileReturn {
       fetchUser();
     }
   }, [userId, fetchUser]);
+
+  // Listener para mudanças no Zustand store
+  useEffect(() => {
+    if (isOwnProfile) {
+      const unsubscribe = useUserStore.subscribe(() => {
+        // Re-fetch quando o usuário no store mudar
+        fetchUser();
+      });
+      return unsubscribe;
+    }
+  }, [isOwnProfile, fetchUser]);
 
   return {
     user,

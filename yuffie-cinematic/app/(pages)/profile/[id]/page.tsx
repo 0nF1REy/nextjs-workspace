@@ -405,7 +405,7 @@ export default function ProfilePage({ params }: PageProps) {
 
                 {user.bio && (
                   <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700/30">
-                    <p className="text-gray-300 leading-relaxed max-w-2xl text-center md:text-left">
+                    <p className="text-gray-300 leading-relaxed w-full text-center md:text-left">
                       {user.bio}
                     </p>
                   </div>
