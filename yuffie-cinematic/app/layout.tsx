@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { HeaderComponent } from "@/components/header/header";
-import { FooterComponent } from "@/components/footer/footer";
+import { ConditionalFooter } from "@/components/footer/conditional-footer";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 
 const geistSans = Geist({
@@ -32,7 +32,7 @@ export default function RootLayout({
         <StoreProvider>
           <HeaderComponent />
           <main className="flex-1">{children}</main>
-          <FooterComponent />
+          <ConditionalFooter />
         </StoreProvider>
       </body>
     </html>
