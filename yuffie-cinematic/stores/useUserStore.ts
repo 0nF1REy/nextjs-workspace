@@ -19,21 +19,12 @@ interface UserState {
   getUsername: () => string | null;
 }
 
-const DEFAULT_USER: User = {
-  id: "0nF1REy",
-  username: "0nF1REy",
-  displayName: "Alan Ryan",
-  avatar: "/assets/images/profile-avatar/alan-ryan.jpg",
-  bio: "Dono e administrador do site",
-  joinDate: "2025-10-01",
-};
-
 export const useUserStore = create<UserState>()(
   persist(
     (set, get) => ({
-      // Estado inicial - auto login com usuário padrão
-      currentUser: DEFAULT_USER,
-      isLoggedIn: true,
+      // Estado inicial - sem usuário logado
+      currentUser: null,
+      isLoggedIn: false,
 
       // Ações
       login: (user) =>
@@ -61,14 +52,14 @@ export const useUserStore = create<UserState>()(
         localStorage.removeItem("user-store");
         localStorage.removeItem("yuffie-migrated-to-zustand");
 
-        // Reseta para o estado inicial
+        // Reseta para o estado inicial (sem usuário logado)
         set(() => ({
-          currentUser: DEFAULT_USER,
-          isLoggedIn: true,
+          currentUser: null,
+          isLoggedIn: false,
         }));
 
         if (process.env.NODE_ENV === "development") {
-          console.log("Dados do usuário limpos e resetados para padrão");
+          console.log("Dados do usuário limpos e resetados");
         }
       },
 

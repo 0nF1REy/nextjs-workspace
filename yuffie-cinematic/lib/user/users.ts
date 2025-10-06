@@ -237,9 +237,6 @@ export const users: UserProfile[] = [
   },
 ];
 
-// Usuário logado atual
-export const CURRENT_USER_ID = "0nF1REy";
-
 // Função para buscar usuário por ID
 export const getUserById = (id: string): UserProfile | undefined => {
   return users.find((user) => user.id === id);
@@ -252,9 +249,24 @@ export const getUserByUsername = (
   return users.find((user) => user.username === username);
 };
 
-// Função para obter o usuário logado
+// Função para obter o usuário logado dinamicamente
 export const getCurrentUser = (): UserProfile | undefined => {
-  return getUserById(CURRENT_USER_ID);
+  // Primeiro tenta usar o useAuth (sessionStorage)
+  if (typeof window !== "undefined") {
+    try {
+      const authUser = sessionStorage.getItem("authenticated-user");
+      if (authUser) {
+        const parsedUser = JSON.parse(authUser);
+        // Busca o usuário completo pelos dados de autenticação
+        return getUserById(parsedUser.id);
+      }
+    } catch (error) {
+      console.error("Erro ao recuperar usuário autenticado:", error);
+    }
+  }
+  
+  // Se não há usuário autenticado, retorna undefined
+  return undefined;
 };
 
 // Função para obter usuário com stats dinâmicos
@@ -277,19 +289,24 @@ export const getUserWithStats = (
   return {
     ...user,
     watchingStatus: {
-      watching: Math.floor(stats.totalFavorites * 0.1),
-      completed: stats.totalReviews,
-      planToWatch: Math.floor(stats.totalFavorites * 0.3),
+      watching: Math.floor((stats.totalFavorites || 0) * 0.1),
+      completed: stats.totalReviews || 0,
+      planToWatch: Math.floor((stats.totalFavorites || 0) * 0.3),
     },
   };
 };
 
 // Função para calcular stats dinamicamente
 export const getUserStats = (username?: string) => {
-  const currentUsername = username || getCurrentUser()?.username || "0nF1REy";
+  const currentUser = getCurrentUser();
+  const currentUsername = username || currentUser?.username;
+
+  if (!currentUsername) {
+    return { totalReviews: 0, totalFavorites: 0, totalRatings: 0 };
+  }
 
   // Para o usuário logado, usar localStorage e Zustand
-  if (currentUsername === "0nF1REy") {
+  if (currentUser && currentUsername === currentUser.username) {
     const reviews = getUserReviewsFromStorage().filter(
       (r: UserReview) => r.author === currentUsername
     );

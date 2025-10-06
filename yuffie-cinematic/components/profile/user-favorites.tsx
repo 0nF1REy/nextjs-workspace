@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { getUserFavorites } from "@/components/description/user-interactive-elements";
-import { getSimulatedUserFavorites, getUserByUsername } from "@/lib/user";
+import { getSimulatedUserFavorites, getUserByUsername, getCurrentUser } from "@/lib/user";
 import { cinematics } from "@/lib/details";
 import { FavoriteItem } from "@/lib/user/types";
 
@@ -21,9 +21,10 @@ export default function UserFavorites({ userId }: UserFavoritesProps) {
   useEffect(() => {
     try {
       const user = getUserByUsername(userId) || { username: userId };
+      const loggedUser = getCurrentUser();
 
-      // Se for o usuário logado (0nF1REy), usar localStorage
-      if (user.username === "0nF1REy") {
+      // Se for o usuário logado, usar localStorage
+      if (loggedUser && user.username === loggedUser.username) {
         const userFavorites = getUserFavorites();
         setFavorites(userFavorites);
       } else {
@@ -59,7 +60,7 @@ export default function UserFavorites({ userId }: UserFavoritesProps) {
           Nenhum favorito ainda
         </h3>
         <p className="text-gray-500">
-          {userId === "0nF1REy"
+          {getCurrentUser()?.username === userId
             ? "Adicione filmes, séries e animes aos seus favoritos!"
             : "Este usuário ainda não adicionou nenhum favorito."}
         </p>

@@ -35,7 +35,7 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
   const userRating = getRating(cinematicId);
 
   const currentUser = getCurrentUser();
-  const username = currentUser?.username || getLoggedUsername();
+  const username = currentUser?.username || getLoggedUsername() || "anonymous";
   const userAvatarUrl =
     currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 

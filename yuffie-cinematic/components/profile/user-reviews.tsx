@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useReviewsStore, useUserStore } from "@/stores";
-import { getUserByUsername, getSimulatedUserReviews } from "@/lib/user";
+import { getUserByUsername, getSimulatedUserReviews, getCurrentUser } from "@/lib/user";
 import { UserReview } from "@/lib/user/types";
 import { ProfileReviewItem } from "./profile-review-item";
 
@@ -22,9 +22,10 @@ export default function UserReviews({ userId }: UserReviewsProps) {
     const loadReviews = () => {
       try {
         const user = getUserByUsername(userId) || { username: userId };
+        const loggedUser = getCurrentUser();
 
-        // Se for o usuário logado (0nF1REy), usar Zustand
-        if (user.username === "0nF1REy" || user.username === getUsername()) {
+        // Se for o usuário logado, usar Zustand
+        if (loggedUser && user.username === loggedUser.username) {
           const allReviews = reviewsStore.getAllReviews();
           const userReviews = allReviews.filter(
             (review) => review.author === user.username
@@ -64,7 +65,7 @@ export default function UserReviews({ userId }: UserReviewsProps) {
           Nenhuma review ainda
         </h3>
         <p className="text-gray-500">
-          {userId === "0nF1REy"
+          {getCurrentUser()?.username === userId
             ? "Que tal escrever sua primeira review sobre um filme, série ou anime?"
             : "Este usuário ainda não escreveu nenhuma review."}
         </p>
