@@ -20,7 +20,6 @@ import {
 import { movieSchema, type MovieForm } from "@/lib/validations/movie";
 import { z } from "zod";
 
-// Schema específico para o formulário (sem status obrigatório)
 const formSchema = movieSchema.omit({ status: true });
 type FormData = z.infer<typeof formSchema>;
 
@@ -38,15 +37,18 @@ export default function AddMoviePage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      director: "",
+      originalTitle: "",
       year: new Date().getFullYear(),
-      duration: 0,
+      duration: undefined,
       synopsis: "",
       classification: "",
       language: "",
       country: "",
       genres: [""],
       cast: [{ name: "", character: "" }],
+      poster: "",
+      trailer: "",
+      rating: undefined,
     },
   });
 
@@ -63,20 +65,26 @@ export default function AddMoviePage() {
     setGenreFields([...genreFields, ""]);
   };
 
-  const removeGenre = (index: number) => {
+  const removeGenreField = (index: number) => {
     if (genreFields.length > 1) {
       setGenreFields(genreFields.filter((_, i) => i !== index));
     }
   };
 
   const onSubmit = async (data: FormData) => {
+    // Filtra gêneros vazios antes da validação
+    const filteredData = {
+      ...data,
+      genres: data.genres.filter((genre) => genre.trim().length > 0),
+    };
+
     // Simula salvamento
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Adiciona o status default antes de salvar
     const movieData: MovieForm = {
-      ...data,
-      status: "draft" as const
+      ...filteredData,
+      status: "draft" as const,
     };
 
     console.log("Filme cadastrado:", movieData);
@@ -147,7 +155,10 @@ export default function AddMoviePage() {
               {/* Título e Diretor */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="title" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="title"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     Título *
                   </Label>
                   <Input
@@ -187,13 +198,28 @@ export default function AddMoviePage() {
               {/* Ano, Duração e Avaliação */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="year" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="year"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     Ano *
                   </Label>
                   <Input
                     id="year"
                     type="number"
-                    {...register("year", { valueAsNumber: true })}
+                    {...register("year", {
+                      valueAsNumber: true,
+                      setValueAs: (value) => {
+                        if (
+                          value === "" ||
+                          value === null ||
+                          value === undefined
+                        )
+                          return undefined;
+                        const num = Number(value);
+                        return isNaN(num) ? undefined : num;
+                      },
+                    })}
                     placeholder="2024"
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
@@ -214,7 +240,19 @@ export default function AddMoviePage() {
                   <Input
                     id="duration"
                     type="number"
-                    {...register("duration", { valueAsNumber: true })}
+                    {...register("duration", {
+                      valueAsNumber: true,
+                      setValueAs: (value) => {
+                        if (
+                          value === "" ||
+                          value === null ||
+                          value === undefined
+                        )
+                          return undefined;
+                        const num = Number(value);
+                        return isNaN(num) ? undefined : num;
+                      },
+                    })}
                     placeholder="120"
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
@@ -226,7 +264,10 @@ export default function AddMoviePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="rating" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="rating"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     Avaliação (0-10)
                   </Label>
                   <Input
@@ -235,7 +276,19 @@ export default function AddMoviePage() {
                     step="0.5"
                     min="0"
                     max="10"
-                    {...register("rating", { valueAsNumber: true })}
+                    {...register("rating", {
+                      valueAsNumber: true,
+                      setValueAs: (value) => {
+                        if (
+                          value === "" ||
+                          value === null ||
+                          value === undefined
+                        )
+                          return undefined;
+                        const num = Number(value);
+                        return isNaN(num) ? undefined : num;
+                      },
+                    })}
                     placeholder="8.5"
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
@@ -249,7 +302,10 @@ export default function AddMoviePage() {
 
               {/* Sinopse */}
               <div>
-                <Label htmlFor="synopsis" className="text-gray-300 font-medium mb-2 block">
+                <Label
+                  htmlFor="synopsis"
+                  className="text-gray-300 font-medium mb-2 block"
+                >
                   Sinopse *
                 </Label>
                 <textarea
@@ -269,7 +325,10 @@ export default function AddMoviePage() {
               {/* Classificação, Idioma e País */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="classification" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="classification"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     Classificação *
                   </Label>
                   <Input
@@ -286,7 +345,10 @@ export default function AddMoviePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="language" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="language"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     Idioma *
                   </Label>
                   <Input
@@ -303,7 +365,10 @@ export default function AddMoviePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="country" className="text-gray-300 font-medium mb-2 block">
+                  <Label
+                    htmlFor="country"
+                    className="text-gray-300 font-medium mb-2 block"
+                  >
                     País *
                   </Label>
                   <Input
@@ -348,7 +413,7 @@ export default function AddMoviePage() {
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => removeGenre(index)}
+                          onClick={() => removeGenreField(index)}
                           className="border-red-600 text-red-400 hover:bg-red-600/20"
                         >
                           <FontAwesomeIcon icon={faTimes} className="w-3 h-3" />
@@ -383,7 +448,10 @@ export default function AddMoviePage() {
 
                 <div className="space-y-3">
                   {castFields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div
+                      key={field.id}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-2"
+                    >
                       <Input
                         {...register(`cast.${index}.name` as const)}
                         placeholder="Ex: Robert Downey Jr."

@@ -10,7 +10,7 @@ export const movieSchema = z.object({
   originalTitle: z.string().optional(),
 
   year: z
-    .number()
+    .number({ message: "Ano deve ser um número válido" })
     .min(1900, "Ano deve ser maior que 1900")
     .max(
       new Date().getFullYear() + 5,
@@ -18,14 +18,18 @@ export const movieSchema = z.object({
     ),
 
   duration: z
-    .number()
+    .number({ message: "Duração deve ser um número válido" })
     .min(1, "Duração deve ser maior que 0")
     .max(600, "Duração deve ser menor que 600 minutos"),
 
   genres: z
-    .array(z.string())
+    .array(z.string().min(1, "Gênero não pode estar vazio"))
     .min(1, "Selecione pelo menos um gênero")
-    .max(5, "Selecione no máximo 5 gêneros"),
+    .max(5, "Selecione no máximo 5 gêneros")
+    .refine(
+      (genres) => genres.every((genre) => genre.trim().length > 0),
+      "Todos os gêneros devem ser preenchidos"
+    ),
 
   director: z
     .string()
