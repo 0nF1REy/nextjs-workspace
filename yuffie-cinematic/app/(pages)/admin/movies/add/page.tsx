@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import Link from "next/link";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,63 +17,16 @@ import {
   faCheck,
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
+import { movieSchema, type MovieForm } from "@/lib/validations/movie";
+import { z } from "zod";
 
-// Schema de validação Zod
-const movieSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Título é obrigatório")
-    .min(2, "Título deve ter pelo menos 2 caracteres")
-    .max(100, "Título deve ter no máximo 100 caracteres"),
-
-  director: z
-    .string()
-    .min(1, "Diretor é obrigatório")
-    .min(3, "Nome do diretor deve ter pelo menos 3 caracteres")
-    .max(50, "Nome do diretor deve ter no máximo 50 caracteres"),
-
-  year: z
-    .number()
-    .min(1900, "Ano deve ser a partir de 1900")
-    .max(new Date().getFullYear() + 5, "Ano não pode ser muito futuro"),
-
-  duration: z
-    .number()
-    .min(10, "Duração deve ser de pelo menos 10 minutos")
-    .max(600, "Duração deve ser de no máximo 600 minutos"),
-
-  rating: z
-    .number()
-    .min(0, "Avaliação deve ser entre 0 e 5")
-    .max(5, "Avaliação deve ser entre 0 e 5"),
-
-  synopsis: z
-    .string()
-    .min(1, "Sinopse é obrigatória")
-    .min(50, "Sinopse deve ter pelo menos 50 caracteres")
-    .max(1000, "Sinopse deve ter no máximo 1000 caracteres"),
-
-  genres: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Nome do gênero é obrigatório"),
-      })
-    )
-    .min(1, "Pelo menos um gênero é obrigatório"),
-
-  cast: z
-    .array(
-      z.object({
-        actor: z.string().min(1, "Nome do ator é obrigatório"),
-      })
-    )
-    .min(1, "Pelo menos um ator é obrigatório"),
-});
-
-type MovieForm = z.infer<typeof movieSchema>;
+// Schema específico para o formulário (sem status obrigatório)
+const formSchema = movieSchema.omit({ status: true });
+type FormData = z.infer<typeof formSchema>;
 
 export default function AddMoviePage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [genreFields, setGenreFields] = useState([""]);
 
   const {
     register,
@@ -82,21 +34,20 @@ export default function AddMoviePage() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<MovieForm>({
-    resolver: zodResolver(movieSchema),
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      genres: [{ name: "" }],
-      cast: [{ actor: "" }],
+      title: "",
+      director: "",
+      year: new Date().getFullYear(),
+      duration: 0,
+      synopsis: "",
+      classification: "",
+      language: "",
+      country: "",
+      genres: [""],
+      cast: [{ name: "", character: "" }],
     },
-  });
-
-  const {
-    fields: genreFields,
-    append: appendGenre,
-    remove: removeGenre,
-  } = useFieldArray({
-    control,
-    name: "genres",
   });
 
   const {
@@ -108,11 +59,27 @@ export default function AddMoviePage() {
     name: "cast",
   });
 
-  const onSubmit = async (data: MovieForm) => {
+  const addGenre = () => {
+    setGenreFields([...genreFields, ""]);
+  };
+
+  const removeGenre = (index: number) => {
+    if (genreFields.length > 1) {
+      setGenreFields(genreFields.filter((_, i) => i !== index));
+    }
+  };
+
+  const onSubmit = async (data: FormData) => {
     // Simula salvamento
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    console.log("Filme cadastrado:", data);
+    // Adiciona o status default antes de salvar
+    const movieData: MovieForm = {
+      ...data,
+      status: "draft" as const
+    };
+
+    console.log("Filme cadastrado:", movieData);
     setIsSubmitted(true);
 
     // Reset após sucesso
@@ -260,14 +227,16 @@ export default function AddMoviePage() {
 
                 <div>
                   <Label htmlFor="rating" className="text-gray-300 font-medium mb-2 block">
-                    Avaliação (0-5) *
+                    Avaliação (0-10)
                   </Label>
                   <Input
                     id="rating"
                     type="number"
-                    step="0.1"
+                    step="0.5"
+                    min="0"
+                    max="10"
                     {...register("rating", { valueAsNumber: true })}
-                    placeholder="4.5"
+                    placeholder="8.5"
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
                   {errors.rating && (
@@ -297,6 +266,60 @@ export default function AddMoviePage() {
                 )}
               </div>
 
+              {/* Classificação, Idioma e País */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="classification" className="text-gray-300 font-medium mb-2 block">
+                    Classificação *
+                  </Label>
+                  <Input
+                    id="classification"
+                    {...register("classification")}
+                    placeholder="Ex: 12, 14, 16, 18"
+                    className="bg-gray-800/50 border-gray-600 text-white"
+                  />
+                  {errors.classification && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.classification.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="language" className="text-gray-300 font-medium mb-2 block">
+                    Idioma *
+                  </Label>
+                  <Input
+                    id="language"
+                    {...register("language")}
+                    placeholder="Ex: Português, Inglês"
+                    className="bg-gray-800/50 border-gray-600 text-white"
+                  />
+                  {errors.language && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.language.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="country" className="text-gray-300 font-medium mb-2 block">
+                    País *
+                  </Label>
+                  <Input
+                    id="country"
+                    {...register("country")}
+                    placeholder="Ex: Brasil, EUA"
+                    className="bg-gray-800/50 border-gray-600 text-white"
+                  />
+                  {errors.country && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.country.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               {/* Gêneros */}
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -304,7 +327,7 @@ export default function AddMoviePage() {
                   <Button
                     type="button"
                     size="sm"
-                    onClick={() => appendGenre({ name: "" })}
+                    onClick={addGenre}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
@@ -313,10 +336,10 @@ export default function AddMoviePage() {
                 </div>
 
                 <div className="space-y-3">
-                  {genreFields.map((field, index) => (
-                    <div key={field.id} className="flex gap-2">
+                  {genreFields.map((_, index) => (
+                    <div key={index} className="flex gap-2">
                       <Input
-                        {...register(`genres.${index}.name` as const)}
+                        {...register(`genres.${index}` as const)}
                         placeholder="Ex: Ação, Drama, Ficção"
                         className="bg-gray-800/50 border-gray-600 text-white"
                       />
@@ -350,7 +373,7 @@ export default function AddMoviePage() {
                   <Button
                     type="button"
                     size="sm"
-                    onClick={() => appendCast({ actor: "" })}
+                    onClick={() => appendCast({ name: "", character: "" })}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
@@ -360,10 +383,15 @@ export default function AddMoviePage() {
 
                 <div className="space-y-3">
                   {castFields.map((field, index) => (
-                    <div key={field.id} className="flex gap-2">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <Input
-                        {...register(`cast.${index}.actor` as const)}
+                        {...register(`cast.${index}.name` as const)}
                         placeholder="Ex: Robert Downey Jr."
+                        className="bg-gray-800/50 border-gray-600 text-white"
+                      />
+                      <Input
+                        {...register(`cast.${index}.character` as const)}
+                        placeholder="Ex: Tony Stark / Homem de Ferro"
                         className="bg-gray-800/50 border-gray-600 text-white"
                       />
                       {castFields.length > 1 && (
@@ -372,7 +400,7 @@ export default function AddMoviePage() {
                           size="sm"
                           variant="outline"
                           onClick={() => removeCast(index)}
-                          className="border-red-600 text-red-400 hover:bg-red-600/20"
+                          className="border-red-600 text-red-400 hover:bg-red-600/20 md:col-span-2"
                         >
                           <FontAwesomeIcon icon={faTimes} className="w-3 h-3" />
                         </Button>
