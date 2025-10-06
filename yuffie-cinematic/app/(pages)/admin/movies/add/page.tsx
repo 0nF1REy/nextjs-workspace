@@ -176,11 +176,11 @@ export default function AddMoviePage() {
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {/* Título e Diretor */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="title" className="text-gray-300 font-medium">
+                  <Label htmlFor="title" className="text-gray-300 font-medium mb-2 block">
                     Título *
                   </Label>
                   <Input
@@ -199,7 +199,7 @@ export default function AddMoviePage() {
                 <div>
                   <Label
                     htmlFor="director"
-                    className="text-gray-300 font-medium"
+                    className="text-gray-300 font-medium mb-2 block"
                   >
                     Diretor *
                   </Label>
@@ -220,7 +220,7 @@ export default function AddMoviePage() {
               {/* Ano, Duração e Avaliação */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="year" className="text-gray-300 font-medium">
+                  <Label htmlFor="year" className="text-gray-300 font-medium mb-2 block">
                     Ano *
                   </Label>
                   <Input
@@ -240,7 +240,7 @@ export default function AddMoviePage() {
                 <div>
                   <Label
                     htmlFor="duration"
-                    className="text-gray-300 font-medium"
+                    className="text-gray-300 font-medium mb-2 block"
                   >
                     Duração (min) *
                   </Label>
@@ -259,7 +259,7 @@ export default function AddMoviePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="rating" className="text-gray-300 font-medium">
+                  <Label htmlFor="rating" className="text-gray-300 font-medium mb-2 block">
                     Avaliação (0-5) *
                   </Label>
                   <Input
@@ -280,7 +280,7 @@ export default function AddMoviePage() {
 
               {/* Sinopse */}
               <div>
-                <Label htmlFor="synopsis" className="text-gray-300 font-medium">
+                <Label htmlFor="synopsis" className="text-gray-300 font-medium mb-2 block">
                   Sinopse *
                 </Label>
                 <textarea
@@ -299,7 +299,7 @@ export default function AddMoviePage() {
 
               {/* Gêneros */}
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-4">
                   <Label className="text-gray-300 font-medium">Gêneros *</Label>
                   <Button
                     type="button"
@@ -312,7 +312,7 @@ export default function AddMoviePage() {
                   </Button>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {genreFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2">
                       <Input
@@ -343,7 +343,7 @@ export default function AddMoviePage() {
 
               {/* Elenco */}
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-4">
                   <Label className="text-gray-300 font-medium">
                     Elenco Principal *
                   </Label>
@@ -358,7 +358,7 @@ export default function AddMoviePage() {
                   </Button>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {castFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2">
                       <Input
