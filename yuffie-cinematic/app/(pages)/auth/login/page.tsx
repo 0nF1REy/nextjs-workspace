@@ -21,17 +21,17 @@ import Link from "next/link";
 // Schema de validação Zod
 import { loginSchema, LoginForm } from "@/lib/validations/login";
 
-// Importação de usuários e tipos
 import { users } from "@/lib/user/users";
 import { UserProfile } from "@/lib/user/types";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserStore } from "@/stores";
 
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const { login } = useAuth();
+  const { login: loginUserStore } = useUserStore();
 
-  // Estados para controlar o foco dos inputs
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const {
@@ -58,7 +58,8 @@ export default function LoginPage() {
 
       login(userData);
 
-      // Redireciona baseado no tipo de usuário
+      loginUserStore(user);
+
       const userType = user.userType || "regular";
       if (userType === "admin") {
         router.push("/admin/dashboard");

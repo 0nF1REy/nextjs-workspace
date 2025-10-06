@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/stores";
 
 interface AuthUser {
   id: string;
@@ -14,6 +15,7 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { logout: logoutUserStore } = useUserStore();
 
   const checkAuthState = () => {
     try {
@@ -34,15 +36,12 @@ export function useAuth() {
     checkAuthState();
     setLoading(false);
 
-    // Escuta mudanças no sessionStorage
     const handleStorageChange = () => {
       checkAuthState();
     };
 
-    // Adiciona listener para mudanças no sessionStorage
     window.addEventListener("storage", handleStorageChange);
 
-    // Custom event para mudanças locais no sessionStorage
     window.addEventListener("auth-change", handleStorageChange);
 
     return () => {
@@ -54,7 +53,9 @@ export function useAuth() {
   const logout = () => {
     sessionStorage.removeItem("authenticated-user");
     setUser(null);
-    // Dispara evento customizado para notificar outros componentes
+
+    logoutUserStore();
+
     window.dispatchEvent(new Event("auth-change"));
     router.push("/auth/login");
   };
@@ -62,7 +63,7 @@ export function useAuth() {
   const login = (userData: AuthUser) => {
     sessionStorage.setItem("authenticated-user", JSON.stringify(userData));
     setUser(userData);
-    // Dispara evento customizado para notificar outros componentes
+
     window.dispatchEvent(new Event("auth-change"));
   };
 

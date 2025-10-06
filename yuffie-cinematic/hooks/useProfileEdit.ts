@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useUserStore } from "@/stores";
 import { UserProfile } from "@/lib/user/types";
+import { getCurrentUser } from "@/lib/user";
 
 // Schema de validação
 const profileEditSchema = z.object({
@@ -84,11 +85,41 @@ export function useProfileEdit({
 
   const onSubmit = async (data: ProfileEditForm) => {
     try {
+      // Verificar se o usuário ainda está logado
+      const currentUser = getCurrentUser();
+      if (!currentUser || !user || currentUser.id !== user.id) {
+        console.error("Usuário não autorizado para editar este perfil");
+        return;
+      }
+
       // Atualizar no Zustand store
       updateUser({
         displayName: data.displayName,
         bio: data.bio || undefined,
       });
+
+      // Atualizar também no sessionStorage para manter sincronização
+      if (typeof window !== "undefined") {
+        try {
+          const authUser = sessionStorage.getItem("authenticated-user");
+          if (authUser) {
+            const parsedUser = JSON.parse(authUser);
+            const updatedUser = {
+              ...parsedUser,
+              displayName: data.displayName,
+            };
+            sessionStorage.setItem(
+              "authenticated-user",
+              JSON.stringify(updatedUser)
+            );
+
+            // Disparar evento para notificar mudança
+            window.dispatchEvent(new Event("auth-change"));
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar sessionStorage:", error);
+        }
+      }
 
       // Fechar modal
       closeModal();
