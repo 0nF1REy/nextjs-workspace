@@ -49,23 +49,27 @@ export const useMigrateLocalStorage = () => {
         });
       }
 
-      // Migrar Ratings
+      // Migrar Ratings (Avaliações)
+      const userRatingsKeys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith("movie-rating-")) {
-          const movieId = key.replace("movie-rating-", "");
-          const stored = localStorage.getItem(key);
-          if (stored) {
-            const rating: UserRating = JSON.parse(stored);
-            setRating(movieId, rating.rating);
-          }
+          userRatingsKeys.push(key);
         }
       }
+
+      userRatingsKeys.forEach((key) => {
+        const movieId = key.replace("movie-rating-", "");
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          const rating: UserRating = JSON.parse(stored);
+          setRating(movieId, rating.rating);
+        }
+      });
 
       // Marcar como migrado
       localStorage.setItem("yuffie-migrated-to-zustand", "true");
 
-      // Log apenas em desenvolvimento
       if (process.env.NODE_ENV === "development") {
         console.log("Migração para Zustand concluída!");
       }
@@ -75,7 +79,6 @@ export const useMigrateLocalStorage = () => {
   }, [addReview, toggleLike, addFavorite, setRating]);
 };
 
-// Hook para limpar localStorage antigo (usar apenas após confirmação)
 export const useClearOldStorage = () => {
   const clearOldStorage = () => {
     if (typeof window === "undefined") return;
@@ -99,7 +102,6 @@ export const useClearOldStorage = () => {
       localStorage.removeItem(key);
     });
 
-    // Log apenas em desenvolvimento
     if (process.env.NODE_ENV === "development") {
       console.log(
         `Removidas ${keysToRemove.length} chaves antigas do localStorage`

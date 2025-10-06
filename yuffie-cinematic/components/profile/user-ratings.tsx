@@ -10,8 +10,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 
-import { getUserRatings } from "@/lib/user/storage";
-import { getUserFavorites } from "@/components/description/user-interactive-elements";
+import { useRatingsStore, useFavoritesStore } from "@/stores";
 import { items } from "@/lib/items";
 import { Item as CinematicItem } from "@/lib/items/types";
 import { UserRating } from "@/lib/user/types";
@@ -22,12 +21,12 @@ interface RatedCinematicItem extends CinematicItem {
 
 const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
   const [isFavorited, setIsFavorited] = useState(false);
+  const { isFavorite } = useFavoritesStore();
 
   useEffect(() => {
-    // Verificar se o item está nos favoritos
-    const userFavorites = getUserFavorites();
-    setIsFavorited(userFavorites.some((fav) => fav.id === item.id));
-  }, [item.id]);
+    // Verificar se o item está nos favoritos usando Zustand
+    setIsFavorited(isFavorite(item.id));
+  }, [item.id, isFavorite]);
 
   return (
     <motion.div
@@ -133,14 +132,15 @@ const StarFilter = ({
 export default function UserRatings() {
   const [ratedItems, setRatedItems] = useState<RatedCinematicItem[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const { getAllRatings } = useRatingsStore();
 
   useEffect(() => {
-    const userRatings = getUserRatings();
+    const userRatings = getAllRatings();
     const allItems = items;
 
     const getRatedItems = () => {
       const ratedMap = new Map<string, UserRating>(
-        userRatings.map((r) => [r.movieId, r])
+        userRatings.map((r: UserRating) => [r.movieId, r])
       );
 
       const detailedRatedItems: RatedCinematicItem[] = allItems
@@ -154,7 +154,7 @@ export default function UserRatings() {
     };
 
     getRatedItems();
-  }, []);
+  }, [getAllRatings]);
 
   const filteredItems = selectedRating
     ? ratedItems.filter((item) => item.userRating === selectedRating)

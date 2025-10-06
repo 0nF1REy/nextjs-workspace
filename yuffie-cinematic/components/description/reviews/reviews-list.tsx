@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -25,28 +25,43 @@ export function ReviewsList({
   onNewReview,
 }: ReviewsListProps) {
   const [showReviews, setShowReviews] = useState(false);
+  const [combinedReviews, setCombinedReviews] = useState<
+    (Review | UserReview)[]
+  >([]);
 
   // Zustand store
-  const { getReviewsByCinematic, addReview } = useReviewsStore();
+  const reviewsStore = useReviewsStore();
 
-  // Combinar reviews externas com reviews do usuário
-  const userReviews = getReviewsByCinematic(cinematicId);
-  const allReviews = [
-    ...reviews.map((review) => ({
-      ...review,
-      likes: 0,
-      avatarSeed: `review-${review.id}`,
-    })),
-    ...userReviews,
-  ];
+  useEffect(() => {
+    const userReviews = reviewsStore.getReviewsByCinematic(cinematicId);
+
+    const updatedReviews = [
+      ...reviews.map((review) => {
+        const isLiked = reviewsStore.isReviewLiked(review.id);
+        return {
+          ...review,
+          likes: 0 + (isLiked ? 1 : 0),
+          avatarSeed: `review-${review.id}`,
+        };
+      }),
+      ...userReviews.map((review) => {
+        const isLiked = reviewsStore.isReviewLiked(review.id);
+        return {
+          ...review,
+          likes: (review.likes || 0) + (isLiked ? 1 : 0),
+        };
+      }),
+    ];
+    setCombinedReviews(updatedReviews);
+  }, [reviews, cinematicId, reviewsStore]);
 
   const handleNewReview = useCallback(
     (newReview: UserReview) => {
-      addReview(cinematicId, newReview);
+      reviewsStore.addReview(cinematicId, newReview);
       onNewReview(newReview);
       setShowReviews(true);
     },
-    [cinematicId, addReview, onNewReview]
+    [cinematicId, reviewsStore, onNewReview]
   );
 
   return (
@@ -72,9 +87,9 @@ export function ReviewsList({
           <span className="flex items-center gap-2">
             <FontAwesomeIcon icon={faStar} className="w-4 h-4" />
             {showReviews ? "Ocultar Reviews" : "Ver Reviews Disponíveis"}
-            {allReviews.length > 0 && (
+            {combinedReviews.length > 0 && (
               <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-                {allReviews.length}
+                {combinedReviews.length}
               </span>
             )}
           </span>
@@ -89,11 +104,16 @@ export function ReviewsList({
       {showReviews && (
         <div className="flex-1 min-h-0">
           <div className="h-full overflow-y-auto pr-2 space-y-4 scrollbar-cinema">
-            {allReviews.length > 0 ? (
-              allReviews.map((review) => (
+            {combinedReviews.length > 0 ? (
+              combinedReviews.map((review: Review | UserReview) => (
                 <ReviewItem
                   key={review.id}
-                  review={review}
+                  review={
+                    review as (Review | UserReview) & {
+                      likes: number;
+                      avatarSeed?: string;
+                    }
+                  }
                   cinematicId={cinematicId}
                 />
               ))
@@ -109,7 +129,7 @@ export function ReviewsList({
         </div>
       )}
 
-      {!showReviews && allReviews.length > 0 && (
+      {!showReviews && combinedReviews.length > 0 && (
         <div className="flex-1 flex items-center justify-center text-gray-500">
           <div className="text-center">
             <FontAwesomeIcon icon={faStar} className="w-8 h-8 mb-2" />

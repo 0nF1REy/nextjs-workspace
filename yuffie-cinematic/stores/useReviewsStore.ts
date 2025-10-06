@@ -23,6 +23,10 @@ interface ReviewsState {
   getAllReviews: () => UserReview[];
   isReviewLiked: (reviewId: string) => boolean;
   getReviewLikesCount: (reviewId: string) => number;
+  getUpdatedReviewWithLikes: (reviewId: string) => {
+    isLiked: boolean;
+    likesCount: number;
+  };
 }
 
 export const useReviewsStore = create<ReviewsState>()(
@@ -99,7 +103,16 @@ export const useReviewsStore = create<ReviewsState>()(
 
       getReviewLikesCount: (reviewId) => {
         const state = get();
-        return state.likedReviews.filter((id) => id === reviewId).length;
+        // Contar quantas vezes o reviewId aparece na lista de likes
+        return state.likedReviews.includes(reviewId) ? 1 : 0;
+      },
+
+      // Método para obtenção de uma review com dados atualizados de likes
+      getUpdatedReviewWithLikes: (reviewId: string) => {
+        const state = get();
+        const isLiked = state.likedReviews.includes(reviewId);
+        const likesCount = isLiked ? 1 : 0;
+        return { isLiked, likesCount };
       },
     }),
     {

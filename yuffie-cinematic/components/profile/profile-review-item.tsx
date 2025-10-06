@@ -30,21 +30,23 @@ export function ProfileReviewItem({
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   // Zustand store
-  const { updateReview, deleteReview } = useReviewsStore();
+  const reviewsStore = useReviewsStore();
+  const isLiked = reviewsStore.isReviewLiked(review.id);
+  const currentLikes = (review.likes || 0) + (isLiked ? 1 : 0);
 
   const cinematic = cinematics.find((item) => item.id === review.cinematicId);
   const isUserReview = review.id.startsWith("user-");
 
   const handleEdit = (content: string, rating: number) => {
     if (review.cinematicId) {
-      updateReview(review.cinematicId, review.id, content, rating);
+      reviewsStore.updateReview(review.cinematicId, review.id, content, rating);
       onReviewUpdated?.();
     }
   };
 
   const handleDelete = () => {
     if (review.cinematicId) {
-      deleteReview(review.cinematicId, review.id);
+      reviewsStore.deleteReview(review.cinematicId, review.id);
       onReviewUpdated?.();
     }
   };
@@ -113,18 +115,17 @@ export function ProfileReviewItem({
               <FontAwesomeIcon
                 icon={faThumbsUp}
                 className={`w-3 h-3 ${
-                  (review.likes || 0) > 0 ? "text-blue-400" : "text-gray-500"
+                  currentLikes > 0 ? "text-blue-400" : "text-gray-500"
                 }`}
               />
               <span
                 className={`${
-                  (review.likes || 0) > 0
+                  currentLikes > 0
                     ? "text-blue-400 font-medium"
                     : "text-gray-500"
                 }`}
               >
-                {review.likes || 0}{" "}
-                {(review.likes || 0) === 1 ? "curtida" : "curtidas"}
+                {currentLikes} {currentLikes === 1 ? "curtida" : "curtidas"}
               </span>
             </div>
 

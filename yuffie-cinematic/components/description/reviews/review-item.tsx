@@ -27,9 +27,8 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   // Zustand stores
-  const { isFavorite } = useFavoritesStore();
-  const { toggleLike, isReviewLiked, updateReview, deleteReview } =
-    useReviewsStore();
+  const favoritesStore = useFavoritesStore();
+  const reviewsStore = useReviewsStore();
 
   const avatarUrl = review.avatarSeed?.startsWith(
     "/assets/images/profile-avatar/"
@@ -38,20 +37,23 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
     : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
 
   const isUserReview = review.id.startsWith("user-");
-  const isFavorited = isUserReview ? isFavorite(cinematicId) : false;
-  const isLiked = isReviewLiked(review.id);
+  const isFavorited = isUserReview
+    ? favoritesStore.isFavorite(cinematicId)
+    : false;
+  const isLiked = reviewsStore.isReviewLiked(review.id);
+  const currentLikes = review.likes || 0;
 
   // Handlers
   const handleEdit = (content: string, rating: number) => {
-    updateReview(cinematicId, review.id, content, rating);
+    reviewsStore.updateReview(cinematicId, review.id, content, rating);
   };
 
   const handleDelete = () => {
-    deleteReview(cinematicId, review.id);
+    reviewsStore.deleteReview(cinematicId, review.id);
   };
 
   const handleLike = () => {
-    toggleLike(review.id);
+    reviewsStore.toggleLike(review.id);
   };
 
   return (
@@ -126,8 +128,8 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
             icon={isLiked ? faThumbsUp : faThumbsUpRegular}
             className="w-4 h-4"
           />
-          {isLiked ? "Descurtir" : "Curtir"} review ({review.likes || 0}{" "}
-          {(review.likes || 0) === 1 ? "curtida" : "curtidas"})
+          {isLiked ? "Descurtir" : "Curtir"} review ({currentLikes}{" "}
+          {currentLikes === 1 ? "curtida" : "curtidas"})
         </Button>
         <ReviewActions
           showActions={isUserReview}

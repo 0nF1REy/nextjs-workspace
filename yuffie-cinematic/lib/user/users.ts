@@ -1,9 +1,5 @@
 import { UserProfile, UserReview } from "./types";
-import {
-  getUserReviewsFromStorage,
-  getFavoritesFromStorage,
-  getUserRatings,
-} from "./storage";
+import { getUserReviewsFromStorage, getFavoritesFromStorage } from "./storage";
 import {
   simulatedUserReviews,
   simulatedUserFavorites,
@@ -292,18 +288,28 @@ export const getUserWithStats = (
 export const getUserStats = (username?: string) => {
   const currentUsername = username || getCurrentUser()?.username || "0nF1REy";
 
-  // Para o usuário logado, usar localStorage
+  // Para o usuário logado, usar localStorage e Zustand
   if (currentUsername === "0nF1REy") {
     const reviews = getUserReviewsFromStorage().filter(
       (r: UserReview) => r.author === currentUsername
     );
     const favorites = getFavoritesFromStorage();
-    const ratings = getUserRatings();
+
+    let ratingsCount = 0;
+    try {
+      const ratingsStorage = localStorage.getItem("yuffie-ratings-storage");
+      if (ratingsStorage) {
+        const ratingsData = JSON.parse(ratingsStorage);
+        ratingsCount = Object.keys(ratingsData.state?.ratings || {}).length;
+      }
+    } catch {
+      ratingsCount = 0;
+    }
 
     return {
       totalReviews: reviews.length,
       totalFavorites: favorites.length,
-      totalRatings: ratings.length,
+      totalRatings: ratingsCount,
     };
   }
 
