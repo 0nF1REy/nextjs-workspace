@@ -97,7 +97,7 @@ const StarFilter = ({
   selectedRating: number | null;
   onSelectRating: (rating: number | null) => void;
 }) => {
-  const ratings = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+  const ratings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
 
   return (
     <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 mb-8">
@@ -124,6 +124,14 @@ const StarFilter = ({
             <span className="font-semibold text-sm">{rate.toFixed(1)}</span>
           </button>
         ))}
+        {selectedRating && (
+          <button
+            onClick={() => onSelectRating(null)}
+            className="px-3 py-1 rounded-full transition-all duration-200 bg-gray-600 text-gray-300 hover:bg-gray-500 text-sm font-semibold"
+          >
+            Limpar Filtro
+          </button>
+        )}
       </div>
     </div>
   );
