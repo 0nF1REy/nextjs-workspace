@@ -248,7 +248,7 @@ export default function AddCinematicPage() {
                 <Input
                   id="year"
                   type="number"
-                  {...register("year", { valueAsNumber: true })}
+                  {...register("year")}
                   placeholder="2024"
                   className="bg-gray-800/50 border-gray-600 text-white"
                 />
@@ -272,7 +272,7 @@ export default function AddCinematicPage() {
                     id="duration"
                     type="number"
                     min="1"
-                    {...register("duration", { valueAsNumber: true })}
+                    {...register("duration")}
                     placeholder="120"
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
@@ -297,9 +297,9 @@ export default function AddCinematicPage() {
                       id="seasons"
                       type="number"
                       min="1"
-                      {...register("seasons", { valueAsNumber: true })}
+                      {...register("seasons")}
                       placeholder="1"
-                      className="bg-gray-800/50 border-gray-600 text-white"
+                      className="bg-gray-800/50 border-gray-600 text-white cursor-pointer"
                     />
                     {errors.seasons && (
                       <p className="text-red-400 text-sm mt-1">
@@ -318,9 +318,9 @@ export default function AddCinematicPage() {
                       id="episodes"
                       type="number"
                       min="1"
-                      {...register("episodes", { valueAsNumber: true })}
+                      {...register("episodes")}
                       placeholder="12"
-                      className="bg-gray-800/50 border-gray-600 text-white"
+                      className="bg-gray-800/50 border-gray-600 text-white cursor-pointer"
                     />
                     {errors.episodes && (
                       <p className="text-red-400 text-sm mt-1">
