@@ -1,45 +1,28 @@
+
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faFilm,
-  faPlus,
-  faTimes,
-  faCheck,
-  faSave,
-} from "@fortawesome/free-solid-svg-icons";
-import { cinematicSchema, type CinematicForm } from "@/lib/validations/cinematic";
-import { z } from "zod";
+import { cinematicSchema } from "@/lib/validations/cinematic";
 
-const formSchema = cinematicSchema.omit({ status: true });
-type FormData = z.infer<typeof formSchema>;
+const typeOptions = [
+  { value: "filme", label: "Filme" },
+  { value: "serie", label: "Série" },
+  { value: "anime", label: "Anime" },
+] as const;
 
 export default function AddCinematicPage() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [genreFields, setGenreFields] = useState([""]);
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const [selectedType, setSelectedType] = useState<"filme" | "serie" | "anime">("filme");
+  
+  const form = useForm({
+    resolver: zodResolver(cinematicSchema),
     defaultValues: {
+      type: "filme" as const,
       title: "",
-      originalTitle: "",
+      director: "",
       year: new Date().getFullYear(),
-      duration: undefined,
+      rating: 0,
       synopsis: "",
       classification: "",
       language: "",
@@ -48,460 +31,207 @@ export default function AddCinematicPage() {
       cast: [{ name: "", character: "" }],
       poster: "",
       trailer: "",
-      rating: undefined,
+      status: "draft" as const,
     },
   });
 
-  const {
-    fields: castFields,
-    append: appendCast,
-    remove: removeCast,
-  } = useFieldArray({
-    control,
-    name: "cast",
+  const { register, handleSubmit, control, formState: { errors }, reset, setValue } = form;
+
+  // Configuração específica para arrays  
+  const genresArray = useFieldArray({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    control: control as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "genres" as any,
+  });
+  
+  const castArray = useFieldArray({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    control: control as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "cast" as any,
   });
 
-  const addGenre = () => {
-    setGenreFields([...genreFields, ""]);
+  const onSubmit = (data: Record<string, unknown>) => {
+    console.log("Cinematic cadastrado:", data);
+    alert("Cinematic cadastrado com sucesso!\n" + JSON.stringify(data, null, 2));
+    reset();
   };
 
-  const removeGenreField = (index: number) => {
-    if (genreFields.length > 1) {
-      setGenreFields(genreFields.filter((_, i) => i !== index));
-    }
+  const handleTypeChange = (newType: "filme" | "serie" | "anime") => {
+    setSelectedType(newType);
+    setValue("type", newType);
   };
-
-  const onSubmit = async (data: FormData) => {
-    // Filtra gêneros vazios antes da validação
-    const filteredData = {
-      ...data,
-      genres: data.genres.filter((genre) => genre.trim().length > 0),
-    };
-
-    // Simula salvamento
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Adiciona o status default antes de salvar
-    const cinematicData: CinematicForm = {
-      ...filteredData,
-      status: "draft" as const,
-    };
-
-    setIsSubmitted(true);
-
-    // Reset após sucesso
-    setTimeout(() => {
-      setIsSubmitted(false);
-      reset();
-    }, 3000);
-  };
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center">
-        <Card className="w-full max-w-md bg-[#0d1118] border border-green-900/40">
-          <CardContent className="text-center py-16">
-            <FontAwesomeIcon
-              icon={faCheck}
-              className="text-6xl text-green-500 mb-6"
-            />
-            <h2 className="text-2xl font-bold text-green-500 mb-4">
-              Cinematic Cadastrado!
-            </h2>
-            <p className="text-gray-300">
-              O cinematic foi adicionado com sucesso ao catálogo.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 relative">
-      <div className="absolute inset-0 opacity-5 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-blue-900/20"></div>
-      </div>
-
-      <div className="w-full max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/welcome">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700/50"
-            >
-              <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold text-red-500 flex items-center gap-3">
-            <FontAwesomeIcon icon={faFilm} />
-            Cadastrar Novo Cinematic
-          </h1>
+    <div className="max-w-2xl mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-6">Adicionar Cinematic</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block font-medium mb-1">Tipo</label>
+          <select
+            {...register("type")}
+            value={selectedType}
+            onChange={e => handleTypeChange(e.target.value as "filme" | "serie" | "anime")}
+            className="border rounded px-2 py-1 w-full"
+          >
+            {typeOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
         </div>
 
-        <Card className="bg-[#0d1118] border border-red-900/40">
-          <CardHeader>
-            <CardTitle className="text-xl text-red-400">
-              Informações do Cinematic
-            </CardTitle>
-          </CardHeader>
+        <div>
+          <label className="block font-medium mb-1">Título</label>
+          <input {...register("title")} className="border rounded px-2 py-1 w-full" />
+          {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
+        </div>
 
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              {/* Título e Diretor */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label
-                    htmlFor="title"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Título *
-                  </Label>
-                  <Input
-                    id="title"
-                    {...register("title")}
-                    placeholder="Ex: Vingadores: Ultimato"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.title && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.title.message}
-                    </p>
-                  )}
-                </div>
+        <div>
+          <label className="block font-medium mb-1">Diretor</label>
+          <input {...register("director")} className="border rounded px-2 py-1 w-full" />
+          {errors.director && <span className="text-red-500 text-sm">{errors.director.message}</span>}
+        </div>
 
-                <div>
-                  <Label
-                    htmlFor="director"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Diretor *
-                  </Label>
-                  <Input
-                    id="director"
-                    {...register("director")}
-                    placeholder="Ex: Anthony Russo"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.director && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.director.message}
-                    </p>
-                  )}
-                </div>
-              </div>
+        <div>
+          <label className="block font-medium mb-1">Ano</label>
+          <input type="number" {...register("year", { valueAsNumber: true })} className="border rounded px-2 py-1 w-full" />
+          {errors.year && <span className="text-red-500 text-sm">{errors.year.message}</span>}
+        </div>
 
-              {/* Ano, Duração e Avaliação */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label
-                    htmlFor="year"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Ano *
-                  </Label>
-                  <Input
-                    id="year"
-                    type="number"
-                    {...register("year", {
-                      valueAsNumber: true,
-                      setValueAs: (value) => {
-                        if (
-                          value === "" ||
-                          value === null ||
-                          value === undefined
-                        )
-                          return undefined;
-                        const num = Number(value);
-                        return isNaN(num) ? undefined : num;
-                      },
-                    })}
-                    placeholder="2024"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.year && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.year.message}
-                    </p>
-                  )}
-                </div>
+        {selectedType === "filme" && (
+          <div>
+            <label className="block font-medium mb-1">Duração (minutos)</label>
+            <input 
+              type="number" 
+              {...register("duration", { valueAsNumber: true })} 
+              className="border rounded px-2 py-1 w-full" 
+            />
+            {errors.duration && <span className="text-red-500 text-sm">{errors.duration.message}</span>}
+          </div>
+        )}
 
-                <div>
-                  <Label
-                    htmlFor="duration"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Duração (min) *
-                  </Label>
-                  <Input
-                    id="duration"
-                    type="number"
-                    {...register("duration", {
-                      valueAsNumber: true,
-                      setValueAs: (value) => {
-                        if (
-                          value === "" ||
-                          value === null ||
-                          value === undefined
-                        )
-                          return undefined;
-                        const num = Number(value);
-                        return isNaN(num) ? undefined : num;
-                      },
-                    })}
-                    placeholder="120"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.duration && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.duration.message}
-                    </p>
-                  )}
-                </div>
+        {(selectedType === "serie" || selectedType === "anime") && (
+          <>
+            <div>
+              <label className="block font-medium mb-1">Temporadas</label>
+              <input 
+                type="number" 
+                {...register("seasons", { valueAsNumber: true })} 
+                className="border rounded px-2 py-1 w-full" 
+              />
+              {errors.seasons && <span className="text-red-500 text-sm">{errors.seasons.message}</span>}
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Episódios</label>
+              <input 
+                type="number" 
+                {...register("episodes", { valueAsNumber: true })} 
+                className="border rounded px-2 py-1 w-full" 
+              />
+              {errors.episodes && <span className="text-red-500 text-sm">{errors.episodes.message}</span>}
+            </div>
+          </>
+        )}
 
-                <div>
-                  <Label
-                    htmlFor="rating"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Avaliação (0-10)
-                  </Label>
-                  <Input
-                    id="rating"
-                    type="number"
-                    step="0.5"
-                    min="0"
-                    max="10"
-                    {...register("rating", {
-                      valueAsNumber: true,
-                      setValueAs: (value) => {
-                        if (
-                          value === "" ||
-                          value === null ||
-                          value === undefined
-                        )
-                          return undefined;
-                        const num = Number(value);
-                        return isNaN(num) ? undefined : num;
-                      },
-                    })}
-                    placeholder="8.5"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.rating && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.rating.message}
-                    </p>
-                  )}
-                </div>
-              </div>
+        {selectedType === "anime" && (
+          <div>
+            <label className="block font-medium mb-1">Estúdio</label>
+            <input {...register("studio")} className="border rounded px-2 py-1 w-full" />
+            {errors.studio && <span className="text-red-500 text-sm">{errors.studio.message}</span>}
+          </div>
+        )}
 
-              {/* Sinopse */}
-              <div>
-                <Label
-                  htmlFor="synopsis"
-                  className="text-gray-300 font-medium mb-2 block"
-                >
-                  Sinopse *
-                </Label>
-                <textarea
-                  id="synopsis"
-                  {...register("synopsis")}
-                  placeholder="Descreva a história do cinematic..."
-                  rows={4}
-                  className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none"
-                />
-                {errors.synopsis && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.synopsis.message}
-                  </p>
-                )}
-              </div>
+        <div>
+          <label className="block font-medium mb-1">Nota (0-10)</label>
+          <input type="number" step="0.1" {...register("rating", { valueAsNumber: true })} className="border rounded px-2 py-1 w-full" />
+          {errors.rating && <span className="text-red-500 text-sm">{errors.rating.message}</span>}
+        </div>
 
-              {/* Classificação, Idioma e País */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label
-                    htmlFor="classification"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Classificação *
-                  </Label>
-                  <Input
-                    id="classification"
-                    {...register("classification")}
-                    placeholder="Ex: 12, 14, 16, 18"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.classification && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.classification.message}
-                    </p>
-                  )}
-                </div>
+        <div>
+          <label className="block font-medium mb-1">Sinopse</label>
+          <textarea {...register("synopsis")} className="border rounded px-2 py-1 w-full" />
+          {errors.synopsis && <span className="text-red-500 text-sm">{errors.synopsis.message}</span>}
+        </div>
 
-                <div>
-                  <Label
-                    htmlFor="language"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Idioma *
-                  </Label>
-                  <Input
-                    id="language"
-                    {...register("language")}
-                    placeholder="Ex: Português, Inglês"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.language && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.language.message}
-                    </p>
-                  )}
-                </div>
+        <div>
+          <label className="block font-medium mb-1">Classificação</label>
+          <input {...register("classification")} className="border rounded px-2 py-1 w-full" />
+          {errors.classification && <span className="text-red-500 text-sm">{errors.classification.message}</span>}
+        </div>
 
-                <div>
-                  <Label
-                    htmlFor="country"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    País *
-                  </Label>
-                  <Input
-                    id="country"
-                    {...register("country")}
-                    placeholder="Ex: Brasil, EUA"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.country && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.country.message}
-                    </p>
-                  )}
-                </div>
-              </div>
+        <div>
+          <label className="block font-medium mb-1">Idioma</label>
+          <input {...register("language")} className="border rounded px-2 py-1 w-full" />
+          {errors.language && <span className="text-red-500 text-sm">{errors.language.message}</span>}
+        </div>
 
-              {/* Gêneros */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <Label className="text-gray-300 font-medium">Gêneros *</Label>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={addGenre}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
-                    Adicionar
-                  </Button>
-                </div>
+        <div>
+          <label className="block font-medium mb-1">País</label>
+          <input {...register("country")} className="border rounded px-2 py-1 w-full" />
+          {errors.country && <span className="text-red-500 text-sm">{errors.country.message}</span>}
+        </div>
 
-                <div className="space-y-3">
-                  {genreFields.map((_, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        {...register(`genres.${index}` as const)}
-                        placeholder="Ex: Ação, Drama, Ficção"
-                        className="bg-gray-800/50 border-gray-600 text-white"
-                      />
-                      {genreFields.length > 1 && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => removeGenreField(index)}
-                          className="border-red-600 text-red-400 hover:bg-red-600/20"
-                        >
-                          <FontAwesomeIcon icon={faTimes} className="w-3 h-3" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {errors.genres && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.genres.message}
-                  </p>
-                )}
-              </div>
+        <div>
+          <label className="block font-medium mb-1">Gêneros</label>
+          {genresArray.fields.map((field, idx) => (
+            <div key={field.id} className="flex gap-2 mb-1">
+              <input
+                {...register(`genres.${idx}`)}
+                className="border rounded px-2 py-1 flex-1"
+                placeholder="Gênero"
+              />
+              <button type="button" onClick={() => genresArray.remove(idx)} className="text-red-500">Remover</button>
+            </div>
+          ))}
+          <button type="button" onClick={() => genresArray.append("")} className="text-blue-500">Adicionar gênero</button>
+          {errors.genres && <span className="text-red-500 text-sm">{errors.genres.message as string}</span>}
+        </div>
 
-              {/* Elenco */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <Label className="text-gray-300 font-medium">
-                    Elenco Principal *
-                  </Label>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => appendCast({ name: "", character: "" })}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
-                    Adicionar
-                  </Button>
-                </div>
+        <div>
+          <label className="block font-medium mb-1">Elenco</label>
+          {castArray.fields.map((field, idx) => (
+            <div key={field.id} className="flex gap-2 mb-1">
+              <input
+                {...register(`cast.${idx}.name`)}
+                className="border rounded px-2 py-1 flex-1"
+                placeholder="Nome do ator"
+              />
+              <input
+                {...register(`cast.${idx}.character`)}
+                className="border rounded px-2 py-1 flex-1"
+                placeholder="Personagem"
+              />
+              <button type="button" onClick={() => castArray.remove(idx)} className="text-red-500">Remover</button>
+            </div>
+          ))}
+          <button type="button" onClick={() => castArray.append({ name: "", character: "" })} className="text-blue-500">Adicionar ator</button>
+          {errors.cast && <span className="text-red-500 text-sm">{errors.cast.message as string}</span>}
+        </div>
 
-                <div className="space-y-3">
-                  {castFields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-2"
-                    >
-                      <Input
-                        {...register(`cast.${index}.name` as const)}
-                        placeholder="Ex: Robert Downey Jr."
-                        className="bg-gray-800/50 border-gray-600 text-white"
-                      />
-                      <Input
-                        {...register(`cast.${index}.character` as const)}
-                        placeholder="Ex: Tony Stark / Homem de Ferro"
-                        className="bg-gray-800/50 border-gray-600 text-white"
-                      />
-                      {castFields.length > 1 && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => removeCast(index)}
-                          className="border-red-600 text-red-400 hover:bg-red-600/20 md:col-span-2"
-                        >
-                          <FontAwesomeIcon icon={faTimes} className="w-3 h-3" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {errors.cast && (
-                  <p className="text-red-400 text-sm mt-1">
-                    {errors.cast.message}
-                  </p>
-                )}
-              </div>
+        <div>
+          <label className="block font-medium mb-1">Poster (URL)</label>
+          <input {...register("poster")} className="border rounded px-2 py-1 w-full" />
+          {errors.poster && <span className="text-red-500 text-sm">{errors.poster.message}</span>}
+        </div>
 
-              {/* Submit Button */}
-              <div className="flex justify-end pt-4">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 px-8"
-                >
-                  <FontAwesomeIcon
-                    icon={faSave}
-                    className={`w-4 h-4 mr-2 ${
-                      isSubmitting ? "animate-spin" : ""
-                    }`}
-                  />
-                  {isSubmitting ? "Salvando..." : "Cadastrar Cinematic"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+        <div>
+          <label className="block font-medium mb-1">Trailer (URL)</label>
+          <input {...register("trailer")} className="border rounded px-2 py-1 w-full" />
+          {errors.trailer && <span className="text-red-500 text-sm">{errors.trailer.message}</span>}
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Status</label>
+          <select {...register("status")} className="border rounded px-2 py-1 w-full">
+            <option value="draft">Rascunho</option>
+            <option value="published">Publicado</option>
+          </select>
+          {errors.status && <span className="text-red-500 text-sm">{errors.status.message}</span>}
+        </div>
+
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Cadastrar</button>
+      </form>
     </div>
   );
 }
