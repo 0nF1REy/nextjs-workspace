@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  type FieldValues,
+  type Control,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -118,19 +123,15 @@ export default function AddCinematicPage() {
     setValue,
   } = form;
 
-  // Configuração específica para arrays
+  // Configuração específica para arrays com tipagem
   const genresArray = useFieldArray({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    control: control as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: "genres" as any,
+    control: control as unknown as Control<FieldValues>,
+    name: "genres",
   });
 
   const castArray = useFieldArray({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    control: control as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: "cast" as any,
+    control: control as unknown as Control<FieldValues>,
+    name: "cast",
   });
 
   const onSubmit = async (data: Record<string, unknown>) => {
