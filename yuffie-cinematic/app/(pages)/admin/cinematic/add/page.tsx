@@ -146,7 +146,7 @@ export default function AddCinematicPage() {
             <Button
               variant="outline"
               size="sm"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700/50"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700/50 cursor-pointer"
             >
               <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4 mr-2" />
               Voltar
@@ -446,7 +446,7 @@ export default function AddCinematicPage() {
                     type="button"
                     size="sm"
                     onClick={() => genresArray.append("")}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
                     Adicionar
@@ -494,7 +494,7 @@ export default function AddCinematicPage() {
                     onClick={() =>
                       castArray.append({ name: "", character: "" })
                     }
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faPlus} className="w-3 h-3 mr-1" />
                     Adicionar
@@ -592,7 +592,7 @@ export default function AddCinematicPage() {
                 <select
                   id="status"
                   {...register("status")}
-                  className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white"
+                  className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white cursor-pointer"
                 >
                   <option value="draft">Rascunho</option>
                   <option value="published">Publicado</option>
@@ -609,7 +609,7 @@ export default function AddCinematicPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 px-8"
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 px-8 cursor-pointer"
                 >
                   <FontAwesomeIcon
                     icon={faSave}
