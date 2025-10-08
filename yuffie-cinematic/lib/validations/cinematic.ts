@@ -1,5 +1,30 @@
 import { z } from "zod";
 
+// Validadores customizados para arrays
+const nonEmptyStringArray = (fieldName: string, minItems = 1) =>
+  z
+    .array(z.string().min(1, `${fieldName} não pode estar vazio`))
+    .min(minItems, `Pelo menos ${minItems} ${fieldName.toLowerCase()} é obrigatório`)
+    .transform((arr) => arr.filter((item) => item.trim().length > 0))
+    .refine((arr) => arr.length >= minItems, {
+      message: `Pelo menos ${minItems} ${fieldName.toLowerCase()} deve ser preenchido corretamente`,
+    });
+
+const castSchema = z
+  .array(
+    z.object({
+      name: z.string().min(1, "Nome do ator obrigatório"),
+      character: z.string().min(1, "Personagem obrigatório"),
+    })
+  )
+  .min(1, "Pelo menos um ator é obrigatório")
+  .transform((cast) =>
+    cast.filter((actor) => actor.name.trim() && actor.character.trim())
+  )
+  .refine((cast) => cast.length >= 1, {
+    message: "Pelo menos um ator com nome e personagem completos é obrigatório",
+  });
+
 export const cinematicSchema = z.object({
   type: z.enum(["filme", "serie", "anime"]),
   title: z.string().min(1, "Título obrigatório"),
@@ -29,15 +54,8 @@ export const cinematicSchema = z.object({
   classification: z.string().min(1, "Classificação obrigatória"),
   language: z.string().min(1, "Idioma obrigatório"),
   country: z.string().min(1, "País obrigatório"),
-  genres: z.array(z.string().min(1)).min(1, "Pelo menos um gênero obrigatório"),
-  cast: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Nome do ator obrigatório"),
-        character: z.string().min(1, "Nome do personagem obrigatório"),
-      })
-    )
-    .min(1, "Pelo menos um ator obrigatório"),
+  genres: nonEmptyStringArray("Gênero"),
+  cast: castSchema,
   poster: z.string().optional(),
   trailer: z.string().optional(),
   status: z.enum(["draft", "published"]),
