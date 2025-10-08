@@ -3,27 +3,33 @@ import { z } from "zod";
 // Validadores customizados para arrays
 const nonEmptyStringArray = (fieldName: string, minItems = 1) =>
   z
-    .array(z.string().min(1, `${fieldName} não pode estar vazio`))
-    .min(minItems, `Pelo menos ${minItems} ${fieldName.toLowerCase()} é obrigatório`)
-    .transform((arr) => arr.filter((item) => item.trim().length > 0))
-    .refine((arr) => arr.length >= minItems, {
-      message: `Pelo menos ${minItems} ${fieldName.toLowerCase()} deve ser preenchido corretamente`,
+    .array(z.string())
+    .min(
+      minItems,
+      `Pelo menos ${minItems} ${fieldName.toLowerCase()} é obrigatório`
+    )
+    .refine((arr) => arr.some((item) => item.trim().length > 0), {
+      message: `Pelo menos ${minItems} ${fieldName.toLowerCase()} deve ser preenchido`,
     });
 
 const castSchema = z
   .array(
     z.object({
-      name: z.string().min(1, "Nome do ator obrigatório"),
-      character: z.string().min(1, "Personagem obrigatório"),
+      name: z.string(),
+      character: z.string(),
     })
   )
   .min(1, "Pelo menos um ator é obrigatório")
-  .transform((cast) =>
-    cast.filter((actor) => actor.name.trim() && actor.character.trim())
-  )
-  .refine((cast) => cast.length >= 1, {
-    message: "Pelo menos um ator com nome e personagem completos é obrigatório",
-  });
+  .refine(
+    (cast) =>
+      cast.some(
+        (actor) =>
+          actor.name.trim().length > 0 && actor.character.trim().length > 0
+      ),
+    {
+      message: "Pelo menos um ator com nome e personagem deve ser preenchido",
+    }
+  );
 
 export const cinematicSchema = z.object({
   type: z.enum(["filme", "serie", "anime"]),

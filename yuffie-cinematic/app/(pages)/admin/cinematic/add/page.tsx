@@ -27,17 +27,19 @@ const ErrorMessage = ({ error }: { error?: unknown }) => {
 
   if (typeof error === "string") {
     message = error;
-  } else if (error && typeof error === "object" && "message" in error) {
-    message = String(error.message);
-  } else if (
-    error &&
-    typeof error === "object" &&
-    "root" in error &&
-    error.root &&
-    typeof error.root === "object" &&
-    "message" in error.root
-  ) {
-    message = String(error.root.message);
+  } else if (error && typeof error === "object") {
+    if ("message" in error && typeof error.message === "string") {
+      message = error.message;
+    } else if (
+      "root" in error &&
+      error.root &&
+      typeof error.root === "object" &&
+      "message" in error.root
+    ) {
+      message = String(error.root.message);
+    } else if ("type" in error && error.type === "too_small") {
+      message = "Este campo é obrigatório";
+    }
   }
 
   if (!message) return null;
@@ -584,7 +586,17 @@ export default function AddCinematicPage() {
                     </div>
                   ))}
                 </div>
-                <ErrorMessage error={errors.genres} />
+                {errors.genres && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.genres.message ||
+                      "Pelo menos um gênero é obrigatório"}
+                  </p>
+                )}
+                {errors.genres?.root && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.genres.root.message}
+                  </p>
+                )}
               </div>
 
               {/* Elenco */}
@@ -660,7 +672,16 @@ export default function AddCinematicPage() {
                     </div>
                   ))}
                 </div>
-                <ErrorMessage error={errors.cast} />
+                {errors.cast && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.cast.message || "Pelo menos um ator é obrigatório"}
+                  </p>
+                )}
+                {errors.cast?.root && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.cast.root.message}
+                  </p>
+                )}
               </div>
 
               {/* Poster e Trailer */}
