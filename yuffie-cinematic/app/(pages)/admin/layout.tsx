@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -43,6 +43,46 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  useEffect(() => {
+    const handleBodyScroll = () => {
+      if (isSidebarOpen) {
+        const scrollY = window.scrollY;
+
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+
+        return scrollY;
+      } else {
+        const body = document.body;
+        const scrollY = body.style.top;
+
+        body.style.position = "";
+        body.style.top = "";
+        body.style.width = "";
+        body.style.overflow = "";
+
+        if (scrollY) {
+          window.scrollTo(0, parseInt(scrollY || "0") * -1);
+        }
+      }
+    };
+
+    const isMobile = window.innerWidth < 1024;
+    if (isMobile) {
+      handleBodyScroll();
+    }
+
+    return () => {
+      const body = document.body;
+      body.style.position = "";
+      body.style.top = "";
+      body.style.width = "";
+      body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
   const menuItems = [
     {
@@ -102,38 +142,50 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         )}
       >
         {/* Sidebar Header */}
-        <div className="relative flex items-center justify-between p-4 border-b border-red-900/40 h-20">
+        <div className="relative p-4 border-b border-red-900/40 h-20">
           {/* Logo Container */}
-          <div className="flex items-center justify-center w-full">
-            {!isCollapsed ? (
-              // Logo completa quando expandida
+          <div className="flex items-center justify-center h-full">
+            <div className="hidden lg:flex items-center justify-center w-full">
+              {!isCollapsed ? (
+                // Logo FULL desktop
+                <Image
+                  src="/assets/images/brand/yuffie-cinematic-logotipo-01.png"
+                  alt="Yuffie Cinematic"
+                  width={200}
+                  height={48}
+                  className="h-12 w-auto object-contain"
+                  priority
+                />
+              ) : (
+                // Logo MINI desktop
+                <Image
+                  src="/assets/images/brand/yuffie-cinematic-isotipo.png"
+                  alt="Yuffie"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain"
+                  priority
+                />
+              )}
+            </div>
+
+            <div className="flex lg:hidden items-center justify-center w-full pr-12">
               <Image
                 src="/assets/images/brand/yuffie-cinematic-logotipo-01.png"
                 alt="Yuffie Cinematic"
-                width={180}
-                height={40}
-                className="h-8 w-auto object-contain"
+                width={200}
+                height={48}
+                className="h-12 w-auto object-contain"
                 priority
               />
-            ) : (
-              // Logo mini quando colapsada
-              <Image
-                src="/assets/images/brand/yuffie-cinematic-isotipo.png"
-                alt="Yuffie"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
-                priority
-              />
-            )}
+            </div>
           </div>
 
-          {/* Mobile close button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleSidebar}
-            className="lg:hidden absolute right-4 text-gray-400 hover:text-white"
+            className="lg:hidden absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-white hover:bg-red-900/20 transition-colors"
           >
             <FontAwesomeIcon icon={faTimes} className="w-4 h-4" />
           </Button>
@@ -145,7 +197,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             onClick={toggleCollapse}
             className={cn(
               "hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#0d1118] border border-red-900/40 text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors",
-              "items-center justify-center"
+              "items-center justify-center cursor-pointer"
             )}
           >
             <FontAwesomeIcon
