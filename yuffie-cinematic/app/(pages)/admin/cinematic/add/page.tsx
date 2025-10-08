@@ -25,6 +25,24 @@ const typeOptions = [
   { value: "anime", label: "Anime" },
 ] as const;
 
+const placeholders = {
+  filme: {
+    title: "Ex: Vingadores: Ultimato",
+    director: "Ex: Anthony Russo",
+    synopsis: "Descreva a história do filme...",
+  },
+  serie: {
+    title: "Ex: Breaking Bad",
+    director: "Ex: Vince Gilligan",
+    synopsis: "Descreva a história da série...",
+  },
+  anime: {
+    title: "Ex: Your Name",
+    director: "Ex: Makoto Shinkai",
+    synopsis: "Descreva a história do anime...",
+  },
+};
+
 export default function AddCinematicPage() {
   const [selectedType, setSelectedType] = useState<"filme" | "serie" | "anime">(
     "filme"
@@ -38,7 +56,6 @@ export default function AddCinematicPage() {
       title: "",
       director: "",
       year: new Date().getFullYear(),
-      rating: 0,
       synopsis: "",
       classification: "",
       language: "",
@@ -189,7 +206,7 @@ export default function AddCinematicPage() {
                   <Input
                     id="title"
                     {...register("title")}
-                    placeholder="Ex: Vingadores: Ultimato"
+                    placeholder={placeholders[selectedType].title}
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
                   {errors.title && (
@@ -209,7 +226,7 @@ export default function AddCinematicPage() {
                   <Input
                     id="director"
                     {...register("director")}
-                    placeholder="Ex: Anthony Russo"
+                    placeholder={placeholders[selectedType].director}
                     className="bg-gray-800/50 border-gray-600 text-white"
                   />
                   {errors.director && (
@@ -220,52 +237,26 @@ export default function AddCinematicPage() {
                 </div>
               </div>
 
-              {/* Ano e Avaliação */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label
-                    htmlFor="year"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Ano *
-                  </Label>
-                  <Input
-                    id="year"
-                    type="number"
-                    {...register("year", { valueAsNumber: true })}
-                    placeholder="2024"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.year && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.year.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="rating"
-                    className="text-gray-300 font-medium mb-2 block"
-                  >
-                    Avaliação (0-10)
-                  </Label>
-                  <Input
-                    id="rating"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="10"
-                    {...register("rating", { valueAsNumber: true })}
-                    placeholder="8.5"
-                    className="bg-gray-800/50 border-gray-600 text-white"
-                  />
-                  {errors.rating && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.rating.message}
-                    </p>
-                  )}
-                </div>
+              {/* Ano */}
+              <div>
+                <Label
+                  htmlFor="year"
+                  className="text-gray-300 font-medium mb-2 block"
+                >
+                  Ano *
+                </Label>
+                <Input
+                  id="year"
+                  type="number"
+                  {...register("year", { valueAsNumber: true })}
+                  placeholder="2024"
+                  className="bg-gray-800/50 border-gray-600 text-white"
+                />
+                {errors.year && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.year.message}
+                  </p>
+                )}
               </div>
 
               {/* Campos condicionais baseados no tipo */}
@@ -280,6 +271,7 @@ export default function AddCinematicPage() {
                   <Input
                     id="duration"
                     type="number"
+                    min="1"
                     {...register("duration", { valueAsNumber: true })}
                     placeholder="120"
                     className="bg-gray-800/50 border-gray-600 text-white"
@@ -304,6 +296,7 @@ export default function AddCinematicPage() {
                     <Input
                       id="seasons"
                       type="number"
+                      min="1"
                       {...register("seasons", { valueAsNumber: true })}
                       placeholder="1"
                       className="bg-gray-800/50 border-gray-600 text-white"
@@ -324,6 +317,7 @@ export default function AddCinematicPage() {
                     <Input
                       id="episodes"
                       type="number"
+                      min="1"
                       {...register("episodes", { valueAsNumber: true })}
                       placeholder="12"
                       className="bg-gray-800/50 border-gray-600 text-white"
@@ -370,7 +364,7 @@ export default function AddCinematicPage() {
                 <textarea
                   id="synopsis"
                   {...register("synopsis")}
-                  placeholder="Descreva a história do cinematic..."
+                  placeholder={placeholders[selectedType].synopsis}
                   rows={4}
                   className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none"
                 />
