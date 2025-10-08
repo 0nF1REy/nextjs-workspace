@@ -58,16 +58,28 @@ const placeholders = {
     title: "Ex: Vingadores: Ultimato",
     director: "Ex: Anthony Russo",
     synopsis: "Descreva a história do filme...",
+    cast: {
+      name: "Ex: Robert Downey Jr.",
+      character: "Ex: Tony Stark / Homem de Ferro",
+    },
   },
   serie: {
     title: "Ex: Breaking Bad",
     director: "Ex: Vince Gilligan",
     synopsis: "Descreva a história da série...",
+    cast: {
+      name: "Ex: Bryan Cranston",
+      character: "Ex: Walter White",
+    },
   },
   anime: {
     title: "Ex: Your Name",
     director: "Ex: Makoto Shinkai",
     synopsis: "Descreva a história do anime...",
+    cast: {
+      name: "Ex: Ryunosuke Kamiki",
+      character: "Ex: Taki Tachibana (voz)",
+    },
   },
 };
 
@@ -633,7 +645,7 @@ export default function AddCinematicPage() {
                       <div>
                         <Input
                           {...register(`cast.${index}.name`)}
-                          placeholder="Ex: Robert Downey Jr."
+                          placeholder={placeholders[selectedType].cast.name}
                           className={`bg-gray-800/50 text-white transition-colors duration-200 focus:outline-none focus:ring-0 ${
                             focusedField === `cast.${index}.name`
                               ? "border-red-400 focus:border-red-400"
@@ -646,7 +658,9 @@ export default function AddCinematicPage() {
                       <div>
                         <Input
                           {...register(`cast.${index}.character`)}
-                          placeholder="Ex: Tony Stark / Homem de Ferro"
+                          placeholder={
+                            placeholders[selectedType].cast.character
+                          }
                           className={`bg-gray-800/50 text-white transition-colors duration-200 focus:outline-none focus:ring-0 ${
                             focusedField === `cast.${index}.character`
                               ? "border-red-400 focus:border-red-400"

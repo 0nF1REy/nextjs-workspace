@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Validadores customizados para arrays
 const nonEmptyStringArray = (fieldName: string, minItems = 1) =>
   z
     .array(z.string())
@@ -31,40 +30,56 @@ const castSchema = z
     }
   );
 
-export const cinematicSchema = z.object({
-  type: z.enum(["filme", "serie", "anime"]),
-  title: z.string().min(1, "Título obrigatório"),
-  director: z.string().min(1, "Diretor obrigatório"),
-  year: z.coerce
-    .number()
-    .int("Ano deve ser um número inteiro")
-    .min(1900, "Ano deve ser maior que 1900")
-    .max(new Date().getFullYear(), "Ano não pode ser futuro"),
-  duration: z.coerce
-    .number()
-    .int("Duração deve ser um número inteiro")
-    .min(1, "Duração deve ser maior que 0")
-    .optional(),
-  seasons: z.coerce
-    .number()
-    .int("Temporadas deve ser um número inteiro")
-    .min(1, "Temporadas deve ser maior que 0")
-    .optional(),
-  episodes: z.coerce
-    .number()
-    .int("Episódios deve ser um número inteiro")
-    .min(1, "Episódios deve ser maior que 0")
-    .optional(),
-  studio: z.string().optional(),
-  synopsis: z.string().min(1, "Sinopse obrigatória"),
-  classification: z.string().min(1, "Classificação obrigatória"),
-  language: z.string().min(1, "Idioma obrigatório"),
-  country: z.string().min(1, "País obrigatório"),
-  genres: nonEmptyStringArray("Gênero"),
-  cast: castSchema,
-  poster: z.string().optional(),
-  trailer: z.string().optional(),
-  status: z.enum(["draft", "published"]),
-});
+export const cinematicSchema = z
+  .object({
+    type: z.enum(["filme", "serie", "anime"]),
+    title: z.string().min(1, "Título obrigatório"),
+    director: z.string().min(1, "Diretor obrigatório"),
+    year: z.coerce
+      .number()
+      .int("Ano deve ser um número inteiro")
+      .min(1900, "Ano deve ser maior que 1900")
+      .max(new Date().getFullYear(), "Ano não pode ser futuro"),
+    duration: z.coerce
+      .number()
+      .int("Duração deve ser um número inteiro")
+      .min(1, "Duração deve ser maior que 0")
+      .optional(),
+    seasons: z.coerce
+      .number()
+      .int("Temporadas deve ser um número inteiro")
+      .min(1, "Temporadas deve ser maior que 0")
+      .optional(),
+    episodes: z.coerce
+      .number()
+      .int("Episódios deve ser um número inteiro")
+      .min(1, "Episódios deve ser maior que 0")
+      .optional(),
+    studio: z.string().optional(),
+    synopsis: z.string().min(1, "Sinopse obrigatória"),
+    classification: z.string().min(1, "Classificação obrigatória"),
+    language: z.string().min(1, "Idioma obrigatório"),
+    country: z.string().min(1, "País obrigatório"),
+    genres: nonEmptyStringArray("Gênero"),
+    cast: castSchema,
+    poster: z.string().optional(),
+    trailer: z.string().optional(),
+    status: z.enum(["draft", "published"]),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.type === "anime" &&
+        (!data.studio || data.studio.trim().length === 0)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Estúdio é obrigatório para anime",
+      path: ["studio"],
+    }
+  );
 
 export type CinematicForm = z.infer<typeof cinematicSchema>;
