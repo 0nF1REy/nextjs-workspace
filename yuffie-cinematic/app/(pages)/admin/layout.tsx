@@ -304,9 +304,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 admin@dominio.com.br
               </span>
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-white font-semibold text-sm">A</span>
-                </div>
+                <Image
+                  src="https://i.pravatar.cc/300?u=AdminSite"
+                  alt="Foto de perfil do admin"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full object-cover shadow-lg"
+                  priority
+                />
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#131b22]"></div>
               </div>
             </div>
