@@ -68,11 +68,37 @@ export const cinematicSchema = z
   })
   .refine(
     (data) => {
-      if (
-        data.type === "anime" &&
-        (!data.studio || data.studio.trim().length === 0)
-      ) {
-        return false;
+      if (data.type === "filme") {
+        return data.duration !== undefined && data.duration > 0;
+      }
+      return true;
+    },
+    {
+      message: "Duração é obrigatória para filmes",
+      path: ["duration"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.type === "serie" || data.type === "anime") {
+        return (
+          data.seasons !== undefined &&
+          data.seasons > 0 &&
+          data.episodes !== undefined &&
+          data.episodes > 0
+        );
+      }
+      return true;
+    },
+    {
+      message: "Temporadas e episódios são obrigatórios para séries e animes",
+      path: ["seasons"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.type === "anime") {
+        return data.studio !== undefined && data.studio.trim().length > 0;
       }
       return true;
     },

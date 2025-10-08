@@ -102,6 +102,10 @@ export default function AddCinematicPage() {
       title: "",
       director: "",
       year: new Date().getFullYear(),
+      duration: undefined,
+      seasons: undefined,
+      episodes: undefined,
+      studio: "",
       synopsis: "",
       classification: "",
       language: "",
@@ -146,12 +150,24 @@ export default function AddCinematicPage() {
     setTimeout(() => {
       setIsSubmitted(false);
       reset();
+      setSelectedType("filme");
     }, 3000);
   };
 
   const handleTypeChange = (newType: "filme" | "serie" | "anime") => {
     setSelectedType(newType);
     setValue("type", newType);
+
+    if (newType === "filme") {
+      setValue("seasons", undefined);
+      setValue("episodes", undefined);
+      setValue("studio", "");
+    } else if (newType === "serie") {
+      setValue("duration", undefined);
+      setValue("studio", "");
+    } else if (newType === "anime") {
+      setValue("duration", undefined);
+    }
   };
 
   if (isSubmitted) {
