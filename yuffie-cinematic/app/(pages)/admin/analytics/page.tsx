@@ -2,14 +2,17 @@
 
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faChartLine, 
-  faEye, 
-  faHeart, 
+import {
+  faChartLine,
+  faEye,
+  faHeart,
   faStar,
   faUsers,
-  faFilm
+  faFilm,
 } from "@fortawesome/free-solid-svg-icons";
+import CountUp from "react-countup";
+import { ViewsChart } from "@/components/analytics/ViewsChart";
+import { TopMoviesTable } from "@/components/analytics/TopMoviesTable";
 
 export default function AdminAnalyticsPage() {
   return (
@@ -20,9 +23,7 @@ export default function AdminAnalyticsPage() {
           <FontAwesomeIcon icon={faChartLine} />
           Analytics
         </h1>
-        <p className="text-gray-400">
-          Métricas e estatísticas do sistema
-        </p>
+        <p className="text-gray-400">Métricas e estatísticas do sistema</p>
       </div>
 
       {/* Stats Grid */}
@@ -31,10 +32,17 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-400 text-sm font-medium">Total de Visualizações</p>
-                <p className="text-2xl font-bold text-blue-300">12,847</p>
+                <p className="text-blue-400 text-sm font-medium">
+                  Total de Visualizações
+                </p>
+                <p className="text-2xl font-bold text-blue-300">
+                  <CountUp end={12847} duration={1.2} separator="," />
+                </p>
               </div>
-              <FontAwesomeIcon icon={faEye} className="text-3xl text-blue-400" />
+              <FontAwesomeIcon
+                icon={faEye}
+                className="text-3xl text-blue-400"
+              />
             </div>
           </CardContent>
         </Card>
@@ -43,10 +51,17 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-red-400 text-sm font-medium">Filmes Favoritos</p>
-                <p className="text-2xl font-bold text-red-300">3,291</p>
+                <p className="text-red-400 text-sm font-medium">
+                  Filmes Favoritos
+                </p>
+                <p className="text-2xl font-bold text-red-300">
+                  <CountUp end={3291} duration={1.2} separator="," />
+                </p>
               </div>
-              <FontAwesomeIcon icon={faHeart} className="text-3xl text-red-400" />
+              <FontAwesomeIcon
+                icon={faHeart}
+                className="text-3xl text-red-400"
+              />
             </div>
           </CardContent>
         </Card>
@@ -55,10 +70,17 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-yellow-400 text-sm font-medium">Avaliações</p>
-                <p className="text-2xl font-bold text-yellow-300">8,756</p>
+                <p className="text-yellow-400 text-sm font-medium">
+                  Avaliações
+                </p>
+                <p className="text-2xl font-bold text-yellow-300">
+                  <CountUp end={8756} duration={1.2} separator="," />
+                </p>
               </div>
-              <FontAwesomeIcon icon={faStar} className="text-3xl text-yellow-400" />
+              <FontAwesomeIcon
+                icon={faStar}
+                className="text-3xl text-yellow-400"
+              />
             </div>
           </CardContent>
         </Card>
@@ -67,10 +89,17 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-400 text-sm font-medium">Usuários Ativos</p>
-                <p className="text-2xl font-bold text-green-300">1,542</p>
+                <p className="text-green-400 text-sm font-medium">
+                  Usuários Ativos
+                </p>
+                <p className="text-2xl font-bold text-green-300">
+                  <CountUp end={1542} duration={1.2} separator="," />
+                </p>
               </div>
-              <FontAwesomeIcon icon={faUsers} className="text-3xl text-green-400" />
+              <FontAwesomeIcon
+                icon={faUsers}
+                className="text-3xl text-green-400"
+              />
             </div>
           </CardContent>
         </Card>
@@ -86,13 +115,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <FontAwesomeIcon icon={faChartLine} className="text-6xl mb-4 opacity-30" />
-                <p>Gráfico em desenvolvimento</p>
-                <p className="text-sm">Integração com biblioteca de charts</p>
-              </div>
-            </div>
+            <ViewsChart />
           </CardContent>
         </Card>
 
@@ -104,22 +127,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                { name: "John Wick 2", views: "2,847" },
-                { name: "The X-Files", views: "2,156" },
-                { name: "A Time to Kill", views: "1,923" },
-                { name: "Gunsmith Cats", views: "1,654" }
-              ].map((movie, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <span className="text-yellow-400 font-bold">#{index + 1}</span>
-                    <span className="text-gray-300">{movie.name}</span>
-                  </div>
-                  <span className="text-blue-400 font-medium">{movie.views}</span>
-                </div>
-              ))}
-            </div>
+            <TopMoviesTable />
           </CardContent>
         </Card>
       </div>
