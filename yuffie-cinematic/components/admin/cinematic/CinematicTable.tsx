@@ -6,27 +6,17 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
+import { cinematicStatsData, CinematicStats } from "./cinematic-stats-data";
+import { format } from "date-fns";
 
-type Movie = {
-  name: string;
-  views: number;
-};
-
-const movies: Movie[] = [
-  { name: "John Wick 2", views: 2847 },
-  { name: "The X-Files", views: 2156 },
-  { name: "A Time to Kill", views: 1923 },
-  { name: "Gunsmith Cats", views: 1654 },
-];
-
-const columns: ColumnDef<Movie>[] = [
+const columns: ColumnDef<CinematicStats>[] = [
   {
     header: "#",
     cell: (info) => info.row.index + 1,
   },
   {
     accessorKey: "name",
-    header: "Filme",
+    header: "Cinematic",
     cell: (info) => info.getValue() as string,
   },
   {
@@ -34,11 +24,16 @@ const columns: ColumnDef<Movie>[] = [
     header: "Visualizações",
     cell: (info) => (info.getValue() as number).toLocaleString(),
   },
+  {
+    accessorKey: "addedAt",
+    header: "Adicionado em",
+    cell: (info) => format(new Date(info.getValue() as string), "dd/MM/yyyy"),
+  },
 ];
 
-export function TopMoviesTable() {
+export function CinematicTable() {
   const table = useReactTable({
-    data: movies,
+    data: cinematicStatsData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

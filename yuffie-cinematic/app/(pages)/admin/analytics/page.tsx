@@ -8,11 +8,9 @@ import {
   faHeart,
   faStar,
   faUsers,
-  faFilm,
 } from "@fortawesome/free-solid-svg-icons";
 import CountUp from "react-countup";
-import { ViewsChart } from "@/components/analytics/ViewsChart";
-import { TopMoviesTable } from "@/components/analytics/TopMoviesTable";
+import { ViewsChart } from "@/components/admin/analytics/ViewsChart";
 
 export default function AdminAnalyticsPage() {
   return (
@@ -33,7 +31,7 @@ export default function AdminAnalyticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-400 text-sm font-medium">
-                  Total de Visualizações
+                  Visualizações
                 </p>
                 <p className="text-2xl font-bold text-blue-300">
                   <CountUp end={12847} duration={1.2} separator="," />
@@ -51,9 +49,7 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-red-400 text-sm font-medium">
-                  Filmes Favoritos
-                </p>
+                <p className="text-red-400 text-sm font-medium">Favoritos</p>
                 <p className="text-2xl font-bold text-red-300">
                   <CountUp end={3291} duration={1.2} separator="," />
                 </p>
@@ -106,8 +102,8 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-[#0d1118] border border-gray-700/50">
+      <div className="w-full mt-6">
+        <Card className="bg-[#0d1118] border border-gray-700/50 w-full">
           <CardHeader>
             <CardTitle className="text-gray-300 flex items-center gap-2">
               <FontAwesomeIcon icon={faChartLine} />
@@ -116,18 +112,6 @@ export default function AdminAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <ViewsChart />
-          </CardContent>
-        </Card>
-
-        <Card className="bg-[#0d1118] border border-gray-700/50">
-          <CardHeader>
-            <CardTitle className="text-gray-300 flex items-center gap-2">
-              <FontAwesomeIcon icon={faFilm} />
-              Top Filmes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TopMoviesTable />
           </CardContent>
         </Card>
       </div>
