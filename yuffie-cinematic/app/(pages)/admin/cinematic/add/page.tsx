@@ -17,13 +17,13 @@ import {
   faCheck,
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
-import { movieSchema, type MovieForm } from "@/lib/validations/movie";
+import { cinematicSchema, type CinematicForm } from "@/lib/validations/cinematic";
 import { z } from "zod";
 
-const formSchema = movieSchema.omit({ status: true });
+const formSchema = cinematicSchema.omit({ status: true });
 type FormData = z.infer<typeof formSchema>;
 
-export default function AddMoviePage() {
+export default function AddCinematicPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [genreFields, setGenreFields] = useState([""]);
 
@@ -82,12 +82,11 @@ export default function AddMoviePage() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Adiciona o status default antes de salvar
-    const movieData: MovieForm = {
+    const cinematicData: CinematicForm = {
       ...filteredData,
       status: "draft" as const,
     };
 
-    console.log("Filme cadastrado:", movieData);
     setIsSubmitted(true);
 
     // Reset após sucesso
@@ -107,10 +106,10 @@ export default function AddMoviePage() {
               className="text-6xl text-green-500 mb-6"
             />
             <h2 className="text-2xl font-bold text-green-500 mb-4">
-              Filme Cadastrado!
+              Cinematic Cadastrado!
             </h2>
             <p className="text-gray-300">
-              O filme foi adicionado com sucesso ao catálogo.
+              O cinematic foi adicionado com sucesso ao catálogo.
             </p>
           </CardContent>
         </Card>
@@ -139,14 +138,14 @@ export default function AddMoviePage() {
           </Link>
           <h1 className="text-3xl font-bold text-red-500 flex items-center gap-3">
             <FontAwesomeIcon icon={faFilm} />
-            Cadastrar Novo Filme
+            Cadastrar Novo Cinematic
           </h1>
         </div>
 
         <Card className="bg-[#0d1118] border border-red-900/40">
           <CardHeader>
             <CardTitle className="text-xl text-red-400">
-              Informações do Filme
+              Informações do Cinematic
             </CardTitle>
           </CardHeader>
 
@@ -311,7 +310,7 @@ export default function AddMoviePage() {
                 <textarea
                   id="synopsis"
                   {...register("synopsis")}
-                  placeholder="Descreva a história do filme..."
+                  placeholder="Descreva a história do cinematic..."
                   rows={4}
                   className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none"
                 />
@@ -496,7 +495,7 @@ export default function AddMoviePage() {
                       isSubmitting ? "animate-spin" : ""
                     }`}
                   />
-                  {isSubmitting ? "Salvando..." : "Cadastrar Filme"}
+                  {isSubmitting ? "Salvando..." : "Cadastrar Cinematic"}
                 </Button>
               </div>
             </form>

@@ -2,4 +2,4 @@
 export * from "./login";
 export * from "./contact";
 export * from "./newsletter";
-export * from "./movie";
+export * from "./cinematic";
