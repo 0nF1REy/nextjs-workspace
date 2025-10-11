@@ -1,80 +1,59 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/stores";
-
-interface AuthUser {
-  id: string;
-  email: string;
-  username: string;
-  userType: "admin" | "regular";
-}
+import type { User } from "@/lib/user/types";
 
 export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { logout: logoutUserStore } = useUserStore();
+  const { currentUser, setUser } = useUserStore();
 
-  const checkAuthState = () => {
+  const login = async (credentials: { email: string; password?: string }) => {
     try {
-      const storedUser = sessionStorage.getItem("authenticated-user");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Falha no login");
+      }
+
+      const userData: User = await response.json();
+      setUser(userData);
+
+      if (userData.userType === "admin") {
+        router.push("/admin/dashboard");
       } else {
-        setUser(null);
+        router.push("/");
       }
     } catch (error) {
-      console.error("Erro ao recuperar usuário logado:", error);
-      setUser(null);
+      console.error("Erro no login:", error);
     }
   };
 
-  useEffect(() => {
-    checkAuthState();
-    setLoading(false);
-
-    const handleStorageChange = () => {
-      checkAuthState();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    window.addEventListener("auth-change", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("auth-change", handleStorageChange);
-    };
-  }, []);
-
-  const logout = () => {
-    sessionStorage.removeItem("authenticated-user");
-    setUser(null);
-
-    logoutUserStore();
-
-    window.dispatchEvent(new Event("auth-change"));
-    router.push("/auth/login");
+  const logout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Erro no logout:", error);
+    } finally {
+      setUser(null);
+      router.push("/auth/login");
+    }
   };
 
-  const login = (userData: AuthUser) => {
-    sessionStorage.setItem("authenticated-user", JSON.stringify(userData));
-    setUser(userData);
-
-    window.dispatchEvent(new Event("auth-change"));
-  };
-
-  const isAuthenticated = !!user;
-  const isAdmin = user?.userType === "admin";
+  const isAuthenticated = !!currentUser;
+  const isAdmin = currentUser?.userType === "admin";
+  const loading = false; 
 
   return {
-    user,
+    user: currentUser,
     loading,
-    logout,
     login,
+    logout,
     isAuthenticated,
     isAdmin,
   };

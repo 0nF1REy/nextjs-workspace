@@ -32,7 +32,6 @@ import {
 
 import { useProfile } from "@/hooks/useProfile";
 import { useProfileEdit } from "@/hooks/useProfileEdit";
-import { useConditionalRedirect } from "@/hooks/useConditionalRedirect";
 import NotFoundPage from "@/app/not-found";
 
 // Componentes dinâmicos para dados do lado client
@@ -107,13 +106,6 @@ interface PageProps {
 export default function ProfilePage({ params }: PageProps) {
   const [userId, setUserId] = useState<string>("");
 
-  // Hook para redirecionamento condicional
-  const { shouldRender } = useConditionalRedirect({
-    requireAuth: true,
-    redirectUnauthenticatedTo: "/auth/login",
-    redirectAdminTo: "/admin/dashboard",
-  });
-
   // Hooks customizados
   const { user, loading, error, isOwnProfile, refetch } = useProfile({
     userId,
@@ -139,18 +131,6 @@ export default function ProfilePage({ params }: PageProps) {
     };
     getParams();
   }, [params]);
-
-  // Estados de carregamento e erro
-  if (!shouldRender) {
-    return (
-      <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Redirecionando...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (

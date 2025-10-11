@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -24,13 +23,10 @@ import { loginSchema, LoginForm } from "@/lib/validations/login";
 import { users } from "@/lib/user/users";
 import { UserProfile } from "@/lib/user/types";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserStore } from "@/stores";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const { login } = useAuth();
-  const { login: loginUserStore } = useUserStore();
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -48,24 +44,7 @@ export default function LoginPage() {
     );
     if (user) {
       setError("");
-
-      const userData = {
-        id: user.id,
-        email: user.email!,
-        username: user.username,
-        userType: user.userType || ("regular" as const),
-      };
-
-      login(userData);
-
-      loginUserStore(user);
-
-      const userType = user.userType || "regular";
-      if (userType === "admin") {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/");
-      }
+      login({ email: user.email!, password: user.password });
     } else {
       setError("Usuário ou senha inválidos.");
     }
