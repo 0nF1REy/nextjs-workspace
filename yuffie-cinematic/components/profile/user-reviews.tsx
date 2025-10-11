@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReviewsStore, useUserStore } from "@/stores";
-import { getUserByUsername, getSimulatedUserReviews, getCurrentUser } from "@/lib/user";
+import { useReviewsStore } from "@/stores";
+import {
+  getUserByUsername,
+  getSimulatedUserReviews,
+  getCurrentUser,
+} from "@/lib/user";
 import { UserReview } from "@/lib/user/types";
 import { ProfileReviewItem } from "./profile-review-item";
 
@@ -16,7 +20,6 @@ export default function UserReviews({ userId }: UserReviewsProps) {
 
   // Zustand stores
   const reviewsStore = useReviewsStore();
-  const { getUsername } = useUserStore();
 
   useEffect(() => {
     const loadReviews = () => {
@@ -43,7 +46,7 @@ export default function UserReviews({ userId }: UserReviewsProps) {
     };
 
     loadReviews();
-  }, [userId, getUsername, reviewsStore]);
+  }, [userId, reviewsStore]);
 
   if (loading) {
     return (
