@@ -14,7 +14,7 @@ export const footerSections = [
     links: [
       { href: "#", label: "Discussões" },
       { href: "#", label: "Grupos" },
-      { href: "#", label: "Recomendações" },
+      { href: "/newsletter", label: "Newsletter" },
     ],
   },
   {
