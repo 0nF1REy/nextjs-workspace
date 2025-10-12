@@ -1,6 +1,6 @@
 "use client";
 
-import { getCurrentUser } from "@/lib/user/users";
+import { useUserStore } from "@/stores";
 import { UserReview } from "@/lib/user/types";
 import { ProfileReviewItem } from "./profile-review-item";
 
@@ -17,6 +17,8 @@ export default function UserReviews({
   isLoading,
   onReviewChange,
 }: UserReviewsProps) {
+  const currentUser = useUserStore((state) => state.currentUser);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -37,7 +39,7 @@ export default function UserReviews({
           Nenhuma review ainda
         </h3>
         <p className="text-gray-500">
-          {getCurrentUser()?.username === userId
+          {currentUser?.username === userId
             ? "Que tal escrever sua primeira review sobre um filme, série ou anime?"
             : "Este usuário ainda não escreveu nenhuma review."}
         </p>
