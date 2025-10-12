@@ -4,17 +4,15 @@ import { useState, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MovieDetails } from "./details";
 import { ReviewsList } from "./reviews-list";
-import { MovieDetailsProps, Review } from "./types";
+import { MovieDetailsProps } from "./types";
 
 interface MovieReviewsProps extends MovieDetailsProps {
-  reviews: Review[];
   cinematicId: string;
 }
 
 export default function MovieReviews({
   genre,
   duration,
-  reviews,
   cinematicId,
 }: MovieReviewsProps) {
   const [activeTab, setActiveTab] = useState("details");
@@ -22,8 +20,6 @@ export default function MovieReviews({
   const handleTabChange = useCallback((value: string) => {
     setActiveTab(value);
   }, []);
-
-  const handleNewReview = useCallback(() => {}, []);
 
   return (
     <aside className="bg-gradient-to-br from-gray-900 to-black border border-red-900/40 rounded-xl p-6 shadow-lg h-[600px] flex flex-col">
@@ -52,11 +48,7 @@ export default function MovieReviews({
         </TabsContent>
 
         <TabsContent value="reviews" className="flex-1 min-h-0">
-          <ReviewsList
-            reviews={reviews}
-            cinematicId={cinematicId}
-            onNewReview={handleNewReview}
-          />
+          <ReviewsList cinematicId={cinematicId} />
         </TabsContent>
       </Tabs>
 

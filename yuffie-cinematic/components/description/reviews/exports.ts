@@ -15,14 +15,7 @@ export { DeleteReviewModal } from "./delete-review-modal";
 export { ReviewActions } from "./review-actions";
 
 // Utilitários
-export {
-  getContentType,
-  formatContentTypeWithArticle,
-  getAllUserReviews,
-} from "./utils";
-
-// Reducer
-export { reviewsReducer } from "./reviews-reducer";
+export { getContentType, formatContentTypeWithArticle } from "@/lib/utils";
 
 // Tipos
 export type {

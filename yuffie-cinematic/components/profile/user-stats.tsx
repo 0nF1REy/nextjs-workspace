@@ -3,44 +3,47 @@
 import { useEffect, useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faHeart, faComments } from "@fortawesome/free-solid-svg-icons";
-import { getUserStats } from "@/lib/user";
+import { getUserStats } from "@/lib/user/users";
 
 interface UserStatsProps {
   userId: string;
+  dynamicReviewsCount: number;
 }
 
-export default function UserStats({ userId }: UserStatsProps) {
+export default function UserStats({
+  userId,
+  dynamicReviewsCount,
+}: UserStatsProps) {
   const [stats, setStats] = useState({
-    totalReviews: 0,
     totalFavorites: 0,
     totalRatings: 0,
   });
 
-  const loadStats = useCallback(() => {
+  const loadStaticStats = useCallback(() => {
     const userStats = getUserStats(userId);
-    setStats(userStats);
+    setStats({
+      totalFavorites: userStats.totalFavorites,
+      totalRatings: userStats.totalRatings,
+    });
   }, [userId]);
 
   useEffect(() => {
-    loadStats();
-  }, [loadStats]);
+    loadStaticStats();
+  }, [loadStaticStats]);
 
   useEffect(() => {
-    // Escutar eventos de atualização de reviews e outros dados do usuário
-    const handleReviewsUpdate = () => {
-      loadStats();
+    const handleStatsUpdate = () => {
+      loadStaticStats();
     };
 
-    window.addEventListener("userReviewsUpdated", handleReviewsUpdate);
-    window.addEventListener("userFavoritesUpdated", handleReviewsUpdate);
-    window.addEventListener("userRatingsUpdated", handleReviewsUpdate);
+    window.addEventListener("userFavoritesUpdated", handleStatsUpdate);
+    window.addEventListener("userRatingsUpdated", handleStatsUpdate);
 
     return () => {
-      window.removeEventListener("userReviewsUpdated", handleReviewsUpdate);
-      window.removeEventListener("userFavoritesUpdated", handleReviewsUpdate);
-      window.removeEventListener("userRatingsUpdated", handleReviewsUpdate);
+      window.removeEventListener("userFavoritesUpdated", handleStatsUpdate);
+      window.removeEventListener("userRatingsUpdated", handleStatsUpdate);
     };
-  }, [loadStats]);
+  }, [loadStaticStats]);
 
   const statsData = [
     {
@@ -54,7 +57,7 @@ export default function UserStats({ userId }: UserStatsProps) {
     {
       icon: faComments,
       label: "Reviews",
-      value: stats.totalReviews,
+      value: dynamicReviewsCount,
       color: "text-blue-400",
       bgColor: "bg-blue-600/20",
       borderColor: "border-blue-500/30",
