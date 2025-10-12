@@ -4,7 +4,7 @@ import { FavoriteItem, UserRating } from "@/lib/user/types";
 
 export const useMigrateLocalStorage = () => {
   const { toggleLike } = useReviewsStore();
-  const { addFavorite } = useFavoritesStore();
+  const { toggleFavorite } = useFavoritesStore();
   const { setRating } = useRatingsStore();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const useMigrateLocalStorage = () => {
         const favs: FavoriteItem[] = JSON.parse(favorites);
         favs.forEach((fav) => {
           if (!useFavoritesStore.getState().isFavorite(fav.id)) {
-            addFavorite(fav);
+            toggleFavorite(fav);
           }
         });
       }
@@ -52,14 +52,8 @@ export const useMigrateLocalStorage = () => {
       });
 
       localStorage.setItem("yuffie-migrated-to-zustand", "true");
-
-      if (process.env.NODE_ENV === "development") {
-        console.log("Migração para Zustand (Likes, Favs, Ratings) concluída!");
-      }
-    } catch (error) {
-      console.error("Erro na migração:", error);
-    }
-  }, [toggleLike, addFavorite, setRating]);
+    } catch {}
+  }, [toggleLike, toggleFavorite, setRating]);
 };
 
 export const useClearOldStorage = () => {
@@ -84,12 +78,6 @@ export const useClearOldStorage = () => {
     keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
     });
-
-    if (process.env.NODE_ENV === "development") {
-      console.log(
-        `Removidas ${keysToRemove.length} chaves antigas do localStorage`
-      );
-    }
   };
 
   return { clearOldStorage };
