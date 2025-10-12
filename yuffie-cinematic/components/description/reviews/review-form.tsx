@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/stores";
 import { useRatingsStore } from "@/stores";
 import { getContentType, formatContentTypeWithArticle } from "@/lib/utils";
-import { UserReview } from "./types";
 
 const reviewSchema = z.object({
   content: z
@@ -25,9 +24,11 @@ type ReviewFormData = z.infer<typeof reviewSchema>;
 
 interface ReviewFormProps {
   cinematicId: string;
-  onSubmit: (
-    review: Omit<UserReview, "id" | "author" | "date" | "likes" | "avatarSeed">
-  ) => void;
+  onSubmit: (reviewData: {
+    content: string;
+    rating: number;
+    cinematicId: string;
+  }) => void;
 }
 
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {

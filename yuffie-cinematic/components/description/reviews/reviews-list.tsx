@@ -39,7 +39,11 @@ export function ReviewsList({ cinematicId }: ReviewsListProps) {
   }, [refreshReviews]);
 
   const handleNewReview = useCallback(
-    async (newReviewData: Omit<UserReview, "id" | "date" | "likes">) => {
+    async (newReviewData: {
+      content: string;
+      rating: number;
+      cinematicId: string;
+    }) => {
       setLoading(true);
       try {
         const res = await fetch("/api/reviews", {
