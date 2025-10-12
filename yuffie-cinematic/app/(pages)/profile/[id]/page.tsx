@@ -36,7 +36,6 @@ import NotFoundPage from "@/app/not-found";
 import { UserReview } from "@/lib/user/types";
 import { getUserByUsername } from "@/lib/user/users";
 
-// Componentes dinâmicos (sem alterações na definição)
 const DynamicUserStats = dynamic(
   () => import("@/components/profile/user-stats"),
   {
@@ -444,7 +443,7 @@ export default function ProfilePage({ params }: PageProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="relative z-10">
-                <DynamicUserFavorites userId={user.id} />
+                <DynamicUserFavorites />
               </CardContent>
             </Card>
           </TabsContent>
