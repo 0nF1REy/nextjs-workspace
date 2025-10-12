@@ -5,6 +5,7 @@ interface RatingsState {
   ratings: Record<string, UserRating>;
   setRatings: (ratings: Record<string, UserRating>) => void;
   setRating: (movieId: string, rating: number) => Promise<void>;
+  removeRating: (movieId: string) => Promise<void>;
   getRating: (movieId: string) => number | null;
 }
 
@@ -31,6 +32,19 @@ export const useRatingsStore = create<RatingsState>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ movieId, rating }),
       });
+    } catch {
+      set({ ratings: currentRatings });
+    }
+  },
+
+  removeRating: async (movieId) => {
+    const currentRatings = get().ratings;
+    const optimisticRatings = { ...currentRatings };
+    delete optimisticRatings[movieId];
+    set({ ratings: optimisticRatings });
+
+    try {
+      await fetch(`/api/user/ratings?movieId=${movieId}`, { method: "DELETE" });
     } catch {
       set({ ratings: currentRatings });
     }

@@ -20,13 +20,7 @@ interface RatedCinematicItem extends CinematicItem {
 }
 
 const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
-  const { isFavorite } = useFavoritesStore();
-
-  useEffect(() => {
-    // Verificar se o item está nos favoritos usando Zustand
-    setIsFavorited(isFavorite(item.id));
-  }, [item.id, isFavorite]);
+  const isFavorite = useFavoritesStore((state) => state.isFavorite(item.id));
 
   return (
     <motion.div
@@ -44,8 +38,6 @@ const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
             className="object-cover"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
           />
-
-          {/* Overlay com informações */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-0 left-0 right-0 p-3">
               <h4 className="text-white font-semibold text-sm mb-1 line-clamp-2">
@@ -59,8 +51,7 @@ const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
                     ? "Série"
                     : "Anime"}
                 </span>
-                {/* Mostrar coração apenas se estiver favoritado */}
-                {isFavorited && (
+                {isFavorite && (
                   <div className="flex items-center gap-1">
                     <FontAwesomeIcon
                       icon={faHeart}
@@ -71,8 +62,6 @@ const RatedItemCard = ({ item }: { item: RatedCinematicItem }) => {
               </div>
             </div>
           </div>
-
-          {/* Rating badge no topo direito */}
           <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1">
             <div className="flex items-center gap-1">
               <FontAwesomeIcon
@@ -138,31 +127,25 @@ const StarFilter = ({
 };
 
 export default function UserRatings() {
+  const ratings = useRatingsStore((state) => state.ratings);
   const [ratedItems, setRatedItems] = useState<RatedCinematicItem[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const { getAllRatings } = useRatingsStore();
 
   useEffect(() => {
-    const userRatings = getAllRatings();
-    const allItems = items;
+    const userRatings = Object.values(ratings);
+    const ratedMap = new Map<string, UserRating>(
+      userRatings.map((r) => [r.movieId, r])
+    );
 
-    const getRatedItems = () => {
-      const ratedMap = new Map<string, UserRating>(
-        userRatings.map((r: UserRating) => [r.movieId, r])
-      );
+    const detailedRatedItems: RatedCinematicItem[] = items
+      .filter((item) => ratedMap.has(item.id))
+      .map((item) => ({
+        ...item,
+        userRating: ratedMap.get(item.id)?.rating,
+      }));
 
-      const detailedRatedItems: RatedCinematicItem[] = allItems
-        .filter((item) => ratedMap.has(item.id))
-        .map((item) => ({
-          ...item,
-          userRating: ratedMap.get(item.id)?.rating,
-        }));
-
-      setRatedItems(detailedRatedItems);
-    };
-
-    getRatedItems();
-  }, [getAllRatings]);
+    setRatedItems(detailedRatedItems);
+  }, [ratings]);
 
   const filteredItems = selectedRating
     ? ratedItems.filter((item) => item.userRating === selectedRating)
