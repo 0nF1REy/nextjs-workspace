@@ -18,7 +18,6 @@ import {
 
 // Schema de validação Zod
 import { contactSchema, ContactForm } from "@/lib/validations/contact";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -73,7 +72,6 @@ export default function ContactPage() {
 
   if (isSubmitted) {
     return (
-      <ProtectedRoute>
         <div className="min-h-screen w-full bg-[#131b22] text-gray-100 flex items-center justify-center">
           <Card className="w-full max-w-md bg-[#0d1118] border border-green-900/40">
             <CardContent className="text-center py-16">
@@ -93,12 +91,11 @@ export default function ContactPage() {
             </CardContent>
           </Card>
         </div>
-      </ProtectedRoute>
+ 
     );
   }
 
   return (
-    <ProtectedRoute>
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100 relative">
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
@@ -372,6 +369,5 @@ export default function ContactPage() {
         </div>
       </div>
       </div>
-    </ProtectedRoute>
   );
 }

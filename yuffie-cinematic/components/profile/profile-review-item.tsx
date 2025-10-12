@@ -9,45 +9,63 @@ import {
   faArrowRight,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp as faThumbsUpRegular } from "@fortawesome/free-regular-svg-icons";
 import { StarRating } from "@/components/description/reviews/star-rating";
 import { EditReviewModal } from "@/components/description/reviews/edit-review-modal";
 import { DeleteReviewModal } from "@/components/description/reviews/delete-review-modal";
 import { ReviewActions } from "@/components/description/reviews/review-actions";
-import { useReviewsStore } from "@/stores";
+import { useReviewsStore, useUserStore } from "@/stores";
 import { cinematics } from "@/lib/details";
 import { UserReview } from "@/lib/user/types";
 
 interface ProfileReviewItemProps {
   review: UserReview;
-  onReviewUpdated?: () => void;
+  onReviewChange?: () => void;
 }
 
 export function ProfileReviewItem({
   review,
-  onReviewUpdated,
+  onReviewChange,
 }: ProfileReviewItemProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  // Zustand store
-  const reviewsStore = useReviewsStore();
-  const isLiked = reviewsStore.isReviewLiked(review.id);
-  const currentLikes = (review.likes || 0) + (isLiked ? 1 : 0);
-
   const cinematic = cinematics.find((item) => item.id === review.cinematicId);
-  const isUserReview = review.id.startsWith("user-");
 
-  const handleEdit = (content: string, rating: number) => {
-    if (review.cinematicId) {
-      reviewsStore.updateReview(review.cinematicId, review.id, content, rating);
-      onReviewUpdated?.();
+  const { currentUser } = useUserStore();
+  const likedReviewsStore = useReviewsStore();
+
+  const currentLikes = review.likes || 0;
+  const isLikedByCurrentUser = likedReviewsStore.isReviewLiked(review.id);
+  const isUserReview = currentUser?.username === review.author;
+
+  const handleEdit = async (content: string, rating: number) => {
+    try {
+      const res = await fetch(`/api/reviews/${review.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, rating }),
+      });
+      if (res.ok) {
+        onReviewChange?.();
+        setEditOpen(false);
+      }
+    } catch (error) {
+      console.error("Falha ao editar a review:", error);
     }
   };
 
-  const handleDelete = () => {
-    if (review.cinematicId) {
-      reviewsStore.deleteReview(review.cinematicId, review.id);
-      onReviewUpdated?.();
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`/api/reviews/${review.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        onReviewChange?.();
+        setDeleteOpen(false);
+      }
+    } catch (error) {
+      console.error("Falha ao deletar a review:", error);
     }
   };
 
@@ -70,7 +88,6 @@ export function ProfileReviewItem({
             </div>
           </Link>
         )}
-
         <div className="flex-1 space-y-3 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="min-w-0">
@@ -87,14 +104,12 @@ export function ProfileReviewItem({
                 <span className="text-gray-400 text-sm">{review.rating}/5</span>
               </div>
             </div>
-
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-gray-500 text-sm flex-shrink-0">
                 <FontAwesomeIcon icon={faCalendar} className="w-3 h-3" />
                 <span>{new Date(review.date).toLocaleDateString("pt-BR")}</span>
               </div>
 
-              {/* Botões de ação apenas para reviews do usuário */}
               <ReviewActions
                 showActions={isUserReview}
                 onEdit={() => setEditOpen(true)}
@@ -102,18 +117,13 @@ export function ProfileReviewItem({
               />
             </div>
           </div>
-
-          {/* Review content */}
-          <div className="text-gray-300 leading-relaxed">
-            <p className="break-words sm:break-normal">
-              &ldquo;{review.content}&rdquo;
-            </p>
-          </div>
-
+          <p className="text-gray-300 leading-relaxed break-words sm:break-normal">
+            &ldquo;{review.content}&rdquo;
+          </p>
           <div className="flex items-center justify-between pt-2 border-t border-gray-700">
             <div className="flex items-center gap-2 text-sm">
               <FontAwesomeIcon
-                icon={faThumbsUp}
+                icon={isLikedByCurrentUser ? faThumbsUp : faThumbsUpRegular}
                 className={`w-3 h-3 ${
                   currentLikes > 0 ? "text-blue-400" : "text-gray-500"
                 }`}
@@ -128,14 +138,12 @@ export function ProfileReviewItem({
                 {currentLikes} {currentLikes === 1 ? "curtida" : "curtidas"}
               </span>
             </div>
-
             {cinematic && (
               <Link
                 href={`/details/${cinematic.id}`}
                 className="text-red-400 text-sm hover:text-red-300 transition-colors flex-shrink-0 flex items-center gap-1"
               >
                 <span className="hidden sm:inline">Ver detalhes</span>
-                <span className="sm:hidden">Ver</span>
                 <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3" />
               </Link>
             )}
@@ -143,7 +151,6 @@ export function ProfileReviewItem({
         </div>
       </div>
 
-      {/* Modais reutilizáveis */}
       <EditReviewModal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
@@ -151,7 +158,6 @@ export function ProfileReviewItem({
         initialContent={review.content}
         initialRating={review.rating}
       />
-
       <DeleteReviewModal
         isOpen={deleteOpen}
         onClose={() => setDeleteOpen(false)}

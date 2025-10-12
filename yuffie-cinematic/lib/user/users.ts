@@ -1,5 +1,6 @@
-import { UserProfile, UserReview } from "./types";
-import { getUserReviewsFromStorage, getFavoritesFromStorage } from "./storage";
+import { UserProfile } from "./types";
+import { useFavoritesStore } from "@/stores/useFavoritesStore";
+
 import {
   simulatedUserReviews,
   simulatedUserFavorites,
@@ -237,39 +238,30 @@ export const users: UserProfile[] = [
   },
 ];
 
-// Função para buscar usuário por ID
 export const getUserById = (id: string): UserProfile | undefined => {
   return users.find((user) => user.id === id);
 };
 
-// Função para buscar usuário por username
 export const getUserByUsername = (
   username: string
 ): UserProfile | undefined => {
   return users.find((user) => user.username === username);
 };
 
-// Função para obter o usuário logado dinamicamente
-export const getCurrentUser = (): UserProfile | undefined => {
-  // Primeiro tenta usar o useAuth (sessionStorage)
+import { useUserStore } from "@/stores/useUserStore";
+
+export const getCurrentUser = (): UserProfile | null => {
   if (typeof window !== "undefined") {
     try {
-      const authUser = sessionStorage.getItem("authenticated-user");
-      if (authUser) {
-        const parsedUser = JSON.parse(authUser);
-        // Busca o usuário completo pelos dados de autenticação
-        return getUserById(parsedUser.id);
-      }
+      return useUserStore.getState().currentUser;
     } catch (error) {
-      console.error("Erro ao recuperar usuário autenticado:", error);
+      console.error("Erro ao acessar Zustand:", error);
+      return null;
     }
   }
-  
-  // Se não há usuário autenticado, retorna undefined
-  return undefined;
+  return null;
 };
 
-// Função para obter usuário com stats dinâmicos
 export const getUserWithStats = (
   username: string
 ):
@@ -296,7 +288,6 @@ export const getUserWithStats = (
   };
 };
 
-// Função para calcular stats dinamicamente
 export const getUserStats = (username?: string) => {
   const currentUser = getCurrentUser();
   const currentUsername = username || currentUser?.username;
@@ -305,13 +296,10 @@ export const getUserStats = (username?: string) => {
     return { totalReviews: 0, totalFavorites: 0, totalRatings: 0 };
   }
 
-  // Para o usuário logado, usar localStorage e Zustand
   if (currentUser && currentUsername === currentUser.username) {
-    const reviews = getUserReviewsFromStorage().filter(
-      (r: UserReview) => r.author === currentUsername
-    );
-    const favorites = getFavoritesFromStorage();
+    const reviewsCount = 0;
 
+    const favorites = useFavoritesStore.getState().favorites;
     let ratingsCount = 0;
     try {
       const ratingsStorage = localStorage.getItem("yuffie-ratings-storage");
@@ -324,13 +312,12 @@ export const getUserStats = (username?: string) => {
     }
 
     return {
-      totalReviews: reviews.length,
+      totalReviews: reviewsCount,
       totalFavorites: favorites.length,
       totalRatings: ratingsCount,
     };
   }
 
-  // Para outros usuários, usar dados simulados
   const userReviews = simulatedUserReviews.filter(
     (r) => r.author === currentUsername
   );
@@ -344,27 +331,22 @@ export const getUserStats = (username?: string) => {
   };
 };
 
-// Função para obter reviews simuladas de um usuário
 export const getSimulatedUserReviews = (username: string) => {
   return simulatedUserReviews.filter((review) => review.author === username);
 };
 
-// Função para obter favoritos simulados de um usuário
 export const getSimulatedUserFavorites = (username: string) => {
   return simulatedUserFavorites[username] || [];
 };
 
-// Função para obter ratings simulados de um usuário
 export const getSimulatedUserRatings = (username: string) => {
   return simulatedUserRatings[username] || [];
 };
 
-// Função para verificar se um usuário existe
 export const userExists = (id: string): boolean => {
   return users.some((user) => user.id === id);
 };
 
-// Função para listar todos os usuários
 export const getAllUsers = (): UserProfile[] => {
   return users;
 };

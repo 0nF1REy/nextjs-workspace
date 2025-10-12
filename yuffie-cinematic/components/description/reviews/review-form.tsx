@@ -9,10 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/ui/button";
-import { getCurrentUser, getLoggedUsername } from "@/lib/user";
+import { useUserStore } from "@/stores";
 import { useRatingsStore } from "@/stores";
-import { getContentType, formatContentTypeWithArticle } from "./utils";
-import { UserReview } from "./types";
+import { getContentType, formatContentTypeWithArticle } from "@/lib/utils";
 
 const reviewSchema = z.object({
   content: z
@@ -25,17 +24,19 @@ type ReviewFormData = z.infer<typeof reviewSchema>;
 
 interface ReviewFormProps {
   cinematicId: string;
-  onSubmit: (review: UserReview) => void;
+  onSubmit: (reviewData: {
+    content: string;
+    rating: number;
+    cinematicId: string;
+  }) => void;
 }
 
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
-  // Zustand store
   const { getRating } = useRatingsStore();
+  const { currentUser } = useUserStore();
 
   const userRating = getRating(cinematicId);
-
-  const currentUser = getCurrentUser();
-  const username = currentUser?.username || getLoggedUsername() || "anonymous";
+  const username = currentUser?.username || "anonymous";
   const userAvatarUrl =
     currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
@@ -49,9 +50,7 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: {
-      content: "",
-    },
+    defaultValues: { content: "" },
   });
 
   const watchedContent = watch("content");
@@ -61,18 +60,13 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
       return;
     }
 
-    const newReview: UserReview = {
-      id: `user-${Date.now()}`,
-      author: username,
+    const reviewData = {
       content: data.content.trim(),
       rating: userRating,
-      date: new Date().toISOString(),
       cinematicId,
-      avatarSeed: currentUser?.avatar || username,
-      likes: 0,
     };
 
-    onSubmit(newReview);
+    onSubmit(reviewData);
     reset();
   };
 

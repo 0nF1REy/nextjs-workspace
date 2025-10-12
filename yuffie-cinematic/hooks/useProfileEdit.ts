@@ -6,9 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useUserStore } from "@/stores";
 import { UserProfile } from "@/lib/user/types";
-import { getCurrentUser } from "@/lib/user";
 
-// Schema de validação
 const profileEditSchema = z.object({
   displayName: z
     .string()
@@ -30,23 +28,16 @@ interface UseProfileEditOptions {
 }
 
 interface UseProfileEditReturn {
-  // Estados do modal
   isOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
 
-  // Estados de feedback
   showSuccessMessage: boolean;
 
-  // Form
   form: ReturnType<typeof useForm<ProfileEditForm>>;
   handleSubmit: () => void;
 }
 
-/**
- * Hook customizado para edição de perfil
- * Centraliza toda a lógica do formulário e modal
- */
 export function useProfileEdit({
   user,
   isOwnProfile,
@@ -55,10 +46,8 @@ export function useProfileEdit({
   const [isOpen, setIsOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Zustand store
   const { updateUser } = useUserStore();
 
-  // Form setup
   const form = useForm<ProfileEditForm>({
     resolver: zodResolver(profileEditSchema),
     defaultValues: {
@@ -69,7 +58,6 @@ export function useProfileEdit({
 
   const openModal = () => {
     if (user && isOwnProfile) {
-      // Pré-preencher formulário com dados atuais
       form.reset({
         displayName: user.displayName || "",
         bio: user.bio || "",
@@ -85,20 +73,17 @@ export function useProfileEdit({
 
   const onSubmit = async (data: ProfileEditForm) => {
     try {
-      // Verificar se o usuário ainda está logado
-      const currentUser = getCurrentUser();
-      if (!currentUser || !user || currentUser.id !== user.id) {
+      const zustandUser = useUserStore.getState().currentUser;
+      if (!zustandUser || !user || zustandUser.id !== user.id) {
         console.error("Usuário não autorizado para editar este perfil");
         return;
       }
 
-      // Atualizar no Zustand store
       updateUser({
         displayName: data.displayName,
         bio: data.bio || undefined,
       });
 
-      // Atualizar também no sessionStorage para manter sincronização
       if (typeof window !== "undefined") {
         try {
           const authUser = sessionStorage.getItem("authenticated-user");
@@ -113,7 +98,6 @@ export function useProfileEdit({
               JSON.stringify(updatedUser)
             );
 
-            // Disparar evento para notificar mudança
             window.dispatchEvent(new Event("auth-change"));
           }
         } catch (error) {
@@ -121,14 +105,11 @@ export function useProfileEdit({
         }
       }
 
-      // Fechar modal
       closeModal();
 
-      // Mostrar mensagem de sucesso
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000);
 
-      // Callback de sucesso
       onSuccess?.();
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);

@@ -1,55 +1,39 @@
 import { useEffect } from "react";
 import { useReviewsStore, useFavoritesStore, useRatingsStore } from "./index";
-import { UserReview, FavoriteItem, UserRating } from "@/lib/user/types";
+import { FavoriteItem, UserRating } from "@/lib/user/types";
 
-// Hook para migração de dados do localStorage para Zustand
 export const useMigrateLocalStorage = () => {
-  const { addReview, toggleLike } = useReviewsStore();
+  const { toggleLike } = useReviewsStore();
   const { addFavorite } = useFavoritesStore();
   const { setRating } = useRatingsStore();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Flag para verificar se já migrou
     const migrated = localStorage.getItem("yuffie-migrated-to-zustand");
     if (migrated === "true") return;
 
     try {
-      // Migrar Reviews
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("user-reviews-")) {
-          const cinematicId = key.replace("user-reviews-", "");
-          const stored = localStorage.getItem(key);
-          if (stored) {
-            const reviews: UserReview[] = JSON.parse(stored);
-            reviews.forEach((review) => {
-              addReview(cinematicId, review);
-            });
-          }
-        }
-      }
-
-      // Migrar Likes
       const likedReviews = localStorage.getItem("liked-reviews");
       if (likedReviews) {
         const likes: string[] = JSON.parse(likedReviews);
         likes.forEach((reviewId) => {
-          toggleLike(reviewId);
+          if (!useReviewsStore.getState().isReviewLiked(reviewId)) {
+            toggleLike(reviewId);
+          }
         });
       }
 
-      // Migrar Favoritos
       const favorites = localStorage.getItem("user-favorites");
       if (favorites) {
         const favs: FavoriteItem[] = JSON.parse(favorites);
         favs.forEach((fav) => {
-          addFavorite(fav);
+          if (!useFavoritesStore.getState().isFavorite(fav.id)) {
+            addFavorite(fav);
+          }
         });
       }
 
-      // Migrar Ratings (Avaliações)
       const userRatingsKeys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -67,16 +51,15 @@ export const useMigrateLocalStorage = () => {
         }
       });
 
-      // Marcar como migrado
       localStorage.setItem("yuffie-migrated-to-zustand", "true");
 
       if (process.env.NODE_ENV === "development") {
-        console.log("Migração para Zustand concluída!");
+        console.log("Migração para Zustand (Likes, Favs, Ratings) concluída!");
       }
     } catch (error) {
       console.error("Erro na migração:", error);
     }
-  }, [addReview, toggleLike, addFavorite, setRating]);
+  }, [toggleLike, addFavorite, setRating]);
 };
 
 export const useClearOldStorage = () => {
