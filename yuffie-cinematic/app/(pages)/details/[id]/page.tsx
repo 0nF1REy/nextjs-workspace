@@ -144,6 +144,7 @@ const MovieCarouselComponent = ({
                       src={img}
                       alt=""
                       fill
+                      sizes="100vw"
                       className="object-cover scale-110 blur-xl opacity-30"
                       priority={idx === 0}
                     />
@@ -152,6 +153,7 @@ const MovieCarouselComponent = ({
                     src={img}
                     alt={`${cinematic.title} scene ${idx + 1}`}
                     fill
+                    sizes="(max-width: 640px) 100vw, 60vw"
                     className="rounded-lg relative z-10 object-cover sm:object-contain"
                     priority={idx === 0}
                   />

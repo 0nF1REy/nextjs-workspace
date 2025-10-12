@@ -42,6 +42,7 @@ export function CategoryCarouselItem({
               fill
               className="object-cover w-full h-full transition-transform duration-500 
                        group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
+              sizes="200px"
               priority={priority}
             />
           </div>
