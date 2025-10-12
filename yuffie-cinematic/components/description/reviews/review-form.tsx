@@ -25,18 +25,19 @@ type ReviewFormData = z.infer<typeof reviewSchema>;
 
 interface ReviewFormProps {
   cinematicId: string;
-  onSubmit: (review: UserReview) => void;
+  onSubmit: (
+    review: Omit<UserReview, "id" | "author" | "date" | "likes" | "avatarSeed">
+  ) => void;
 }
 
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
-  // Zustand store
   const { getRating } = useRatingsStore();
   const { currentUser } = useUserStore();
 
   const userRating = getRating(cinematicId);
   const username = currentUser?.username || "anonymous";
   const userAvatarUrl =
-    currentUser?.avatar || "/assets/images/profile-avatar/default.png";
+    currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
 
   const contentType = getContentType(cinematicId);
 
@@ -48,9 +49,7 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: {
-      content: "",
-    },
+    defaultValues: { content: "" },
   });
 
   const watchedContent = watch("content");
@@ -60,19 +59,13 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
       return;
     }
 
-    const newReview: UserReview = {
-      id: `user-${Date.now()}`,
-      author: username,
+    const reviewData = {
       content: data.content.trim(),
       rating: userRating,
-      date: new Date().toISOString(),
       cinematicId,
-      avatarSeed:
-        currentUser?.avatar || "/assets/images/profile-avatar/default.png",
-      likes: 0,
     };
 
-    onSubmit(newReview);
+    onSubmit(reviewData);
     reset();
   };
 

@@ -15,12 +15,12 @@ import { StarRating } from "./star-rating";
 import { EditReviewModal } from "./edit-review-modal";
 import { DeleteReviewModal } from "./delete-review-modal";
 import { ReviewActions } from "./review-actions";
-import { Review, UserReview } from "./types";
+import { UserReview } from "./types";
 import { getUserByUsername } from "@/lib/user/users";
 import { useUserStore } from "@/stores/useUserStore";
 
 interface ReviewItemProps {
-  review: (Review | UserReview) & { likes: number; avatarSeed?: string };
+  review: UserReview;
   cinematicId: string;
   onReviewChange?: () => void;
 }
@@ -30,7 +30,7 @@ export function ReviewItem({
   cinematicId,
   onReviewChange,
 }: ReviewItemProps) {
-  const user = getUserByUsername?.(review.author);
+  const user = getUserByUsername(review.author);
   const displayName = user?.displayName || review.author;
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -38,11 +38,10 @@ export function ReviewItem({
   const favoritesStore = useFavoritesStore();
   const likedReviewsStore = useReviewsStore();
 
-  const avatarUrl = review.avatarSeed?.startsWith(
-    "/assets/images/profile-avatar/"
-  )
-    ? review.avatarSeed
-    : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
+  const avatarUrl =
+    user?.avatar ||
+    review.avatarSeed ||
+    `https://i.pravatar.cc/300?u=${review.author}`;
 
   const { currentUser } = useUserStore();
   const isUserReview = currentUser && review.author === currentUser.username;
@@ -102,9 +101,7 @@ export function ReviewItem({
       setCurrentLikes(updatedReview.likes);
     } catch (error) {
       console.error("Erro ao curtir/descurtir:", error);
-
       setCurrentLikes(originalLikes);
-
       if (likedReviewsStore.isReviewLiked(review.id) !== originalIsLiked) {
         likedReviewsStore.toggleLike(review.id);
       }
