@@ -1,8 +1,33 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/stores";
+import {
+  useUserStore,
+  useFavoritesStore,
+  useRatingsStore,
+  useReviewsStore,
+} from "@/stores";
 import type { User } from "@/lib/user/types";
+
+async function fetchUserData() {
+  try {
+    const res = await fetch("/api/user/data");
+    if (res.ok) {
+      const data = await res.json();
+      useFavoritesStore.getState().setFavorites(data.favorites || []);
+      useRatingsStore.getState().setRatings(data.ratings || {});
+      useReviewsStore.getState().setLikes(data.likedReviewIds || []);
+    }
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+  }
+}
+
+function clearUserData() {
+  useFavoritesStore.getState().setFavorites([]);
+  useRatingsStore.getState().setRatings({});
+  useReviewsStore.getState().setLikes([]);
+}
 
 export function useAuth() {
   const router = useRouter();
@@ -17,12 +42,12 @@ export function useAuth() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Falha no login");
+        throw new Error("Falha no login");
       }
 
       const userData: User = await response.json();
       setUser(userData);
+      await fetchUserData();
 
       if (userData.userType === "admin") {
         router.push("/admin/dashboard");
@@ -41,13 +66,14 @@ export function useAuth() {
       console.error("Erro no logout:", error);
     } finally {
       setUser(null);
+      clearUserData();
       router.push("/auth/login");
     }
   };
 
   const isAuthenticated = !!currentUser;
   const isAdmin = currentUser?.userType === "admin";
-  const loading = false; 
+  const loading = false;
 
   return {
     user: currentUser,
