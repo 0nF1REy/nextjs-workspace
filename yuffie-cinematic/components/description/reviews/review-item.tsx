@@ -16,19 +16,27 @@ import { EditReviewModal } from "./edit-review-modal";
 import { DeleteReviewModal } from "./delete-review-modal";
 import { ReviewActions } from "./review-actions";
 import { Review, UserReview } from "./types";
+import { getUserByUsername } from "@/lib/user/users";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface ReviewItemProps {
   review: (Review | UserReview) & { likes: number; avatarSeed?: string };
   cinematicId: string;
+  onReviewChange?: () => void;
 }
 
-export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
+export function ReviewItem({
+  review,
+  cinematicId,
+  onReviewChange,
+}: ReviewItemProps) {
+  const user = getUserByUsername?.(review.author);
+  const displayName = user?.displayName || review.author;
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  // Zustand stores
   const favoritesStore = useFavoritesStore();
-  const reviewsStore = useReviewsStore();
+  const likedReviewsStore = useReviewsStore();
 
   const avatarUrl = review.avatarSeed?.startsWith(
     "/assets/images/profile-avatar/"
@@ -36,32 +44,80 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
     ? review.avatarSeed
     : `https://i.pravatar.cc/300?u=${review.avatarSeed || review.author}`;
 
-  const isUserReview = review.id.startsWith("user-");
+  const { currentUser } = useUserStore();
+  const isUserReview = currentUser && review.author === currentUser.username;
   const isFavorited = isUserReview
     ? favoritesStore.isFavorite(cinematicId)
     : false;
-  const isLiked = reviewsStore.isReviewLiked(review.id);
-  const currentLikes = review.likes || 0;
 
-  // Handlers
-  const handleEdit = (content: string, rating: number) => {
-    reviewsStore.updateReview(cinematicId, review.id, content, rating);
+  const [currentLikes, setCurrentLikes] = useState(review.likes || 0);
+  const isLikedByCurrentUser = likedReviewsStore.isReviewLiked(review.id);
+
+  const handleEdit = async (content: string, rating: number) => {
+    try {
+      const response = await fetch(`/api/reviews/${review.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, rating }),
+      });
+      if (response.ok) {
+        onReviewChange?.();
+        setEditOpen(false);
+      }
+    } catch (error) {
+      console.error("Falha ao editar a review:", error);
+    }
   };
 
-  const handleDelete = () => {
-    reviewsStore.deleteReview(cinematicId, review.id);
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/reviews/${review.id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        onReviewChange?.();
+        setDeleteOpen(false);
+      }
+    } catch (error) {
+      console.error("Falha ao deletar a review:", error);
+    }
   };
 
-  const handleLike = () => {
-    reviewsStore.toggleLike(review.id);
+  const handleLike = async () => {
+    const originalLikes = currentLikes;
+    const originalIsLiked = isLikedByCurrentUser;
+
+    setCurrentLikes(originalIsLiked ? originalLikes - 1 : originalLikes + 1);
+    likedReviewsStore.toggleLike(review.id);
+
+    try {
+      const method = originalIsLiked ? "DELETE" : "POST";
+      const res = await fetch(`/api/reviews/${review.id}/like`, { method });
+
+      if (!res.ok) {
+        throw new Error("Falha na requisição de like");
+      }
+
+      const updatedReview = await res.json();
+      setCurrentLikes(updatedReview.likes);
+    } catch (error) {
+      console.error("Erro ao curtir/descurtir:", error);
+
+      setCurrentLikes(originalLikes);
+
+      if (likedReviewsStore.isReviewLiked(review.id) !== originalIsLiked) {
+        likedReviewsStore.toggleLike(review.id);
+      }
+    }
   };
 
   return (
     <div className="space-y-4 p-4 bg-black/40 border border-gray-800 rounded-lg shadow-md">
-      {/* Header da Review */}
       <div className="flex items-center gap-3">
         <Link
-          href={`/profile/${encodeURIComponent(review.author)}`}
+          href={`/profile/${encodeURIComponent(
+            user?.username || review.author
+          )}`}
           className="relative w-12 h-12 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
         >
           <Image
@@ -76,10 +132,12 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
           <p className="font-semibold text-red-400 text-sm sm:text-base">
             Review por{" "}
             <Link
-              href={`/profile/${encodeURIComponent(review.author)}`}
+              href={`/profile/${encodeURIComponent(
+                user?.username || review.author
+              )}`}
               className="hover:text-red-300 transition-colors cursor-pointer underline-offset-2 hover:underline"
             >
-              {review.author}
+              {displayName}
             </Link>
           </p>
           {isUserReview && (
@@ -99,7 +157,6 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
         )}
       </div>
 
-      {/* Rating */}
       {review.rating && review.rating > 0 && (
         <div className="flex items-center gap-3">
           <StarRating rating={review.rating} />
@@ -107,38 +164,35 @@ export function ReviewItem({ review, cinematicId }: ReviewItemProps) {
         </div>
       )}
 
-      {/* Comentário */}
       <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
         &ldquo;{review.content}&rdquo;
       </p>
 
-      {/* Like Button e ações do usuário */}
       <div className="flex items-center justify-between pt-2 border-t border-gray-700">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleLike}
           className={`flex items-center gap-2 text-xs transition-colors ${
-            isLiked
+            isLikedByCurrentUser
               ? "text-blue-400 hover:text-blue-300"
               : "text-gray-400 hover:text-blue-400"
           }`}
         >
           <FontAwesomeIcon
-            icon={isLiked ? faThumbsUp : faThumbsUpRegular}
+            icon={isLikedByCurrentUser ? faThumbsUp : faThumbsUpRegular}
             className="w-4 h-4"
           />
-          {isLiked ? "Descurtir" : "Curtir"} review ({currentLikes}{" "}
+          {isLikedByCurrentUser ? "Descurtir" : "Curtir"} review ({currentLikes}{" "}
           {currentLikes === 1 ? "curtida" : "curtidas"})
         </Button>
         <ReviewActions
-          showActions={isUserReview}
+          showActions={Boolean(isUserReview)}
           onEdit={() => setEditOpen(true)}
           onDelete={() => setDeleteOpen(true)}
         />
       </div>
 
-      {/* Modais */}
       <EditReviewModal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}

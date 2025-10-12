@@ -19,7 +19,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { AdminRoute } from "@/components/AdminRoute";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AdminLayoutProps {
@@ -319,9 +318,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="min-h-[calc(100vh-89px)] p-6">
-          <AdminRoute>{children}</AdminRoute>
-        </main>
+        <main className="min-h-[calc(100vh-89px)] p-6">{children}</main>
       </div>
     </div>
   );

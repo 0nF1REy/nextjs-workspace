@@ -24,7 +24,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 import ImageGallery from "@/components/description/image-gallery";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const DynamicMovieReviews = dynamic(
   () => import("@/components/description/reviews"),
@@ -56,16 +55,13 @@ const DynamicUserInteractiveElements = dynamic(
 );
 
 import SeasonEpisodes from "@/components/description/season-episodes";
-
 import { cinematics } from "@/lib/details";
-
 import NotFoundPage from "@/app/not-found";
-import { CinematicDetail, Review } from "@/lib/details/types";
+import { CinematicDetail } from "@/lib/details/types"; // Removido 'Review'
 import { CinematicItem } from "@/lib/items/types";
 
 import "@/styles/rolling-covers.css";
 
-// Rolling Covers
 interface RollingCoversProps {
   items: CinematicItem[];
   speed?: number;
@@ -73,11 +69,9 @@ interface RollingCoversProps {
 
 const RollingCovers = ({ items, speed = 1 }: RollingCoversProps) => {
   if (!items || items.length === 0) return null;
-
   const duplicatedItems = [...items, ...items, ...items];
   const totalWidth = items.length * 170;
   const animationDuration = totalWidth / speed;
-
   return (
     <div className="w-full overflow-hidden py-6 bg-gradient-to-r from-transparent via-red-900/10 to-transparent">
       <div
@@ -103,7 +97,6 @@ const RollingCovers = ({ items, speed = 1 }: RollingCoversProps) => {
                 className="object-cover"
                 sizes="160px"
               />
-              {/* Overlay escuro */}
               <div className="absolute inset-0 bg-black/40"></div>
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 z-10">
                 <p className="text-white text-xs font-medium truncate">
@@ -124,12 +117,9 @@ const DEFAULT_IMAGE_DIMENSIONS = {
 };
 
 interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }
 
-// Sub-componente para o carrossel
 const MovieCarouselComponent = ({
   cinematic,
 }: {
@@ -141,7 +131,6 @@ const MovieCarouselComponent = ({
     cinematic.carouselImages.length === 0
   )
     return null;
-
   return (
     <div className="flex justify-center mb-12">
       <div className="w-full">
@@ -150,7 +139,6 @@ const MovieCarouselComponent = ({
             {cinematic.carouselImages.map((img, idx) => (
               <CarouselItem key={`${cinematic.id}-carousel-${idx}`}>
                 <div className="w-full relative overflow-hidden h-[220px] sm:h-[350px]">
-                  {/* Background difuso */}
                   <div className="absolute inset-0 -z-10 hidden sm:block">
                     <Image
                       src={img}
@@ -160,7 +148,6 @@ const MovieCarouselComponent = ({
                       priority={idx === 0}
                     />
                   </div>
-                  {/* Imagem principal */}
                   <Image
                     src={img}
                     alt={`${cinematic.title} scene ${idx + 1}`}
@@ -180,43 +167,26 @@ const MovieCarouselComponent = ({
   );
 };
 
-// Sub-componente para cards de filmes semelhantes
 const SimilarMovieCard = ({
   movie: similarMovie,
 }: {
   movie: CinematicItem;
 }) => (
   <Link href={`/details/${encodeURIComponent(similarMovie.id)}`}>
-    <div
-      className="group relative bg-[#0d1118] border border-red-900/40 text-gray-200 
-               rounded-xl overflow-hidden shadow-lg transition-all duration-500 transform cursor-pointer
-               hover:scale-105 hover:border-red-500/50 hover:brightness-110 
-               hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
-    >
-      {/* Gradient overlay */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none 
-                     transition-opacity duration-500 ease-out group-hover:from-red-500/8 group-hover:to-purple-500/8"
-      ></div>
-
+    <div className="group relative bg-[#0d1118] border border-red-900/40 text-gray-200 rounded-xl overflow-hidden shadow-lg transition-all duration-500 transform cursor-pointer hover:scale-105 hover:border-red-500/50 hover:brightness-110 hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)]">
+      <div className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-purple-500/3 pointer-events-none transition-opacity duration-500 ease-out group-hover:from-red-500/8 group-hover:to-purple-500/8"></div>
       <div className="aspect-[3/4] relative overflow-hidden">
         <Image
           src={similarMovie.cover}
           alt={similarMovie.title}
           width={DEFAULT_IMAGE_DIMENSIONS.similar.width}
           height={DEFAULT_IMAGE_DIMENSIONS.similar.height}
-          className="object-cover w-full h-full transition-transform duration-500 
-                   group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
+          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
         />
       </div>
-
       <div className="relative z-10 p-3">
         <div className="w-full text-center">
-          <p
-            className="text-xs font-medium text-gray-200 truncate 
-                     transition-all duration-500 group-hover:text-red-300 
-                     group-hover:scale-105"
-          >
+          <p className="text-xs font-medium text-gray-200 truncate transition-all duration-500 group-hover:text-red-300 group-hover:scale-105">
             {similarMovie.title}
           </p>
         </div>
@@ -225,7 +195,6 @@ const SimilarMovieCard = ({
   </Link>
 );
 
-// Sub-componente para a seção de filmes semelhantes
 const SimilarMoviesSectionComponent = ({
   cinematic,
   similarMovies,
@@ -234,14 +203,12 @@ const SimilarMoviesSectionComponent = ({
   similarMovies: CinematicItem[];
 }) => {
   if (similarMovies.length === 0) return null;
-
   const typeLabel =
     cinematic?.type === "movie"
       ? "Filmes"
       : cinematic?.type === "serie"
       ? "Séries"
       : "Animes";
-
   return (
     <section className="mt-12">
       <div className="mb-6">
@@ -262,7 +229,6 @@ const SimilarMoviesSectionComponent = ({
   );
 };
 
-// Client Component
 export default function CinematicDescriptionPage({ params }: PageProps) {
   const [id, setId] = useState<string>("");
 
@@ -274,14 +240,12 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
 
   if (!id) {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Carregando...</p>
-          </div>
+      <div className="min-h-screen bg-[#131b22] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Carregando...</p>
         </div>
-      </ProtectedRoute>
+      </div>
     );
   }
 
@@ -290,9 +254,7 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
 
   if (!cinematic) {
     return (
-      <ProtectedRoute>
-        <NotFoundPage message="O item que você está procurando não existe ou foi removido." />
-      </ProtectedRoute>
+      <NotFoundPage message="O item que você está procurando não existe ou foi removido." />
     );
   }
 
@@ -315,52 +277,21 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     cover: c.cover,
   }));
 
-  // Avaliações padrão
-  const reviews: Review[] = [
-    {
-      id: "1",
-      author: "Crítico Cinéfilo",
-      content: `Uma obra impressionante que demonstra o melhor do ${
-        cinematic?.type === "movie"
-          ? "cinema"
-          : cinematic?.type === "serie"
-          ? "seriado"
-          : "anime"
-      }.`,
-      rating: cinematic?.rating || 4,
-    },
-    {
-      id: "2",
-      author: "Espectador Assíduo",
-      content:
-        "Recomendo fortemente para quem aprecia boa narrativa e desenvolvimento de personagens.",
-      rating: Math.min((cinematic?.rating || 4) + 1, 5),
-    },
-  ];
-
   const creatorLabel =
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
-      {/* Main Container / Constrained Wrapper */}
+    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Rolling Covers */}
         <section aria-label="Rolling covers">
           <RollingCovers items={allCinematicsItems} speed={10} />
         </section>
-
-        {/* Carrossel */}
         <section aria-label="Cinematic gallery">
           <MovieCarouselComponent cinematic={cinematic} />
         </section>
-
-        {/* Cartão de detalhes*/}
         <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
             <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
-              {/* Poster */}
               <div className="flex-shrink-0 flex justify-center md:block">
                 <Image
                   src={cinematic.cover}
@@ -371,8 +302,6 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                   className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
                 />
               </div>
-
-              {/* Infos */}
               <div className="flex flex-col justify-between flex-1">
                 <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
                   <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
@@ -382,26 +311,15 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                     {cinematic.year} • {creatorLabel} {cinematic.creator}
                   </CardDescription>
                 </CardHeader>
-
                 <CardContent className="space-y-4 p-0">
                   <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                     {cinematic.synopsis}
                   </p>
-
                   <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
-                    {/* Avaliações do Usuário e Favoritar */}
                     <div className="w-full lg:w-auto">
                       <Suspense
                         fallback={
-                          <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse">
-                            <div className="h-4 bg-gray-700 w-3/4 rounded"></div>
-                            <div className="flex gap-2">
-                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
-                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
-                              <div className="h-6 w-6 bg-gray-700 rounded-full"></div>
-                            </div>
-                            <div className="h-8 w-32 bg-gray-700 rounded-md"></div>
-                          </div>
+                          <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse h-[148px]"></div>
                         }
                       >
                         <DynamicUserInteractiveElements
@@ -413,8 +331,6 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                         />
                       </Suspense>
                     </div>
-
-                    {/* Elenco Principal */}
                     <div className="w-full lg:w-auto">
                       <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
                         Elenco Principal:
@@ -434,8 +350,6 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
                 </CardContent>
               </div>
             </div>
-
-            {/* CardFooter */}
             <CardFooter className="flex justify-center md:justify-start">
               <Link href="/">
                 <Button
@@ -449,8 +363,6 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
               </Link>
             </CardFooter>
           </Card>
-
-          {/* Resenhas - DINÂMICAS, carregadas via Suspense */}
           <Suspense
             fallback={
               <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>
@@ -459,30 +371,22 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
             <DynamicMovieReviews
               genre={cinematic.genre}
               duration={cinematic.duration}
-              reviews={reviews}
               cinematicId={cinematic.id}
             />
           </Suspense>
         </main>
-
-        {/* Seção de Temporadas */}
         {cinematic.type === "serie" && cinematic.seasons && (
           <SeasonEpisodes
             seasons={cinematic.seasons}
             seriesTitle={cinematic.title}
           />
         )}
-
-        {/* Galeria de Imagens */}
         <ImageGallery images={galleryImages} />
-
-        {/* Similares */}
         <SimilarMoviesSectionComponent
           cinematic={cinematic}
           similarMovies={similarMovies}
         />
       </div>
-      </div>
-    </ProtectedRoute>
+    </div>
   );
 }

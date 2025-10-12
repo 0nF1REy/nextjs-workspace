@@ -1,54 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useReviewsStore } from "@/stores";
-import {
-  getUserByUsername,
-  getSimulatedUserReviews,
-  getCurrentUser,
-} from "@/lib/user";
+import { getCurrentUser } from "@/lib/user/users";
 import { UserReview } from "@/lib/user/types";
 import { ProfileReviewItem } from "./profile-review-item";
 
 interface UserReviewsProps {
   userId: string;
+  initialReviews: UserReview[];
+  isLoading: boolean;
+  onReviewChange: () => void;
 }
 
-export default function UserReviews({ userId }: UserReviewsProps) {
-  const [reviews, setReviews] = useState<UserReview[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Zustand stores
-  const reviewsStore = useReviewsStore();
-
-  useEffect(() => {
-    const loadReviews = () => {
-      try {
-        const user = getUserByUsername(userId) || { username: userId };
-        const loggedUser = getCurrentUser();
-
-        // Se for o usuário logado, usar Zustand
-        if (loggedUser && user.username === loggedUser.username) {
-          const allReviews = reviewsStore.getAllReviews();
-          const userReviews = allReviews.filter(
-            (review) => review.author === user.username
-          );
-          setReviews(userReviews);
-        } else {
-          const simulatedReviews = getSimulatedUserReviews(user.username);
-          setReviews(simulatedReviews);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar reviews:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadReviews();
-  }, [userId, reviewsStore]);
-
-  if (loading) {
+export default function UserReviews({
+  userId,
+  initialReviews,
+  isLoading,
+  onReviewChange,
+}: UserReviewsProps) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }, (_, i) => (
@@ -58,7 +27,7 @@ export default function UserReviews({ userId }: UserReviewsProps) {
     );
   }
 
-  if (reviews.length === 0) {
+  if (initialReviews.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="w-16 h-16 bg-gray-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -78,8 +47,12 @@ export default function UserReviews({ userId }: UserReviewsProps) {
 
   return (
     <div className="space-y-4">
-      {reviews.map((review) => (
-        <ProfileReviewItem key={review.id} review={review} />
+      {initialReviews.map((review) => (
+        <ProfileReviewItem
+          key={review.id}
+          review={review}
+          onReviewChange={onReviewChange}
+        />
       ))}
     </div>
   );

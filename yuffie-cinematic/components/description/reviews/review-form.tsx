@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/ui/button";
-import { getCurrentUser, getLoggedUsername } from "@/lib/user";
+import { useUserStore } from "@/stores";
 import { useRatingsStore } from "@/stores";
-import { getContentType, formatContentTypeWithArticle } from "./utils";
+import { getContentType, formatContentTypeWithArticle } from "@/lib/utils";
 import { UserReview } from "./types";
 
 const reviewSchema = z.object({
@@ -31,13 +31,12 @@ interface ReviewFormProps {
 export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
   // Zustand store
   const { getRating } = useRatingsStore();
+  const { currentUser } = useUserStore();
 
   const userRating = getRating(cinematicId);
-
-  const currentUser = getCurrentUser();
-  const username = currentUser?.username || getLoggedUsername() || "anonymous";
+  const username = currentUser?.username || "anonymous";
   const userAvatarUrl =
-    currentUser?.avatar || `https://i.pravatar.cc/300?u=${username}`;
+    currentUser?.avatar || "/assets/images/profile-avatar/default.png";
 
   const contentType = getContentType(cinematicId);
 
@@ -68,7 +67,8 @@ export function ReviewForm({ cinematicId, onSubmit }: ReviewFormProps) {
       rating: userRating,
       date: new Date().toISOString(),
       cinematicId,
-      avatarSeed: currentUser?.avatar || username,
+      avatarSeed:
+        currentUser?.avatar || "/assets/images/profile-avatar/default.png",
       likes: 0,
     };
 

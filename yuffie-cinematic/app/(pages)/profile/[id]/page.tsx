@@ -1,9 +1,9 @@
 "use client";
 
+import { useState, useEffect, useCallback, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Suspense, useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -33,21 +33,21 @@ import {
 import { useProfile } from "@/hooks/useProfile";
 import { useProfileEdit } from "@/hooks/useProfileEdit";
 import NotFoundPage from "@/app/not-found";
+import { UserReview } from "@/lib/user/types";
+import { getUserByUsername } from "@/lib/user/users";
 
-// Componentes dinâmicos para dados do lado client
+// Componentes dinâmicos (sem alterações na definição)
 const DynamicUserStats = dynamic(
   () => import("@/components/profile/user-stats"),
   {
     ssr: false,
     loading: () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {Array.from({ length: 3 }, (_, i) => (
-          <Card key={i} className="bg-gray-800 animate-pulse">
-            <CardContent className="p-4">
-              <div className="h-6 bg-gray-700 rounded mb-2" />
-              <div className="h-8 bg-gray-700 rounded" />
-            </CardContent>
-          </Card>
+          <div
+            key={i}
+            className="bg-gray-800 animate-pulse rounded-lg h-[116px]"
+          />
         ))}
       </div>
     ),
@@ -98,15 +98,14 @@ const DynamicUserRatings = dynamic(
 );
 
 interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }
 
 export default function ProfilePage({ params }: PageProps) {
   const [userId, setUserId] = useState<string>("");
+  const [reviews, setReviews] = useState<UserReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
-  // Hooks customizados
   const { user, loading, error, isOwnProfile, refetch } = useProfile({
     userId,
   });
@@ -123,7 +122,6 @@ export default function ProfilePage({ params }: PageProps) {
     onSuccess: refetch,
   });
 
-  // Obter parâmetros da URL
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
@@ -131,6 +129,25 @@ export default function ProfilePage({ params }: PageProps) {
     };
     getParams();
   }, [params]);
+
+  const fetchUserReviews = useCallback(async () => {
+    if (!userId) return;
+    setReviewsLoading(true);
+    try {
+      const user = getUserByUsername(userId) || { username: userId };
+      const res = await fetch(`/api/reviews?author=${user.username}`);
+      const data = await res.json();
+      setReviews(data);
+    } catch {
+      setReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchUserReviews();
+  }, [fetchUserReviews]);
 
   if (loading) {
     return (
@@ -151,7 +168,6 @@ export default function ProfilePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-10 scrollbar-cinema">
-      {/* Header do Perfil */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card
           className="relative bg-[#0d1118] border border-red-900/40 shadow-2xl rounded-2xl overflow-hidden mb-8
@@ -160,15 +176,12 @@ export default function ProfilePage({ params }: PageProps) {
                        hover:border-red-800/60
                        hover:scale-[1.01]"
         >
-          {/* Gradient overlay */}
           <div
             className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-purple-500/5 pointer-events-none 
                          transition-opacity duration-700 ease-out hover:from-red-500/8 hover:to-purple-500/8"
           ></div>
-
           <CardContent className="relative z-10 p-6 md:p-8">
             <div className="flex flex-col md:flex-row gap-8 items-center">
-              {/* Avatar */}
               <div className="flex-shrink-0 md:self-center">
                 <div className="relative group">
                   <div
@@ -190,8 +203,6 @@ export default function ProfilePage({ params }: PageProps) {
                       priority
                     />
                   </div>
-
-                  {/* Glow effect */}
                   <div
                     className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500/20 to-purple-500/20 
                                  opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out 
@@ -199,16 +210,11 @@ export default function ProfilePage({ params }: PageProps) {
                   ></div>
                 </div>
               </div>
-
-              {/* Informações do Usuário */}
               <div className="flex-1 text-center md:text-left space-y-6 md:self-center">
                 <div className="space-y-3">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                      <h1
-                        className="text-3xl md:text-4xl font-bold text-red-500 mb-2 
-                                   tracking-tight drop-shadow-lg"
-                      >
+                      <h1 className="text-3xl md:text-4xl font-bold text-red-500 mb-2 tracking-tight drop-shadow-lg">
                         {user.username}
                       </h1>
                       {user.displayName && (
@@ -217,8 +223,6 @@ export default function ProfilePage({ params }: PageProps) {
                         </p>
                       )}
                     </div>
-
-                    {/* Botão Editar Perfil */}
                     {isOwnProfile && (
                       <Dialog
                         open={editModalOpen}
@@ -227,12 +231,7 @@ export default function ProfilePage({ params }: PageProps) {
                         <DialogTrigger asChild>
                           <Button
                             onClick={openEditModal}
-                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
-                                       shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl
-                                       border border-blue-400/30 hover:border-blue-300/50
-                                       transition-all duration-300 ease-out hover:scale-105 active:scale-95
-                                       text-white font-medium px-4 py-2 rounded-lg
-                                       flex items-center gap-2 cursor-pointer"
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl border border-blue-400/30 hover:border-blue-300/50 transition-all duration-300 ease-out hover:scale-105 active:scale-95 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer"
                           >
                             <FontAwesomeIcon
                               icon={faEdit}
@@ -241,25 +240,7 @@ export default function ProfilePage({ params }: PageProps) {
                             Editar Perfil
                           </Button>
                         </DialogTrigger>
-
-                        <DialogContent
-                          className="sm:max-w-md bg-[#0d1118] border border-gray-700/50 
-                                                  [&>button[data-slot='dialog-close']]:bg-gray-800/50 
-                                                  [&>button[data-slot='dialog-close']]:border 
-                                                  [&>button[data-slot='dialog-close']]:border-gray-600/50 
-                                                  [&>button[data-slot='dialog-close']]:text-gray-400 
-                                                  [&>button[data-slot='dialog-close']]:hover:bg-red-600/20 
-                                                  [&>button[data-slot='dialog-close']]:hover:border-red-500/50 
-                                                  [&>button[data-slot='dialog-close']]:hover:text-red-300
-                                                  [&>button[data-slot='dialog-close']]:transition-all 
-                                                  [&>button[data-slot='dialog-close']]:duration-300 
-                                                  [&>button[data-slot='dialog-close']]:hover:scale-110
-                                                  [&>button[data-slot='dialog-close']]:hover:rotate-90
-                                                  [&>button[data-slot='dialog-close']]:rounded-lg
-                                                  [&>button[data-slot='dialog-close']]:backdrop-blur-sm
-                                                  [&>button[data-slot='dialog-close']]:hover:shadow-lg
-                                                  [&>button[data-slot='dialog-close']]:hover:shadow-red-500/20"
-                        >
+                        <DialogContent className="sm:max-w-md bg-[#0d1118] border border-gray-700/50 [&>button[data-slot='dialog-close']]:bg-gray-800/50 [&>button[data-slot='dialog-close']]:border [&>button[data-slot='dialog-close']]:border-gray-600/50 [&>button[data-slot='dialog-close']]:text-gray-400 [&>button[data-slot='dialog-close']]:hover:bg-red-600/20 [&>button[data-slot='dialog-close']]:hover:border-red-500/50 [&>button[data-slot='dialog-close']]:hover:text-red-300 [&>button[data-slot='dialog-close']]:transition-all [&>button[data-slot='dialog-close']]:duration-300 [&>button[data-slot='dialog-close']]:hover:scale-110 [&>button[data-slot='dialog-close']]:hover:rotate-90 [&>button[data-slot='dialog-close']]:rounded-lg [&>button[data-slot='dialog-close']]:backdrop-blur-sm [&>button[data-slot='dialog-close']]:hover:shadow-lg [&>button[data-slot='dialog-close']]:hover:shadow-red-500/20">
                           <DialogHeader>
                             <DialogTitle className="text-xl font-bold text-red-500 flex items-center gap-2">
                               <FontAwesomeIcon
@@ -269,7 +250,6 @@ export default function ProfilePage({ params }: PageProps) {
                               Editar Perfil
                             </DialogTitle>
                           </DialogHeader>
-
                           <form
                             onSubmit={handleSubmit}
                             className="space-y-4 mt-4"
@@ -285,8 +265,7 @@ export default function ProfilePage({ params }: PageProps) {
                                 id="displayName"
                                 {...form.register("displayName")}
                                 placeholder="Digite seu nome de exibição"
-                                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400
-                                           focus:border-red-500/50 focus:ring-red-500/20"
+                                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-red-500/50 focus:ring-red-500/20"
                               />
                               {form.formState.errors.displayName && (
                                 <p className="text-red-400 text-xs mt-1">
@@ -294,7 +273,6 @@ export default function ProfilePage({ params }: PageProps) {
                                 </p>
                               )}
                             </div>
-
                             <div className="space-y-2">
                               <Label
                                 htmlFor="bio"
@@ -307,10 +285,7 @@ export default function ProfilePage({ params }: PageProps) {
                                 {...form.register("bio")}
                                 placeholder="Conte um pouco sobre você..."
                                 rows={4}
-                                className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md
-                                           text-white placeholder:text-gray-400
-                                           focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20
-                                           resize-none"
+                                className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-md text-white placeholder:text-gray-400 focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 resize-none"
                               />
                               {form.formState.errors.bio && (
                                 <p className="text-red-400 text-xs mt-1">
@@ -318,38 +293,24 @@ export default function ProfilePage({ params }: PageProps) {
                                 </p>
                               )}
                             </div>
-
                             <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-4">
                               <DialogClose asChild>
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="group bg-gray-800/50 border-gray-600/50 text-gray-300 
-                                           hover:bg-red-600/20 hover:border-red-500/50 hover:text-red-300
-                                           transition-all duration-300 ease-out hover:scale-105 active:scale-95
-                                           backdrop-blur-sm rounded-lg px-4 py-2
-                                           hover:shadow-lg hover:shadow-red-500/10
-                                           flex items-center gap-2 cursor-pointer font-medium"
+                                  className="group bg-gray-800/50 border-gray-600/50 text-gray-300 hover:bg-red-600/20 hover:border-red-500/50 hover:text-red-300 transition-all duration-300 ease-out hover:scale-105 active:scale-95 backdrop-blur-sm rounded-lg px-4 py-2 hover:shadow-lg hover:shadow-red-500/10 flex items-center gap-2 cursor-pointer font-medium"
                                 >
                                   <FontAwesomeIcon
                                     icon={faTimes}
-                                    className="w-4 h-4 transition-all duration-300 ease-out
-                                             group-hover:rotate-90 group-hover:text-red-400"
+                                    className="w-4 h-4 transition-all duration-300 ease-out group-hover:rotate-90 group-hover:text-red-400"
                                   />
                                   Cancelar
                                 </Button>
                               </DialogClose>
-
                               <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
-                                className="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
-                                           shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl
-                                           border border-blue-400/30 hover:border-blue-300/50
-                                           transition-all duration-300 ease-out hover:scale-105 active:scale-95
-                                           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 
-                                           cursor-pointer text-white font-medium px-4 py-2 rounded-lg
-                                           flex items-center gap-2"
+                                className="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl border border-blue-400/30 hover:border-blue-300/50 transition-all duration-300 ease-out hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2"
                               >
                                 <FontAwesomeIcon
                                   icon={faSave}
@@ -369,7 +330,6 @@ export default function ProfilePage({ params }: PageProps) {
                       </Dialog>
                     )}
                   </div>
-
                   <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
                     <div className="flex items-center gap-2 px-3 py-1 bg-gray-800/50 rounded-full border border-gray-700/30">
                       <FontAwesomeIcon
@@ -382,7 +342,6 @@ export default function ProfilePage({ params }: PageProps) {
                     </div>
                   </div>
                 </div>
-
                 {user.bio && (
                   <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700/30">
                     <p className="text-gray-300 leading-relaxed w-full text-center md:text-left">
@@ -390,14 +349,9 @@ export default function ProfilePage({ params }: PageProps) {
                     </p>
                   </div>
                 )}
-
-                {/* Gêneros Favoritos */}
                 {user.favoriteGenres && user.favoriteGenres.length > 0 && (
                   <div className="space-y-3">
-                    <p
-                      className="text-sm font-semibold text-red-400 uppercase tracking-wide 
-                                 flex items-center justify-center md:justify-start gap-2"
-                    >
+                    <p className="text-sm font-semibold text-red-400 uppercase tracking-wide flex items-center justify-center md:justify-start gap-2">
                       <span className="w-2 h-2 bg-red-500 rounded-full"></span>
                       Gêneros Favoritos
                     </p>
@@ -405,13 +359,7 @@ export default function ProfilePage({ params }: PageProps) {
                       {user.favoriteGenres.map((genre: string) => (
                         <span
                           key={genre}
-                          className="px-3 py-2 bg-gradient-to-r from-red-600/20 to-red-500/20 
-                                   border border-red-500/30 rounded-full text-sm text-red-300 
-                                   font-medium backdrop-blur-sm
-                                   transition-all duration-300 ease-out
-                                   hover:from-red-600/30 hover:to-red-500/30 
-                                   hover:border-red-400/50 hover:text-red-200
-                                   hover:scale-105 hover:shadow-lg"
+                          className="px-3 py-2 bg-gradient-to-r from-red-600/20 to-red-500/20 border border-red-500/30 rounded-full text-sm text-red-300 font-medium backdrop-blur-sm transition-all duration-300 ease-out hover:from-red-600/30 hover:to-red-500/30 hover:border-red-400/50 hover:text-red-200 hover:scale-105 hover:shadow-lg"
                         >
                           {genre}
                         </span>
@@ -423,14 +371,9 @@ export default function ProfilePage({ params }: PageProps) {
             </div>
           </CardContent>
         </Card>
-
-        {/* Mensagem de Sucesso */}
         {showSuccessMessage && (
           <div className="mb-6">
-            <div
-              className="bg-green-600/20 border border-green-500/30 rounded-xl p-4 
-                            backdrop-blur-sm flex items-center gap-3 animate-in fade-in duration-300"
-            >
+            <div className="bg-green-600/20 border border-green-500/30 rounded-xl p-4 backdrop-blur-sm flex items-center gap-3 animate-in fade-in duration-300">
               <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
                 <FontAwesomeIcon
                   icon={faSave}
@@ -448,33 +391,17 @@ export default function ProfilePage({ params }: PageProps) {
             </div>
           </div>
         )}
-
-        {/* Estatísticas */}
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {Array.from({ length: 3 }, (_, i) => (
-                <Card key={i} className="bg-gray-800 animate-pulse">
-                  <CardContent className="p-4">
-                    <div className="h-6 bg-gray-700 rounded mb-2" />
-                    <div className="h-8 bg-gray-700 rounded" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          }
-        >
-          <DynamicUserStats userId={user.id} />
+        <Suspense fallback={null}>
+          <DynamicUserStats
+            userId={user.id}
+            dynamicReviewsCount={reviews.length}
+          />
         </Suspense>
-
-        {/* Conteúdo em Abas */}
         <Tabs defaultValue="favorites" className="w-full">
           <TabsList className="grid grid-cols-3 gap-2 mb-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 rounded-xl p-1 h-15">
             <TabsTrigger
               value="favorites"
-              className="data-[state=active]:bg-red-500 data-[state=active]:text-white 
-                       text-sm md:text-base transition-all duration-300 ease-out
-                       hover:bg-red-500/20 rounded-lg py-2.5"
+              className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-sm md:text-base transition-all duration-300 ease-out hover:bg-red-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faHeart}
@@ -485,9 +412,7 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="reviews"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white 
-                       text-sm md:text-base transition-all duration-300 ease-out
-                       hover:bg-blue-500/20 rounded-lg py-2.5"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-sm md:text-base transition-all duration-300 ease-out hover:bg-blue-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faComments}
@@ -497,9 +422,7 @@ export default function ProfilePage({ params }: PageProps) {
             </TabsTrigger>
             <TabsTrigger
               value="ratings"
-              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white 
-                       text-sm md:text-base transition-all duration-300 ease-out
-                       hover:bg-yellow-500/20 rounded-lg py-2.5"
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white text-sm md:text-base transition-all duration-300 ease-out hover:bg-yellow-500/20 rounded-lg py-2.5"
             >
               <FontAwesomeIcon
                 icon={faStar}
@@ -509,12 +432,8 @@ export default function ProfilePage({ params }: PageProps) {
               <span className="sm:hidden">Aval</span>
             </TabsTrigger>
           </TabsList>
-
           <TabsContent value="favorites">
-            <Card
-              className="relative bg-[#0d1118] border border-red-900/40 rounded-2xl overflow-hidden
-                           transition-all duration-500 ease-out hover:border-red-800/60"
-            >
+            <Card className="relative bg-[#0d1118] border border-red-900/40 rounded-2xl overflow-hidden transition-all duration-500 ease-out hover:border-red-800/60">
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/3 via-transparent to-red-500/3 pointer-events-none"></div>
               <CardHeader className="relative z-10">
                 <CardTitle className="text-red-500 text-lg md:text-xl flex items-center gap-3 font-semibold">
@@ -529,12 +448,8 @@ export default function ProfilePage({ params }: PageProps) {
               </CardContent>
             </Card>
           </TabsContent>
-
           <TabsContent value="reviews">
-            <Card
-              className="relative bg-[#0d1118] border border-blue-900/40 rounded-2xl overflow-hidden
-                           transition-all duration-500 ease-out hover:border-blue-800/60"
-            >
+            <Card className="relative bg-[#0d1118] border border-blue-900/40 rounded-2xl overflow-hidden transition-all duration-500 ease-out hover:border-blue-800/60">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-transparent to-blue-500/3 pointer-events-none"></div>
               <CardHeader className="relative z-10">
                 <CardTitle className="text-blue-600 text-lg md:text-xl flex items-center gap-3 font-semibold">
@@ -545,16 +460,17 @@ export default function ProfilePage({ params }: PageProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="relative z-10">
-                <DynamicUserReviews userId={user.id} />
+                <DynamicUserReviews
+                  userId={user.id}
+                  initialReviews={reviews}
+                  isLoading={reviewsLoading}
+                  onReviewChange={fetchUserReviews}
+                />
               </CardContent>
             </Card>
           </TabsContent>
-
           <TabsContent value="ratings">
-            <Card
-              className="relative bg-[#0d1118] border border-yellow-900/40 rounded-2xl overflow-hidden
-                           transition-all duration-500 ease-out hover:border-yellow-800/60"
-            >
+            <Card className="relative bg-[#0d1118] border border-yellow-900/40 rounded-2xl overflow-hidden transition-all duration-500 ease-out hover:border-yellow-800/60">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/3 via-transparent to-yellow-500/3 pointer-events-none"></div>
               <CardHeader className="relative z-10">
                 <CardTitle className="text-yellow-600 text-lg md:text-xl flex items-center gap-3 font-semibold">
@@ -570,8 +486,6 @@ export default function ProfilePage({ params }: PageProps) {
             </Card>
           </TabsContent>
         </Tabs>
-
-        {/* Botão Voltar */}
         <div className="flex justify-center mt-8">
           <Link href="/">
             <Button
