@@ -1,55 +1,24 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faHeart, faComments } from "@fortawesome/free-solid-svg-icons";
-import { getUserStats } from "@/lib/user/users";
+import { useFavoritesStore, useRatingsStore } from "@/stores";
 
 interface UserStatsProps {
-  userId: string;
   dynamicReviewsCount: number;
 }
 
-export default function UserStats({
-  userId,
-  dynamicReviewsCount,
-}: UserStatsProps) {
-  const [stats, setStats] = useState({
-    totalFavorites: 0,
-    totalRatings: 0,
-  });
-
-  const loadStaticStats = useCallback(() => {
-    const userStats = getUserStats(userId);
-    setStats({
-      totalFavorites: userStats.totalFavorites,
-      totalRatings: userStats.totalRatings,
-    });
-  }, [userId]);
-
-  useEffect(() => {
-    loadStaticStats();
-  }, [loadStaticStats]);
-
-  useEffect(() => {
-    const handleStatsUpdate = () => {
-      loadStaticStats();
-    };
-
-    window.addEventListener("userFavoritesUpdated", handleStatsUpdate);
-    window.addEventListener("userRatingsUpdated", handleStatsUpdate);
-
-    return () => {
-      window.removeEventListener("userFavoritesUpdated", handleStatsUpdate);
-      window.removeEventListener("userRatingsUpdated", handleStatsUpdate);
-    };
-  }, [loadStaticStats]);
+export default function UserStats({ dynamicReviewsCount }: UserStatsProps) {
+  const favoritesCount = useFavoritesStore((state) => state.favorites.length);
+  const ratingsCount = useRatingsStore(
+    (state) => Object.keys(state.ratings).length
+  );
 
   const statsData = [
     {
       icon: faHeart,
       label: "Favoritos",
-      value: stats.totalFavorites,
+      value: favoritesCount,
       color: "text-red-400",
       bgColor: "bg-red-600/20",
       borderColor: "border-red-500/30",
@@ -65,7 +34,7 @@ export default function UserStats({
     {
       icon: faStar,
       label: "Avaliações",
-      value: stats.totalRatings,
+      value: ratingsCount,
       color: "text-yellow-400",
       bgColor: "bg-yellow-600/20",
       borderColor: "border-yellow-500/30",

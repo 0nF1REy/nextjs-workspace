@@ -1,6 +1,4 @@
 import { UserProfile } from "./types";
-import { useFavoritesStore } from "@/stores/useFavoritesStore";
-
 import {
   simulatedUserReviews,
   simulatedUserFavorites,
@@ -246,89 +244,6 @@ export const getUserByUsername = (
   username: string
 ): UserProfile | undefined => {
   return users.find((user) => user.username === username);
-};
-
-import { useUserStore } from "@/stores/useUserStore";
-
-export const getCurrentUser = (): UserProfile | null => {
-  if (typeof window !== "undefined") {
-    try {
-      return useUserStore.getState().currentUser;
-    } catch (error) {
-      console.error("Erro ao acessar Zustand:", error);
-      return null;
-    }
-  }
-  return null;
-};
-
-export const getUserWithStats = (
-  username: string
-):
-  | (UserProfile & {
-      watchingStatus?: {
-        watching: number;
-        completed: number;
-        planToWatch: number;
-      };
-    })
-  | undefined => {
-  const user = getUserByUsername(username);
-  if (!user) return undefined;
-
-  const stats = getUserStats(username);
-
-  return {
-    ...user,
-    watchingStatus: {
-      watching: Math.floor((stats.totalFavorites || 0) * 0.1),
-      completed: stats.totalReviews || 0,
-      planToWatch: Math.floor((stats.totalFavorites || 0) * 0.3),
-    },
-  };
-};
-
-export const getUserStats = (username?: string) => {
-  const currentUser = getCurrentUser();
-  const currentUsername = username || currentUser?.username;
-
-  if (!currentUsername) {
-    return { totalReviews: 0, totalFavorites: 0, totalRatings: 0 };
-  }
-
-  if (currentUser && currentUsername === currentUser.username) {
-    const reviewsCount = 0;
-
-    const favorites = useFavoritesStore.getState().favorites;
-    let ratingsCount = 0;
-    try {
-      const ratingsStorage = localStorage.getItem("yuffie-ratings-storage");
-      if (ratingsStorage) {
-        const ratingsData = JSON.parse(ratingsStorage);
-        ratingsCount = Object.keys(ratingsData.state?.ratings || {}).length;
-      }
-    } catch {
-      ratingsCount = 0;
-    }
-
-    return {
-      totalReviews: reviewsCount,
-      totalFavorites: favorites.length,
-      totalRatings: ratingsCount,
-    };
-  }
-
-  const userReviews = simulatedUserReviews.filter(
-    (r) => r.author === currentUsername
-  );
-  const userFavorites = simulatedUserFavorites[currentUsername] || [];
-  const userRatings = simulatedUserRatings[currentUsername] || [];
-
-  return {
-    totalReviews: userReviews.length,
-    totalFavorites: userFavorites.length,
-    totalRatings: userRatings.length,
-  };
 };
 
 export const getSimulatedUserReviews = (username: string) => {

@@ -391,10 +391,7 @@ export default function ProfilePage({ params }: PageProps) {
           </div>
         )}
         <Suspense fallback={null}>
-          <DynamicUserStats
-            userId={user.id}
-            dynamicReviewsCount={reviews.length}
-          />
+          <DynamicUserStats dynamicReviewsCount={reviews.length} />
         </Suspense>
         <Tabs defaultValue="favorites" className="w-full">
           <TabsList className="grid grid-cols-3 gap-2 mb-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 rounded-xl p-1 h-15">
