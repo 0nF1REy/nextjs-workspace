@@ -63,6 +63,7 @@ export function HighlightGrid({
                   fill
                   className="object-cover w-full h-full transition-transform duration-500 
                            group-hover:scale-105 group-hover:brightness-110 group-hover:contrast-105"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                   priority={idx < 6}
                 />
               </div>
