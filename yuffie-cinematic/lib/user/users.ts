@@ -1,9 +1,4 @@
 import { UserProfile } from "./types";
-import {
-  simulatedUserReviews,
-  simulatedUserFavorites,
-  simulatedUserRatings,
-} from "./mock-data";
 
 export const users: UserProfile[] = [
   {
@@ -244,18 +239,6 @@ export const getUserByUsername = (
   username: string
 ): UserProfile | undefined => {
   return users.find((user) => user.username === username);
-};
-
-export const getSimulatedUserReviews = (username: string) => {
-  return simulatedUserReviews.filter((review) => review.author === username);
-};
-
-export const getSimulatedUserFavorites = (username: string) => {
-  return simulatedUserFavorites[username] || [];
-};
-
-export const getSimulatedUserRatings = (username: string) => {
-  return simulatedUserRatings[username] || [];
 };
 
 export const userExists = (id: string): boolean => {
