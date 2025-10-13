@@ -49,6 +49,9 @@ export async function middleware(request: NextRequest) {
     "/newsletter",
     "/contact",
     "/welcome",
+    "/animes",
+    "/movies",
+    "/series",
   ];
 
   // Regra 1: Se o usuário já está logado, não o deixe ver as páginas de login/registro
