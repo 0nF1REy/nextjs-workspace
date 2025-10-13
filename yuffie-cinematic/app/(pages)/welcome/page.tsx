@@ -12,6 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores";
 import { motion } from "framer-motion";
+import { InfiniteMovingCards } from "@/components/welcome/InfiniteMovingCards";
+import { items } from "@/lib/items";
 
 export default function WelcomePage() {
   const currentUser = useUserStore((state) => state.currentUser);
@@ -19,26 +21,27 @@ export default function WelcomePage() {
     currentUser?.displayName || currentUser?.username || "Cinéfilo";
 
   return (
-    <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
-      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="min-h-screen overflow-x-hidden bg-[#0b0f14] text-gray-100">
+      <section className="relative flex min-h-[100vh] w-full items-center justify-between overflow-hidden px-8 py-24 md:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full text-center"
+          className="relative z-20 max-w-xl space-y-6"
         >
-          <h1 className="mb-4 text-5xl font-extrabold tracking-tight md:text-7xl">
-            <span className="block">Seja Bem-vindo,</span>
+          <h1 className="text-5xl font-extrabold leading-tight tracking-tight md:text-7xl">
+            <span className="block text-white">Seja bem-vindo,</span>
             <span className="bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">
               {username}!
             </span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-300 md:text-xl">
+
+          <p className="text-lg text-gray-300 md:text-xl">
             Sua jornada pelo universo cinematográfico começa agora. Explore
             nosso catálogo, descubra novas obras e compartilhe suas paixões.
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap gap-4 pt-4">
             <Link
               href="/"
               className={cn(
@@ -49,6 +52,7 @@ export default function WelcomePage() {
               Explorar o Catálogo
               <FontAwesomeIcon icon={faArrowRight} className="ml-2 h-4 w-4" />
             </Link>
+
             <Link
               href="/newsletter"
               className={cn(
@@ -62,11 +66,18 @@ export default function WelcomePage() {
           </div>
         </motion.div>
 
+        <div className="absolute right-0 top-0 hidden h-full w-[55%] md:flex justify-center overflow-hidden">
+          <InfiniteMovingCards items={items} />
+          <div className="absolute inset-0 bg-gradient-to-l from-[#0b0f14] via-[#0b0f14]/90 to-transparent pointer-events-none" />
+        </div>
+      </section>
+
+      <section className="relative z-10 w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="mt-20 w-full max-w-4xl"
+          className="mt-10 w-full max-w-4xl mx-auto"
         >
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -129,7 +140,7 @@ export default function WelcomePage() {
             </div>
           </div>
         </motion.div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
