@@ -11,41 +11,31 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
+import { Button, buttonVariants } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
-// Schema de validação Zod
 import { loginSchema, LoginForm } from "@/lib/validations/login";
-
-import { users } from "@/lib/user/users";
-import { UserProfile } from "@/lib/user/types";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
-  const { login } = useAuth();
-
+  const { login, loading } = useAuth();
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<LoginForm> = (data) => {
-    const user = users.find(
-      (u: UserProfile) => u.email === data.email && u.password === data.password
-    );
-    if (user) {
-      setError("");
-      login({ email: user.email!, password: user.password });
-    } else {
+  const onSubmit: SubmitHandler<LoginForm> = async (data) => {
+    setError("");
+    try {
+      await login(data);
+    } catch {
       setError("Usuário ou senha inválidos.");
     }
   };
@@ -56,7 +46,6 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-blue-900/20"></div>
       </div>
 
-      {/* Main Container / Constrained Wrapper */}
       <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-25 min-h-screen flex items-center justify-center">
         <Card
           className="relative w-full max-w-md bg-[#0d1118] 
@@ -70,7 +59,6 @@ export default function LoginPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-purple-500/5 pointer-events-none transition-opacity duration-700 ease-out hover:from-red-500/8 hover:to-purple-500/8"></div>
 
           <CardHeader className="text-center space-y-4 pt-8 pb-6 relative z-10">
-            {/* Isotipo */}
             <div className="flex justify-center">
               <Link
                 href="/"
@@ -95,29 +83,18 @@ export default function LoginPage() {
                   />
                 </div>
 
-                {/* Partículas de brilho */}
-                <div
-                  className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2
-                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-200"
-                >
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-200">
                   <div className="w-1 h-1 bg-red-400 rounded-full animate-ping"></div>
                 </div>
-                <div
-                  className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1
-                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-300"
-                >
+                <div className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-300">
                   <div className="w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
                 </div>
-                <div
-                  className="absolute top-1/2 left-0 transform -translate-x-2 -translate-y-1/2
-                     opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-400"
-                >
+                <div className="absolute top-1/2 left-0 transform -translate-x-2 -translate-y-1/2 opacity-0 group-hover:opacity-80 transition-opacity duration-700 delay-400">
                   <div className="w-1 h-1 bg-cyan-400 rounded-full animate-ping"></div>
                 </div>
               </Link>
             </div>
 
-            {/* Label */}
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-red-500 tracking-tight">
                 Yuffie&apos;s Cinematic
@@ -194,13 +171,35 @@ export default function LoginPage() {
               <div className="w-full space-y-4">
                 <Button
                   type="submit"
-                  disabled={Object.keys(errors).length > 0}
+                  disabled={isSubmitting || loading}
                   className="w-full cursor-pointer bg-gradient-to-r from-red-600 to-red-700 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  Entrar na Plataforma
+                  {isSubmitting || loading
+                    ? "Entrando..."
+                    : "Entrar na Plataforma"}
                 </Button>
 
-                <div className="text-center">
+                <div className="relative text-center">
+                  <div className="absolute inset-0 flex items-center z-0">
+                    <span className="w-full border-t border-gray-700/50"></span>
+                  </div>
+                  <div className="relative inline-block px-4 text-xs text-gray-400 rounded-md shadow-sm backdrop-blur-sm z-10">
+                    Não tem uma conta?
+                  </div>
+                </div>
+
+                <Link
+                  href="/auth/register"
+                  className={buttonVariants({
+                    variant: "outline",
+                    className:
+                      "w-full bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-green-600/20 hover:border-green-500/50 hover:text-green-300 transition-all duration-300 ease-out hover:scale-105 active:scale-95",
+                  })}
+                >
+                  Criar conta
+                </Link>
+
+                <div className="text-center pt-2">
                   <Link
                     href="/"
                     className="inline-flex items-center gap-2 text-gray-400 hover:text-red-400 text-sm transition-colors duration-300"
