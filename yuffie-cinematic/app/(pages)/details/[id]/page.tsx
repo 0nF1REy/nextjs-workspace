@@ -57,7 +57,7 @@ const DynamicUserInteractiveElements = dynamic(
 import SeasonEpisodes from "@/components/description/season-episodes";
 import { cinematics } from "@/lib/details";
 import NotFoundPage from "@/app/not-found";
-import { CinematicDetail } from "@/lib/details/types"; // Removido 'Review'
+import { CinematicDetail } from "@/lib/details/types";
 import { CinematicItem } from "@/lib/items/types";
 
 import "@/styles/rolling-covers.css";

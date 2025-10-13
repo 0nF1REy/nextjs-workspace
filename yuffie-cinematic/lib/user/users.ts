@@ -248,3 +248,7 @@ export const userExists = (id: string): boolean => {
 export const getAllUsers = (): UserProfile[] => {
   return users;
 };
+
+export const addUser = (user: UserProfile) => {
+  users.push(user);
+};

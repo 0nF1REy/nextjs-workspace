@@ -39,11 +39,17 @@ export async function middleware(request: NextRequest) {
 
   // Definição das diferentes categorias de rotas
   const authRoutes = ["/auth/login", "/auth/register"];
-  
+
   const adminRoutes = ["/admin"];
 
   // Páginas que exigem login
-  const protectedRoutes = ["/profile", "/details", "/newsletter", "/contact"];
+  const protectedRoutes = [
+    "/profile",
+    "/details",
+    "/newsletter",
+    "/contact",
+    "/welcome",
+  ];
 
   // Regra 1: Se o usuário já está logado, não o deixe ver as páginas de login/registro
   if (
