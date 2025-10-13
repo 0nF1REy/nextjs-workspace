@@ -35,8 +35,12 @@ export default function LoginPage() {
     setError("");
     try {
       await login(data);
-    } catch {
-      setError("Usuário ou senha inválidos.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Ocorreu um erro desconhecido.");
+      }
     }
   };
 

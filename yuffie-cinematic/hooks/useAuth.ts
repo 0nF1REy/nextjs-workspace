@@ -8,6 +8,7 @@ import {
   useReviewsStore,
 } from "@/stores";
 import type { User } from "@/lib/user/types";
+import { RegisterForm } from "@/lib/validations/register";
 
 async function fetchUserData() {
   try {
@@ -18,9 +19,7 @@ async function fetchUserData() {
       useRatingsStore.getState().setRatings(data.ratings || {});
       useReviewsStore.getState().setLikes(data.likedReviewIds || []);
     }
-  } catch (error) {
-    console.error("Failed to fetch user data:", error);
-  }
+  } catch {}
 }
 
 function clearUserData() {
@@ -34,36 +33,51 @@ export function useAuth() {
   const { currentUser, setUser } = useUserStore();
 
   const login = async (credentials: { email: string; password?: string }) => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
 
-      if (!response.ok) {
-        throw new Error("Falha no login");
-      }
-
-      const userData: User = await response.json();
-      setUser(userData);
-      await fetchUserData();
-
-      if (userData.userType === "admin") {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Erro no login:", error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Falha no login");
     }
+
+    const userData: User = await response.json();
+    setUser(userData);
+    await fetchUserData();
+
+    if (userData.userType === "admin") {
+      router.push("/admin/dashboard");
+    } else {
+      router.push("/");
+    }
+  };
+
+  const registerAndLogin = async (data: RegisterForm) => {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Ocorreu um erro no registro.");
+    }
+
+    setUser(result);
+    await fetchUserData();
+
+    router.push("/welcome");
   };
 
   const logout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-    } catch (error) {
-      console.error("Erro no logout:", error);
+    } catch {
     } finally {
       setUser(null);
       clearUserData();
@@ -79,6 +93,7 @@ export function useAuth() {
     user: currentUser,
     loading,
     login,
+    registerAndLogin,
     logout,
     isAuthenticated,
     isAdmin,
