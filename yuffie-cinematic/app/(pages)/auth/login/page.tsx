@@ -26,6 +26,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -43,6 +44,11 @@ export default function LoginPage() {
       }
     }
   };
+
+  const emailValue = watch("email");
+  const passwordValue = watch("password");
+  const isButtonDisabled =
+    !emailValue || !passwordValue || isSubmitting || loading;
 
   return (
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100">
@@ -175,7 +181,7 @@ export default function LoginPage() {
               <div className="w-full space-y-4">
                 <Button
                   type="submit"
-                  disabled={isSubmitting || loading}
+                  disabled={isButtonDisabled}
                   className="w-full cursor-pointer bg-gradient-to-r from-red-600 to-red-700 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {isSubmitting || loading
