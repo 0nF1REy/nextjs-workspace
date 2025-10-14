@@ -1,12 +1,43 @@
 {
   "name": "yuffie-cinematic",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Modern catalog for movies, series and anime with reviews, favorites, animations and interactive UI. Built with Next.js and React.",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint"
+  },
+  "keywords": [
+    "movies",
+    "series",
+    "anime",
+    "catalog",
+    "reviews",
+    "favorites",
+    "Next.js",
+    "React",
+    "Framer Motion",
+    "Tailwind",
+    "dashboard",
+    "user",
+    "interactive",
+    "cinema",
+    "streaming"
+  ],
+  "author": {
+    "name": "Alan Ryan da Silva Domingues",
+    "email": "alanryan619@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://gitlab.com/alanryan619/3j-ga-pw3-2025-projeto-filmes-series-alan",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/alanryan619/3j-ga-pw3-2025-projeto-filmes-series-alan.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/alanryan619/3j-ga-pw3-2025-projeto-filmes-series-alan/-/issues"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.0.0",
