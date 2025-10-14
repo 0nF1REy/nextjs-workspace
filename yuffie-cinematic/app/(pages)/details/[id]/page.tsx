@@ -24,6 +24,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 import ImageGallery from "@/components/description/image-gallery";
+import { AnimatePresence, motion } from "framer-motion";
+import { DynamicFullScreenBanner } from "@/components/description/DynamicFullScreenBanner";
 
 const DynamicMovieReviews = dynamic(
   () => import("@/components/description/reviews"),
@@ -232,6 +234,7 @@ const SimilarMoviesSectionComponent = ({
 };
 
 export default function CinematicDescriptionPage({ params }: PageProps) {
+  const [showBanner, setShowBanner] = useState(true);
   const [id, setId] = useState<string>("");
 
   useEffect(() => {
@@ -239,6 +242,14 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
       setId(resolvedParams.id);
     });
   }, [params]);
+
+  // Banner - lógica
+  useEffect(() => {
+    if (showBanner) {
+      const timer = setTimeout(() => setShowBanner(false), 1600);
+      return () => clearTimeout(timer);
+    }
+  }, [showBanner]);
 
   if (!id) {
     return (
@@ -260,8 +271,9 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
     );
   }
 
+  const bannerImage = cinematic.carouselImages?.[0] || null;
+  const layoutId = `banner-${cinematic.id}`;
   const galleryImages = cinematic?.galleryImages;
-
   const similarMovies: CinematicItem[] = cinematics
     .filter((c) => c.id !== cinematic.id && c.type === cinematic.type)
     .slice(0, 6)
@@ -271,124 +283,147 @@ export default function CinematicDescriptionPage({ params }: PageProps) {
       poster: c.cover,
       cover: c.cover,
     }));
-
   const allCinematicsItems: CinematicItem[] = cinematics.map((c) => ({
     id: c.id,
     title: c.title,
     poster: c.cover,
     cover: c.cover,
   }));
-
   const creatorLabel =
     cinematic.type === "serie" ? "Criado por" : "Dirigido por";
 
   return (
     <div className="min-h-screen w-full bg-[#131b22] text-gray-100 pt-4">
-      <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section aria-label="Rolling covers">
-          <RollingCovers items={allCinematicsItems} speed={10} />
-        </section>
-        <section aria-label="Cinematic gallery">
-          <MovieCarouselComponent cinematic={cinematic} />
-        </section>
-        <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
-            <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
-              <div className="flex-shrink-0 flex justify-center md:block">
-                <Image
-                  src={cinematic.cover}
-                  alt={`${cinematic.title} poster`}
-                  width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
-                  height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
-                  priority
-                  className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
-                />
-              </div>
-              <div className="flex flex-col justify-between flex-1">
-                <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
-                  <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
-                    {cinematic.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm sm:text-base md:text-gray-400">
-                    {cinematic.year} • {creatorLabel} {cinematic.creator}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 p-0">
-                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-                    {cinematic.synopsis}
-                  </p>
-                  <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
-                    <div className="w-full lg:w-auto">
-                      <Suspense
-                        fallback={
-                          <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse h-[148px]"></div>
-                        }
-                      >
-                        <DynamicUserInteractiveElements
-                          cinematicId={cinematic.id}
-                          cinematicRating={cinematic.rating}
-                          cinematicTitle={cinematic.title}
-                          cinematicCover={cinematic.cover}
-                          cinematicType={cinematic.type}
-                        />
-                      </Suspense>
-                    </div>
-                    <div className="w-full lg:w-auto">
-                      <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
-                        Elenco Principal:
-                      </span>
-                      <ul className="list-disc list-inside text-gray-400 space-y-1">
-                        {cinematic.cast.map((actor, idx) => (
-                          <li
-                            key={`${cinematic.id}-cast-${idx}`}
-                            className="text-sm sm:text-base"
-                          >
-                            {actor}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </div>
-            </div>
-            <CardFooter className="flex justify-center md:justify-start">
-              <Link href="/">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="hover:bg-red-600 flex items-center gap-2"
-                >
-                  <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
-                  Voltar para Home
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-          <Suspense
-            fallback={
-              <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>
-            }
+      <AnimatePresence>
+        {showBanner && bannerImage && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.6 }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 100,
+              background: "rgba(0,0,0,0.85)",
+            }}
           >
-            <DynamicMovieReviews
-              genre={cinematic.genre}
-              duration={cinematic.duration}
-              cinematicId={cinematic.id}
+            <DynamicFullScreenBanner
+              image={bannerImage}
+              alt={cinematic.title}
+              layoutId={layoutId}
             />
-          </Suspense>
-        </main>
-        {cinematic.type === "serie" && cinematic.seasons && (
-          <SeasonEpisodes
-            seasons={cinematic.seasons}
-            seriesTitle={cinematic.title}
-          />
+            <div className="absolute inset-0 bg-black/5 transition-all duration-700 pointer-events-none" />
+          </motion.div>
         )}
-        <ImageGallery images={galleryImages} />
-        <SimilarMoviesSectionComponent
-          cinematic={cinematic}
-          similarMovies={similarMovies}
-        />
-      </div>
+      </AnimatePresence>
+      {(!bannerImage || !showBanner) && (
+        <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <section aria-label="Rolling covers">
+            <RollingCovers items={allCinematicsItems} speed={10} />
+          </section>
+          <section aria-label="Cinematic gallery">
+            <MovieCarouselComponent cinematic={cinematic} />
+          </section>
+          <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <Card className="lg:col-span-2 bg-gradient-to-br from-gray-900 to-black border border-red-900/40 shadow-2xl ">
+              <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6">
+                <div className="flex-shrink-0 flex justify-center md:block">
+                  <Image
+                    src={cinematic.cover}
+                    alt={`${cinematic.title} poster`}
+                    width={DEFAULT_IMAGE_DIMENSIONS.cover.width}
+                    height={DEFAULT_IMAGE_DIMENSIONS.cover.height}
+                    priority
+                    className="rounded-lg shadow-lg w-48 h-auto sm:w-56 md:w-auto"
+                  />
+                </div>
+                <div className="flex flex-col justify-between flex-1">
+                  <CardHeader className="p-0 text-center md:text-left mb-4 md:mb-0">
+                    <CardTitle className="text-2xl sm:text-3xl md:text-2xl text-red-500">
+                      {cinematic.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm sm:text-base md:text-gray-400">
+                      {cinematic.year} • {creatorLabel} {cinematic.creator}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 p-0">
+                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                      {cinematic.synopsis}
+                    </p>
+                    <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
+                      <div className="w-full lg:w-auto">
+                        <Suspense
+                          fallback={
+                            <div className="space-y-4 p-4 bg-gray-800 rounded-lg animate-pulse h-[148px]"></div>
+                          }
+                        >
+                          <DynamicUserInteractiveElements
+                            cinematicId={cinematic.id}
+                            cinematicRating={cinematic.rating}
+                            cinematicTitle={cinematic.title}
+                            cinematicCover={cinematic.cover}
+                            cinematicType={cinematic.type}
+                          />
+                        </Suspense>
+                      </div>
+                      <div className="w-full lg:w-auto">
+                        <span className="font-semibold text-gray-200 block mb-2 text-base sm:text-lg">
+                          Elenco Principal:
+                        </span>
+                        <ul className="list-disc list-inside text-gray-400 space-y-1">
+                          {cinematic.cast.map((actor, idx) => (
+                            <li
+                              key={`${cinematic.id}-cast-${idx}`}
+                              className="text-sm sm:text-base"
+                            >
+                              {actor}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+              </div>
+              <CardFooter className="flex justify-center md:justify-start">
+                <Link href="/">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="hover:bg-red-600 flex items-center gap-2"
+                  >
+                    <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
+                    Voltar para Home
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+            <Suspense
+              fallback={
+                <div className="p-4 bg-gray-800 rounded-xl h-64 animate-pulse"></div>
+              }
+            >
+              <DynamicMovieReviews
+                genre={cinematic.genre}
+                duration={cinematic.duration}
+                cinematicId={cinematic.id}
+              />
+            </Suspense>
+          </main>
+          {cinematic.type === "serie" && cinematic.seasons && (
+            <SeasonEpisodes
+              seasons={cinematic.seasons}
+              seriesTitle={cinematic.title}
+            />
+          )}
+          <ImageGallery images={galleryImages} />
+          <SimilarMoviesSectionComponent
+            cinematic={cinematic}
+            similarMovies={similarMovies}
+          />
+        </div>
+      )}
     </div>
   );
 }
