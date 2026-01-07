@@ -40,9 +40,10 @@ const upload = async (formData: FormData): Promise<UploadResult> => {
 
     const timestamp = Date.now();
     const safeFileName = `${timestamp}-${sanitizeFileName(file.name)}`;
-    const filePath = path.join(UPLOAD_DIR, safeFileName);
+    const uploadPath = path.join(process.cwd(), UPLOAD_DIR);
+    const filePath = path.join(uploadPath, safeFileName);
 
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+    await fs.mkdir(uploadPath, { recursive: true });
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -78,7 +79,7 @@ const upload = async (formData: FormData): Promise<UploadResult> => {
 // Método de exclusão
 const deleteFile = async (fileName: string) => {
   try {
-    const filePath = path.join(UPLOAD_DIR, fileName);
+    const filePath = path.join(process.cwd(), UPLOAD_DIR, fileName);
     await fs.unlink(filePath);
     revalidatePath("/");
   } catch (error) {
