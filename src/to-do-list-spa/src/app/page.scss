@@ -1,0 +1,12 @@
+.vintage-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .vintage-grid {
+    gap: 1.5rem;
+  }
+}

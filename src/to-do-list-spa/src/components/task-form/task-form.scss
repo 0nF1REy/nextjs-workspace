@@ -1,0 +1,78 @@
+@use "../vintage-theme";
+
+.card-title {
+  padding-bottom: 1rem;
+  text-align: center;
+  color: #4a403a;
+}
+
+.card-vintage {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.form-vintage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.vintage-input {
+  .MuiOutlinedInput-root {
+    background-color: #ffffff !important;
+    border-radius: 4px !important;
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #e0d8c8 !important;
+    }
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #4a403a !important;
+    }
+
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: #007bff !important;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-vintage {
+  font-weight: bold !important;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease, color 0.3s ease;
+  text-transform: capitalize !important;
+}
+
+.btn-cancel-vintage {
+  font-weight: bold;
+  background-color: #bd282d;
+  color: #ffffff !important;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.18), 0 7px 14px rgba(0, 0, 0, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-vintage:hover {
+  background-color: #005cbb;
+}
+
+.btn-cancel-vintage:hover {
+  background-color: #ba1319;
+}
+
+.description-counter {
+  display: block;
+  text-align: right;
+  width: 100%;
+  color: inherit;
+}

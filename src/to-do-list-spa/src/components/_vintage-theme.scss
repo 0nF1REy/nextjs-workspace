@@ -1,0 +1,19 @@
+.container-vintage {
+  background-color: #fefcf7;
+  width: 450px;
+  flex: 1 1 350px;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0d8c8;
+  font-family: "Cormorant Garamond", serif;
+  color: #4a403a;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .container-vintage {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+}
