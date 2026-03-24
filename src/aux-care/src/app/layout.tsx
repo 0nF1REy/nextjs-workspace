@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+import { Header } from "@/components/header/header";
+import { Footer } from "@/components/footer/footer";
+import { ContentWrapper } from "@/components/ui/content-wrapper";
+import { PageTransitionWrapper } from "@/components/ui/page-transition-wrapper";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "AuxCare+",
+  description: "Sistema AuxCare+",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="pt-BR">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
+      >
+        <Header />
+        <main className="flex-1 bg-gray-50">
+          <PageTransitionWrapper>
+            <ContentWrapper>{children}</ContentWrapper>
+          </PageTransitionWrapper>
+        </main>
+        <Footer />
+      </body>
+    </html>
+  );
+}
